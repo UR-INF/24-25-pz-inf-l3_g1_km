@@ -1,27 +1,49 @@
-Programowanie zespołowe laboratorium _**X**_ grupa _**Y**_
+Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 
-# Dokumentacja projetu: **System do zarządzania zadaniami ....(w hurtowni, firmie kurierskiej, księgarni, serwisie samochodowym itp)**
+# Dokumentacja projetu: **System do zarządzania zadaniami w hotelu**
 
 ## Zespoł projetowy:
-imie i nazwisko z oznaczeniem lidera, pełniona rola, zakres czynności/odpowiedzialność 
+- Krzysztof Motas (Lider) - ...
+- Konrad Pluta - ...
+- Patryk Jarosiewicz - ...
+- Jakub Orczyk - ...
 
-## Opis programu / systemu
-
+## Opis aplikacji
 
 ## Cel projektu 
+Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelach, które usprawnia komunikację między pracownikami w zespole. System umożliwia delegowanie zadań, śledzenie ich postępu, automatyzację powiadomień oraz analizę wydajności personelu. Dzięki intuicyjnemu interfejsowi i aplikacji mobilnej, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co eliminuje chaos organizacyjny i usprawnia codzienne operacje hotelowe.
 
+## Zakres projektu
 
-## Zakres projektu 
+## Wymagania stawiane aplikacji
 
+System powinien składać się z kilku niezależnych modułów, które pozwalają na elastyczne zarządzanie zadaniami i użytkownikami:
 
-## Wymagania stawiane aplikacji / systemowi 
-- System powinien mieć kilka modułów 
-  - Moduł administracji użytkownikami (role) 
-  - Moduł raportów 
-  - Moduł konfiguracji
-- System powinien umożliwiać generowanie raportów PDF
-- System powinien współpracować z bazą danych
-...
+- **Moduł administracji użytkownikami (role)** – umożliwia nadawanie uprawnień i zarządzanie kontami pracowników oraz ich dostępem do poszczególnych funkcji.
+- **Moduł raportów** – pozwala na analizę danych, generowanie statystyk dotyczących realizacji zadań oraz wydajności pracowników.
+- **Moduł konfiguracji** – daje możliwość dostosowania ustawień systemu, m.in. automatycznych powiadomień, harmonogramów, priorytetów zadań.
+- **Moduł komunikacji** – zapewnia wewnętrzny czat i powiadomienia push dla użytkowników, aby szybciej przekazywać informacje i zgłoszenia.
+- **Moduł zgłaszania usterek i zadań** – integracja z recepcją i personelem, pozwalająca na szybkie przesyłanie zgłoszeń i monitorowanie ich realizacji.
+- **Moduł integracji z systemem rezerwacji hotelowej** – automatyczne przypisywanie zadań, np. sprzątania po wymeldowaniu gościa.
+
+## Generowanie raportów i dokumentacji
+
+- System powinien umożliwiać **generowanie raportów w formacie PDF** na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników.
+- Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie).
+- Powinna być możliwość **eksportu danych do formatów CSV/Excel** w celu dalszej analizy.
+
+## Integracja z bazą danych
+
+- System powinien być oparty na bazie danych, która pozwala na **szybki dostęp do informacji** o użytkownikach, zadaniach, zgłoszeniach i raportach.
+- Powinien umożliwiać **przechowywanie historii zmian** w zadaniach i zgłoszeniach.
+- Konieczna jest **synchronizacja w czasie rzeczywistym**, aby każdy użytkownik miał dostęp do aktualnych informacji.
+
+## Bezpieczeństwo i dostęp użytkowników
+
+- System powinien posiadać **mechanizmy autoryzacji i uwierzytelniania użytkowników** (logowanie, resetowanie hasła, role).
+- Dostęp do poszczególnych funkcji powinien być **ograniczony na podstawie ról** (np. manager ma dostęp do raportów, ale personel sprzątający widzi tylko przypisane do siebie zadania).
+- **Dane użytkowników i zadania powinny być szyfrowane**, aby zapewnić bezpieczeństwo informacji.
+
 
 ## Panele / zakładki systemu, które będą oferowały potrzebne funkcjonalności 
 - Panel administratora 
