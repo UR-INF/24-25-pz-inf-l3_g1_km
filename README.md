@@ -87,7 +87,7 @@ Np. Scentralizowany oparty na bazie danych.
 
 ## Diagramy UML
 - ###### [Diagram przypadków użycia]
-  Wstawić rys. diagramu UML
+![Diagram przypadków użycia](uml/useCaseDiagram.png)
 - ###### [Diagram aktywności]
 Wstawić rys. diagramu UML
 - ###### [Diagram sekwencji]
