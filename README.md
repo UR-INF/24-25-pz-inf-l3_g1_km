@@ -22,7 +22,6 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 - **Moduł administracji użytkownikami (role)** – umożliwia nadawanie uprawnień i zarządzanie kontami pracowników oraz ich dostępem do poszczególnych funkcji.
 - **Moduł raportów** – pozwala na analizę danych, generowanie statystyk dotyczących realizacji zadań oraz wydajności pracowników.
 - **Moduł konfiguracji** – daje możliwość dostosowania ustawień systemu, m.in. automatycznych powiadomień, harmonogramów, priorytetów zadań.
-- **Moduł komunikacji** – zapewnia wewnętrzny czat i powiadomienia push dla użytkowników, aby szybciej przekazywać informacje i zgłoszenia.
 - **Moduł zgłaszania usterek i zadań** – integracja z recepcją i personelem, pozwalająca na szybkie przesyłanie zgłoszeń i monitorowanie ich realizacji.
 - **Moduł integracji z systemem rezerwacji hotelowej** – automatyczne przypisywanie zadań, np. sprzątania po wymeldowaniu gościa.
 
