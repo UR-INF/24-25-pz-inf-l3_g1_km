@@ -89,7 +89,20 @@ Np. Scentralizowany oparty na bazie danych.
 - ###### [Diagram przypadków użycia]
 ![Diagram przypadków użycia](uml/useCaseDiagram.png)
 - ###### [Diagram aktywności]
-Wstawić rys. diagramu UML
+#### Logowanie
+![Diagram aktywności - Logowanie](uml/activityDiagram_login.png)<br>
+#### Tworzenie zamówień
+![Diagram aktywności - Tworzenie zamówień](uml/activityDiagram_orderCreating.png)<br>
+#### Zarządzanie zadaniami
+![Diagram aktywności - Zarządzanie zadaniami](uml/activityDiagram_orderManagement.png)<br>
+#### Resetowanie hasła
+![Diagram aktywności - Resetowanie hasła](uml/activityDiagram_passwordReset.png)<br>
+#### Zgłaszanie poprawek zadań
+![Diagram aktywności - Zgłaszanie poprawek zadań](uml/activityDiagram_submittingCorrections.png)<br>
+#### Zarządzanie zgłoszeniami
+![Diagram aktywności - Zarządzanie zgłoszeniami](uml/activityDiagram_ticketManagement.png)<br>
+#### Zarządzanie pracownikami
+![Diagram aktywności - Zarządzanie pracownikami](uml/activityDiagram_workersManagement.png)
 - ###### [Diagram sekwencji]
 Wstawić rys. diagramu UML
 - ###### [Diagram klas]
