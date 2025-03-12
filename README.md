@@ -28,7 +28,7 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 ## Generowanie raportów oraz faktur VAT
 
 - **Generowanie raportów** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
-- **Generowanie faktur VAT** – System powinien umożliwiać wystawianie faktur VAT dla gości hotelu w formacie PDF.
+- **Generowanie faktur VAT** – system powinien umożliwiać także wystawianie faktur VAT dla gości hotelu w formacie PDF.
 
 ## Integracja z bazą danych
 
