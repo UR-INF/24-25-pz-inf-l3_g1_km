@@ -25,11 +25,10 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 - **Moduł zgłaszania usterek i zadań** – integracja z recepcją i personelem, pozwalająca na szybkie przesyłanie zgłoszeń i monitorowanie ich realizacji.
 - **Moduł integracji z systemem rezerwacji hotelowej** – automatyczne przypisywanie zadań, np. sprzątania po wymeldowaniu gościa.
 
-## Generowanie raportów i dokumentacji
+## Generowanie raportów oraz faktur VAT
 
-- System powinien umożliwiać **generowanie raportów w formacie PDF** na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników.
-- Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie).
-- Powinna być możliwość **eksportu danych do formatów CSV/Excel** w celu dalszej analizy.
+- **Generowanie raportów** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
+- **Generowanie faktur VAT** – System powinien umożliwiać wystawianie faktur VAT dla gości hotelu w formacie PDF.
 
 ## Integracja z bazą danych
 
