@@ -101,7 +101,20 @@ Np. Scentralizowany oparty na bazie danych.
 #### Zarządzanie pracownikami
 ![Diagram aktywności - Zarządzanie pracownikami](uml/activityDiagram_workersManagement.png)
 - ###### [Diagram sekwencji]
-Wstawić rys. diagramu UML
+#### Logowanie
+![Diagram sekwencji - Logowanie](uml/sequenceDiagram_login.png)<br>
+### Dodawanie pracownika
+![Diagram sekwencji - Dodawanie pracownika](uml/sequenceDiagram_addEmployee.png)<br>
+### Dodawanie uwag do zadania
+![Diagram sekwencji - Dodawanie uwag do zadania](uml/sequenceDiagram_addReportToTask.png)<br>
+### Edytowanie pracownika
+![Diagram sekwencji - Edytowanie pracownika](uml/sequenceDiagram_editEmployee.png)<br>
+### Usuwanie zgłoszenia
+![Diagram sekwencji - Usuwanie zgłoszenia](uml/sequenceDiagram_deleteReport.png)<br>
+### Usuwanie pracownika
+![Diagram sekwencji - Usuwanie pracownika](uml/sequenceDiagram_removeEmployee.png)<br>
+### Przeglądanie statystyk zespołu
+![Diagram sekwencji - Przeglądanie statystyk zespołu](uml/sequenceDiagram_searchStatistics.png)
 - ###### [Diagram klas]
   Wstawić rys. diagramu UML
 
