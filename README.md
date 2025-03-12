@@ -11,7 +11,7 @@ Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 ## Opis aplikacji
 
 ## Cel projektu 
-Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelach, które usprawnia komunikację między pracownikami w zespole. System umożliwia delegowanie zadań, śledzenie ich postępu, automatyzację powiadomień oraz analizę wydajności personelu. Dzięki intuicyjnemu interfejsowi i aplikacji mobilnej, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co eliminuje chaos organizacyjny i usprawnia codzienne operacje hotelowe.
+Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelach, które usprawnia komunikację między pracownikami w zespole. System umożliwia delegowanie zadań, śledzenie ich postępu, automatyzację powiadomień oraz analizę wydajności personelu. Dzięki intuicyjnemu interfejsowi, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co poprawia organizację pracy w hotelu.
 
 ## Zakres projektu
 
@@ -35,14 +35,12 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 
 - System powinien być oparty na bazie danych, która pozwala na **szybki dostęp do informacji** o użytkownikach, zadaniach, zgłoszeniach i raportach.
 - Powinien umożliwiać **przechowywanie historii zmian** w zadaniach i zgłoszeniach.
-- Konieczna jest **synchronizacja w czasie rzeczywistym**, aby każdy użytkownik miał dostęp do aktualnych informacji.
 
 ## Bezpieczeństwo i dostęp użytkowników
 
-- System powinien posiadać **mechanizmy autoryzacji i uwierzytelniania użytkowników** (logowanie, resetowanie hasła, role).
-- Dostęp do poszczególnych funkcji powinien być **ograniczony na podstawie ról** (np. manager ma dostęp do raportów, ale personel sprzątający widzi tylko przypisane do siebie zadania).
-- **Dane użytkowników i zadania powinny być szyfrowane**, aby zapewnić bezpieczeństwo informacji.
-
+- System powinien posiadać **mechanizmy autoryzacji i uwierzytelniania użytkowników** (logowanie, resetowanie hasła).
+- Dostęp do poszczególnych funkcji powinien być **ograniczony na podstawie ról**.
+- Hasła użytkowników powinny być **szyfrowane**.
 
 ## Panele / zakładki systemu, które będą oferowały potrzebne funkcjonalności 
 - Panel administratora 
