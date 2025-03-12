@@ -85,7 +85,7 @@ Np. Scentralizowany oparty na bazie danych.
 ## Diagramy UML
 - ###### [Diagram przypadków użycia]
 ![Diagram przypadków użycia](uml/useCaseDiagram.png)
-- ###### [Diagram aktywności]
+- ###### [Diagramy aktywności]
 #### Logowanie
 ![Diagram aktywności - Logowanie](uml/activityDiagram_login.png)<br>
 #### Tworzenie zamówień
@@ -100,7 +100,7 @@ Np. Scentralizowany oparty na bazie danych.
 ![Diagram aktywności - Zarządzanie zgłoszeniami](uml/activityDiagram_ticketManagement.png)<br>
 #### Zarządzanie pracownikami
 ![Diagram aktywności - Zarządzanie pracownikami](uml/activityDiagram_workersManagement.png)
-- ###### [Diagram sekwencji]
+- ###### [Diagramy sekwencji]
 #### Logowanie
 ![Diagram sekwencji - Logowanie](uml/sequenceDiagram_login.png)<br>
 ### Dodawanie pracownika
