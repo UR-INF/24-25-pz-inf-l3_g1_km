@@ -59,8 +59,8 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 - Inne dokumenty:
   - ...
 
-## Przepływ informacji w środowisku systemu 
-Np. Scentralizowany oparty na bazie danych.
+## Przepływ informacji w środowisku systemu
+Przepływ informacji w środowisku systemu jest scentralizowany i oparty na bazie danych, co oznacza, że wszystkie operacje są wykonywane przez centralny serwer, który zarządza dostępem do danych. Klient wysyła żądania do backendu poprzez REST API, np. w celu pobrania, zapisania lub aktualizacji informacji. Backend przetwarza żądania, wykonuje operacje na bazie danych i zwraca odpowiedź w formacie JSON. Dzięki temu pracownicy hotelu mają na bieżąco dostęp do aktualnych informacji o zadaniach, ich statusie i priorytetach, niezależnie od stanowiska, urządzenia czy lokalizacji w obiekcie.
 
 ## Użytkownicy aplikacji i ich uprawnienia 
 - Administrator 
@@ -87,32 +87,32 @@ Np. Scentralizowany oparty na bazie danych.
 ![Diagram przypadków użycia](uml/useCaseDiagram.png)
 - ###### [Diagramy aktywności]
 #### Logowanie
-![Diagram aktywności - Logowanie](uml/activityDiagram_login.png)<br>
+![Diagram aktywności - Logowanie](uml/activityDiagram_login.png)
 #### Tworzenie zamówień
-![Diagram aktywności - Tworzenie zamówień](uml/activityDiagram_orderCreating.png)<br>
+![Diagram aktywności - Tworzenie zamówień](uml/activityDiagram_orderCreating.png)
 #### Zarządzanie zadaniami
-![Diagram aktywności - Zarządzanie zadaniami](uml/activityDiagram_orderManagement.png)<br>
+![Diagram aktywności - Zarządzanie zadaniami](uml/activityDiagram_orderManagement.png)
 #### Resetowanie hasła
-![Diagram aktywności - Resetowanie hasła](uml/activityDiagram_passwordReset.png)<br>
+![Diagram aktywności - Resetowanie hasła](uml/activityDiagram_passwordReset.png)
 #### Zgłaszanie poprawek zadań
-![Diagram aktywności - Zgłaszanie poprawek zadań](uml/activityDiagram_submittingCorrections.png)<br>
+![Diagram aktywności - Zgłaszanie poprawek zadań](uml/activityDiagram_submittingCorrections.png)
 #### Zarządzanie zgłoszeniami
-![Diagram aktywności - Zarządzanie zgłoszeniami](uml/activityDiagram_ticketManagement.png)<br>
+![Diagram aktywności - Zarządzanie zgłoszeniami](uml/activityDiagram_ticketManagement.png)
 #### Zarządzanie pracownikami
 ![Diagram aktywności - Zarządzanie pracownikami](uml/activityDiagram_workersManagement.png)
 - ###### [Diagramy sekwencji]
 #### Logowanie
-![Diagram sekwencji - Logowanie](uml/sequenceDiagram_login.png)<br>
+![Diagram sekwencji - Logowanie](uml/sequenceDiagram_login.png)
 ### Dodawanie pracownika
-![Diagram sekwencji - Dodawanie pracownika](uml/sequenceDiagram_addEmployee.png)<br>
+![Diagram sekwencji - Dodawanie pracownika](uml/sequenceDiagram_addEmployee.png)
 ### Dodawanie uwag do zadania
-![Diagram sekwencji - Dodawanie uwag do zadania](uml/sequenceDiagram_addReportToTask.png)<br>
+![Diagram sekwencji - Dodawanie uwag do zadania](uml/sequenceDiagram_addReportToTask.png)
 ### Edytowanie pracownika
-![Diagram sekwencji - Edytowanie pracownika](uml/sequenceDiagram_editEmployee.png)<br>
+![Diagram sekwencji - Edytowanie pracownika](uml/sequenceDiagram_editEmployee.png)
 ### Usuwanie zgłoszenia
-![Diagram sekwencji - Usuwanie zgłoszenia](uml/sequenceDiagram_deleteReport.png)<br>
+![Diagram sekwencji - Usuwanie zgłoszenia](uml/sequenceDiagram_deleteReport.png)
 ### Usuwanie pracownika
-![Diagram sekwencji - Usuwanie pracownika](uml/sequenceDiagram_removeEmployee.png)<br>
+![Diagram sekwencji - Usuwanie pracownika](uml/sequenceDiagram_removeEmployee.png)
 ### Przeglądanie statystyk zespołu
 ![Diagram sekwencji - Przeglądanie statystyk zespołu](uml/sequenceDiagram_searchStatistics.png)
 - ###### [Diagram klas]
