@@ -77,10 +77,16 @@ Przepływ informacji w środowisku systemu jest scentralizowany i oparty na bazi
   - ...
 
 ## Interesariusze 
-- Interesariusze wewnętrzni 
-  - ...
-- Interesariusze zewnętrzni 
-  - ...
+
+### Interesariusze wewnętrzni
+- **Recepcjoniści** – zarządzają rezerwacjami pokoi oraz zgłoszeniami od gości, delegują zadania do odpowiednich działów oraz monitorują ich realizację.  
+- **Pracownicy działu technicznego** – odpowiadają za wykonywanie i aktualizację statusu zadań związanych z naprawami i konserwacją w hotelu.  
+- **Pracownicy działu sprzątania** – realizują zadania związane z utrzymaniem czystości, przygotowaniem pokoi oraz zgłaszaniem ewentualnych usterek.  
+- **Manager hotelu** – nadzoruje realizację zadań, analizuje statystyki dotyczące pracy zespołów i zarządza personelem.  
+
+### Interesariusze zewnętrzni
+- **Goście hotelowi** – mogą pośrednio rezerwować pokoje poprzez kontakt z recepcją (telefonicznie lub osobiście), a także zgłaszają usterki, które są przekazywane przez recepcję do systemu.
+- **Właściciele hotelu** – analizują raporty dotyczące efektywności pracy i jakości usług.
 
 ## Diagramy UML
 - ###### [Diagram przypadków użycia]
