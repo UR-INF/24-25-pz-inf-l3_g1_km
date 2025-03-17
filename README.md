@@ -62,26 +62,37 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 ## Przepływ informacji w środowisku systemu
 Przepływ informacji w środowisku systemu jest scentralizowany i oparty na bazie danych, co oznacza, że wszystkie operacje są wykonywane przez centralny serwer, który zarządza dostępem do danych. Klient wysyła żądania do backendu poprzez REST API, np. w celu pobrania, zapisania lub aktualizacji informacji. Backend przetwarza żądania, wykonuje operacje na bazie danych i zwraca odpowiedź w formacie JSON. Dzięki temu pracownicy hotelu mają na bieżąco dostęp do aktualnych informacji o zadaniach, ich statusie i priorytetach, niezależnie od stanowiska, urządzenia czy lokalizacji w obiekcie.
 
-## Użytkownicy aplikacji i ich uprawnienia 
-- Administrator 
-  - uprawnienie 1 
-  - uprawnienie 2
-  - ...
-- Kierownik 
-  - uprawnienie 1 
-  - uprawnienie 2
-  - ...
-- Użytkownik
-  - uprawnienie 1 
-  - uprawnienie 2
-  - ...
+## Użytkownicy aplikacji i ich uprawnienia
+
+### Pracownik
+*Rola ogólna, po której dziedziczą wszystkie inne role w systemie. Każdy użytkownik systemu jest pracownikiem i posiada podstawowe uprawnienia. Nie jest to jawna rola, lecz bazowa, zapewniająca minimalne funkcjonalności dla wszystkich użytkowników aplikacji.*
+- Logowanie oraz resetowanie hasła
+- Zarządzanie własnym kontem użytkownika
+- Odbieranie i realizacja zadań
+
+### Recepcjonista
+- Tworzenie i zarządzanie rezerwacjami pokoi
+- Zarządzanie zgłoszeniami (tworzenie, modyfikowanie, usuwanie)
+
+### Konserwator
+- Monitorowanie i aktualizacja zgłoszeń technicznych
+
+### Pokojówka
+- Monitorowanie i aktualizacja zgłoszeń dotyczących stanu pokoi
+
+### Manager hotelu
+- Zarządzanie pracownikami (tworzenie, modyfikowanie i usuwanie kont pracowników)
+- Przeglądanie statystyk dotyczących pracowników
+- Zarządzanie pokojami (tworzenie, modyfikowanie, usuwanie pokoi)
+- Zarządzanie raportami (tworzenie, generowanie, przeglądanie)
+- Przeglądanie wystawionych faktur
 
 ## Interesariusze 
 
 ### Interesariusze wewnętrzni
 - **Recepcjoniści** – zarządzają rezerwacjami pokoi oraz zgłoszeniami od gości, delegują zadania do odpowiednich działów oraz monitorują ich realizację.  
-- **Pracownicy działu technicznego** – odpowiadają za wykonywanie i aktualizację statusu zadań związanych z naprawami i konserwacją w hotelu.  
-- **Pracownicy działu sprzątania** – realizują zadania związane z utrzymaniem czystości, przygotowaniem pokoi oraz zgłaszaniem ewentualnych usterek.  
+- **Konserwatorzy** – odpowiadają za wykonywanie i aktualizację statusu zadań związanych z naprawami i konserwacją w hotelu.  
+- **Pokojówki** – realizują zadania związane z utrzymaniem czystości, przygotowaniem pokoi oraz zgłaszaniem ewentualnych usterek.  
 - **Manager hotelu** – nadzoruje realizację zadań, analizuje statystyki dotyczące pracy zespołów i zarządza personelem.  
 
 ### Interesariusze zewnętrzni
