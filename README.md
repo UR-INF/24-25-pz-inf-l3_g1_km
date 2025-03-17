@@ -4,9 +4,9 @@ Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 
 ## Zespoł projetowy:
 - Krzysztof Motas (Lider) - ...
-- Konrad Pluta - ...
-- Patryk Jarosiewicz - ...
-- Jakub Orczyk - ...
+- Konrad Pluta (Członek) - ...
+- Patryk Jarosiewicz (Członek) - ...
+- Jakub Orczyk (Członek) - ...
 
 ## Opis aplikacji
 
@@ -21,14 +21,9 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 
 - **Moduł administracji użytkownikami (role)** – umożliwia nadawanie uprawnień i zarządzanie kontami pracowników oraz ich dostępem do poszczególnych funkcji.
 - **Moduł raportów** – pozwala na analizę danych, generowanie statystyk dotyczących realizacji zadań oraz wydajności pracowników.
-- **Moduł konfiguracji** – daje możliwość dostosowania ustawień systemu, m.in. automatycznych powiadomień, harmonogramów, priorytetów zadań.
+- **Moduł konfiguracji** – daje możliwość dostosowania ustawień systemu, m.in. automatycznych powiadomień itd.
 - **Moduł zgłaszania usterek i zadań** – integracja z recepcją i personelem, pozwalająca na szybkie przesyłanie zgłoszeń i monitorowanie ich realizacji.
 - **Moduł integracji z systemem rezerwacji hotelowej** – automatyczne przypisywanie zadań, np. sprzątania po wymeldowaniu gościa.
-
-## Generowanie raportów oraz faktur VAT
-
-- **Generowanie raportów** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
-- **Generowanie faktur VAT** – system powinien umożliwiać także wystawianie faktur VAT dla gości hotelu w formacie PDF.
 
 ## Integracja z bazą danych
 
@@ -41,23 +36,78 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 - Dostęp do poszczególnych funkcji powinien być **ograniczony na podstawie ról**.
 - Hasła użytkowników powinny być **szyfrowane**.
 
-## Panele / zakładki systemu, które będą oferowały potrzebne funkcjonalności 
-- Panel administratora 
-  - Główne narzędzie administratorów systemu umożliwiające wykonanie wszystkich czynności potrzebnych do zarządzania systemem np. dodawanie, edycja, usuwanie użytkowników, tworzenie i modyfikacja grup, zarządzanie innymi administratorami. 
-- Panel innego użytkownika 
-  - Funkcjonalność 1
-  - ... kolejna funkcjonalność
-...
-- Zakładka raportów 
-  - Generowanie raportów
-- Zakładka ustawień 
-...
+## Panele / zakładki systemu, które będą oferowały potrzebne funkcjonalności  
+
+### **Panel pracownika**  
+Moduł dostępny dla każdego użytkownika systemu, obejmujący:  
+- **Logowanie i resetowanie hasła** – możliwość autoryzacji i odzyskiwania dostępu do konta.  
+- **Zarządzanie kontem** – edycja danych użytkownika oraz ustawień konta.  
+- **Odbieranie i realizacja zadań** – możliwość przeglądania i aktualizacji statusu przydzielonych obowiązków.  
+
+### **Panel recepcjonisty**  
+Interfejs wspomagający pracę recepcji hotelowej, zawierający:  
+- **Zarządzanie rezerwacjami** – tworzenie, edytowanie i usuwanie rezerwacji pokoi.  
+- **Obsługa zgłoszeń** – przyjmowanie i zarządzanie zgłoszeniami gości.  
+- **Podgląd statusu zgłoszeń** – monitorowanie realizacji zgłoszeń przez personel.  
+
+### **Panel konserwatora**  
+Moduł przeznaczony dla działu technicznego, umożliwiający:  
+- **Obsługę zgłoszeń usterek** – przeglądanie i aktualizowanie statusu napraw.  
+- **Tworzenie i edycję zleceń** – zarządzanie pracami konserwacyjnymi w hotelu.  
+
+### **Panel pokojówki**  
+Interfejs dla personelu sprzątającego, obejmujący:  
+- **Monitorowanie zgłoszeń dotyczących stanu pokoi** – przeglądanie zadań związanych z utrzymaniem czystości.  
+- **Oznaczanie wykonanych obowiązków** – potwierdzanie zakończenia sprzątania pokoi.  
+- **Tworzenie zgłoszeń** – raportowanie usterek i problemów w pokojach.  
+
+### **Panel menadżera hotelu**  
+Moduł umożliwiający:  
+- **Zarządzanie pracownikami** – dodawanie, edytowanie i usuwanie kont użytkowników.  
+- **Przeglądanie statystyk** – analiza wydajności personelu i obłożenia hotelu.  
+- **Zarządzanie pokojami** – dodawanie, modyfikacja i usuwanie pokoi.  
+- **Zarządzanie raportami** – generowanie i przeglądanie raportów dotyczących działalności hotelu.  
+- **Podgląd faktur** – przeglądanie wystawionych dokumentów księgowych.  
+
+### **Zakładka zarządzania rezerwacjami**  
+Moduł obsługi rezerwacji, obejmujący:  
+- **Tworzenie, edycję i usuwanie rezerwacji** – kompleksowe zarządzanie pobytami gości.  
+- **Historia rezerwacji** – dostęp do archiwalnych danych rezerwacyjnych.  
+
+### **Zakładka zgłoszeń**  
+Sekcja systemu do obsługi zgłoszeń, umożliwiająca:  
+- **Tworzenie zgłoszeń** – rejestrowanie nowych problemów i usterek.  
+- **Modyfikacja i usuwanie zgłoszeń** – edycja oraz anulowanie zgłoszeń.  
+- **Podgląd statusu zgłoszeń** – monitorowanie procesu realizacji.  
+
+### **Zakładka zleceń**  
+Moduł obsługujący zadania wewnętrzne, oferujący:  
+- **Tworzenie, edycję i usuwanie zleceń** – zarządzanie przydzielonymi obowiązkami.  
+- **Śledzenie statusu zadań** – monitorowanie postępów realizacji.  
+
+### **Zakładka serwisowa**  
+Sekcja systemu dotycząca prac serwisowych, obejmująca:  
+- **Tworzenie zgłoszeń serwisowych** – rejestrowanie zapotrzebowania na naprawy.  
+- **Modyfikacja i usuwanie zgłoszeń serwisowych** – aktualizacja i anulowanie zgłoszeń.  
+
+### **Zakładka raportów**  
+Panel przeznaczony do analizy danych, umożliwiający:  
+- **Generowanie raportów** – tworzenie zestawień wydajnościowych i finansowych.  
+- **Przeglądanie raportów historycznych** – dostęp do archiwalnych analiz.  
+- **Eksport raportów** – zapisywanie raportów w formatach PDF / CSV.  
+
+### **Zakładka faktur**  
+Moduł do obsługi dokumentów księgowych, obejmujący:  
+- **Podgląd faktur** – przeglądanie wystawionych faktur VAT.  
+- **Historia faktur** – dostęp do archiwum dokumentów.  
+
+### **Zakładka ustawień systemowych** 
+Interfejs do konfiguracji aplikacji, umożliwiający:  
+- **Zarządzanie powiadomieniami** – konfiguracja alertów systemowych.  
 
 ## Typy wymaganych dokumentów w projekcie oraz dostęp do nich 
-- Raporty PDF 
-  - rodzaje raportów
-- Inne dokumenty:
-  - ...
+- **Raporty** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
+- **Faktury VAT** – system powinien umożliwiać także wystawianie faktur VAT dla gości hotelu w formacie PDF.
 
 ## Przepływ informacji w środowisku systemu
 Przepływ informacji w środowisku systemu jest scentralizowany i oparty na bazie danych, co oznacza, że wszystkie operacje są wykonywane przez centralny serwer, który zarządza dostępem do danych. Klient wysyła żądania do backendu poprzez REST API, np. w celu pobrania, zapisania lub aktualizacji informacji. Backend przetwarza żądania, wykonuje operacje na bazie danych i zwraca odpowiedź w formacie JSON. Dzięki temu pracownicy hotelu mają na bieżąco dostęp do aktualnych informacji o zadaniach, ich statusie i priorytetach, niezależnie od stanowiska, urządzenia czy lokalizacji w obiekcie.
