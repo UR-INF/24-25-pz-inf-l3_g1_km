@@ -3,15 +3,15 @@ Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 # Dokumentacja projetu: **System do zarządzania zadaniami w hotelu**
 
 ## Zespoł projetowy:
-- Krzysztof Motas (Lider) - ...
-- Konrad Pluta (Członek) - ...
-- Patryk Jarosiewicz (Członek) - ...
-- Jakub Orczyk (Członek) - ...
+- Krzysztof Motas (Lider)
+- Konrad Pluta
+- Patryk Jarosiewicz
+- Jakub Orczyk
 
 ## Opis aplikacji
 
 ## Cel projektu 
-Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelach, które usprawnia komunikację między pracownikami w zespole. System umożliwia delegowanie zadań, śledzenie ich postępu, automatyzację powiadomień oraz analizę wydajności personelu. Dzięki intuicyjnemu interfejsowi, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co poprawia organizację pracy w hotelu.
+Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelu. System umożliwia delegowanie zadań, śledzenie ich postępu. Dzięki intuicyjnemu interfejsowi, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co poprawia organizację pracy w hotelu.
 
 ## Zakres projektu
 
@@ -19,9 +19,9 @@ Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelach,
 
 System powinien składać się z kilku niezależnych modułów, które pozwalają na elastyczne zarządzanie zadaniami i użytkownikami:
 
-- **Moduł administracji użytkownikami (role)** – umożliwia nadawanie uprawnień i zarządzanie kontami pracowników oraz ich dostępem do poszczególnych funkcji.
-- **Moduł raportów** – pozwala na analizę danych, generowanie statystyk dotyczących realizacji zadań oraz wydajności pracowników.
-- **Moduł konfiguracji** – daje możliwość dostosowania ustawień systemu, m.in. automatycznych powiadomień itd.
+- **Moduł administracji użytkownikami (role)** – umożliwia nadawanie uprawnień i zarządzanie kontami pracowników.
+- **Moduł raportów** – pozwala na analizę danych, generowanie statystyk dotyczących realizacji zadań oraz pracy hotelu.
+- **Moduł konfiguracji** – daje możliwość dostosowania ustawień konta, m.in. zmiany hasła, zarządzania automatycznymi powiadomieniami itd.
 - **Moduł zgłaszania usterek i zadań** – integracja z recepcją i personelem, pozwalająca na szybkie przesyłanie zgłoszeń i monitorowanie ich realizacji.
 - **Moduł integracji z systemem rezerwacji hotelowej** – automatyczne przypisywanie zadań, np. sprzątania po wymeldowaniu gościa.
 
@@ -40,30 +40,28 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 
 ### **Panel pracownika**  
 Moduł dostępny dla każdego użytkownika systemu, obejmujący:  
-- **Logowanie i resetowanie hasła** – możliwość autoryzacji i odzyskiwania dostępu do konta.  
+- **Logowanie i resetowanie hasła** – możliwość logowania i odzyskiwania dostępu do konta.  
 - **Zarządzanie kontem** – edycja danych użytkownika oraz ustawień konta.  
 - **Odbieranie i realizacja zadań** – możliwość przeglądania i aktualizacji statusu przydzielonych obowiązków.  
 
 ### **Panel recepcjonisty**  
 Interfejs wspomagający pracę recepcji hotelowej, zawierający:  
 - **Zarządzanie rezerwacjami** – tworzenie, edytowanie i usuwanie rezerwacji pokoi.  
-- **Obsługa zgłoszeń** – przyjmowanie i zarządzanie zgłoszeniami gości.  
+- **Obsługa zgłoszeń** – przyjmowanie i zarządzanie zgłoszeniami gości dotyczących usterek oraz innych spraw.
 - **Podgląd statusu zgłoszeń** – monitorowanie realizacji zgłoszeń przez personel.  
 
 ### **Panel konserwatora**  
 Moduł przeznaczony dla działu technicznego, umożliwiający:  
 - **Obsługę zgłoszeń usterek** – przeglądanie i aktualizowanie statusu napraw.  
-- **Tworzenie i edycję zleceń** – zarządzanie pracami konserwacyjnymi w hotelu.  
 
 ### **Panel pokojówki**  
 Interfejs dla personelu sprzątającego, obejmujący:  
-- **Monitorowanie zgłoszeń dotyczących stanu pokoi** – przeglądanie zadań związanych z utrzymaniem czystości.  
-- **Oznaczanie wykonanych obowiązków** – potwierdzanie zakończenia sprzątania pokoi.  
-- **Tworzenie zgłoszeń** – raportowanie usterek i problemów w pokojach.  
+- **Monitorowanie i zarządzanie zgłoszeniami dotyczących stanu pokoi**  
+- **Tworzenie zgłoszeń usterek** – raportowanie usterek i problemów w pokojach.  
 
 ### **Panel menadżera hotelu**  
 Moduł umożliwiający:  
-- **Zarządzanie pracownikami** – dodawanie, edytowanie i usuwanie kont użytkowników.  
+- **Zarządzanie pracownikami** – dodawanie, edytowanie i usuwanie kont użytkowników, a także nadawanie uprawnień.  
 - **Przeglądanie statystyk** – analiza wydajności personelu i obłożenia hotelu.  
 - **Zarządzanie pokojami** – dodawanie, modyfikacja i usuwanie pokoi.  
 - **Zarządzanie raportami** – generowanie i przeglądanie raportów dotyczących działalności hotelu.  
@@ -71,19 +69,14 @@ Moduł umożliwiający:
 
 ### **Zakładka zarządzania rezerwacjami**  
 Moduł obsługi rezerwacji, obejmujący:  
-- **Tworzenie, edycję i usuwanie rezerwacji** – kompleksowe zarządzanie pobytami gości.  
+- **Tworzenie, edycję i usuwanie rezerwacji** – zarządzanie pobytami gości.  
 - **Historia rezerwacji** – dostęp do archiwalnych danych rezerwacyjnych.  
 
 ### **Zakładka zgłoszeń**  
-Sekcja systemu do obsługi zgłoszeń, umożliwiająca:  
+Sekcja systemu do obsługi zgłoszeń gości hotelowych, umożliwiająca:  
 - **Tworzenie zgłoszeń** – rejestrowanie nowych problemów i usterek.  
 - **Modyfikacja i usuwanie zgłoszeń** – edycja oraz anulowanie zgłoszeń.  
 - **Podgląd statusu zgłoszeń** – monitorowanie procesu realizacji.  
-
-### **Zakładka zleceń**  
-Moduł obsługujący zadania wewnętrzne, oferujący:  
-- **Tworzenie, edycję i usuwanie zleceń** – zarządzanie przydzielonymi obowiązkami.  
-- **Śledzenie statusu zadań** – monitorowanie postępów realizacji.  
 
 ### **Zakładka serwisowa**  
 Sekcja systemu dotycząca prac serwisowych, obejmująca:  
@@ -106,7 +99,7 @@ Interfejs do konfiguracji aplikacji, umożliwiający:
 - **Zarządzanie powiadomieniami** – konfiguracja alertów systemowych.  
 
 ## Typy wymaganych dokumentów w projekcie oraz dostęp do nich 
-- **Raporty** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń oraz efektywności pracowników. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
+- **Raporty** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
 - **Faktury VAT** – system powinien umożliwiać także wystawianie faktur VAT dla gości hotelu w formacie PDF.
 
 ## Przepływ informacji w środowisku systemu
