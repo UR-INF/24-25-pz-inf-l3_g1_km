@@ -52,51 +52,19 @@ Interfejs wspomagający pracę recepcji hotelowej, zawierający:
 
 ### **Panel konserwatora**  
 Moduł przeznaczony dla działu technicznego, umożliwiający:  
-- **Obsługę zgłoszeń usterek** – przeglądanie i aktualizowanie statusu napraw.  
+- **Obsługę zgłoszeń usterek** – przeglądanie i aktualizowanie zgłoszeń napraw.  
 
 ### **Panel pokojówki**  
 Interfejs dla personelu sprzątającego, obejmujący:  
-- **Monitorowanie i zarządzanie zgłoszeniami dotyczących stanu pokoi**  
+- **Monitorowanie i zarządzanie zleceniami dotyczącymi stanu pokoi**  
 - **Tworzenie zgłoszeń usterek** – raportowanie usterek i problemów w pokojach.  
 
 ### **Panel menadżera hotelu**  
 Moduł umożliwiający:  
 - **Zarządzanie pracownikami** – dodawanie, edytowanie i usuwanie kont użytkowników, a także nadawanie uprawnień.  
-- **Przeglądanie statystyk** – analiza wydajności personelu i obłożenia hotelu.  
 - **Zarządzanie pokojami** – dodawanie, modyfikacja i usuwanie pokoi.  
 - **Zarządzanie raportami** – generowanie i przeglądanie raportów dotyczących działalności hotelu.  
-- **Podgląd faktur** – przeglądanie wystawionych dokumentów księgowych.  
-
-### **Zakładka zarządzania rezerwacjami**  
-Moduł obsługi rezerwacji, obejmujący:  
-- **Tworzenie, edycję i usuwanie rezerwacji** – zarządzanie pobytami gości.  
-- **Historia rezerwacji** – dostęp do archiwalnych danych rezerwacyjnych.  
-
-### **Zakładka zgłoszeń**  
-Sekcja systemu do obsługi zgłoszeń gości hotelowych, umożliwiająca:  
-- **Tworzenie zgłoszeń** – rejestrowanie nowych problemów i usterek.  
-- **Modyfikacja i usuwanie zgłoszeń** – edycja oraz anulowanie zgłoszeń.  
-- **Podgląd statusu zgłoszeń** – monitorowanie procesu realizacji.  
-
-### **Zakładka serwisowa**  
-Sekcja systemu dotycząca prac serwisowych, obejmująca:  
-- **Tworzenie zgłoszeń serwisowych** – rejestrowanie zapotrzebowania na naprawy.  
-- **Modyfikacja i usuwanie zgłoszeń serwisowych** – aktualizacja i anulowanie zgłoszeń.  
-
-### **Zakładka raportów**  
-Panel przeznaczony do analizy danych, umożliwiający:  
-- **Generowanie raportów** – tworzenie zestawień wydajnościowych i finansowych.  
-- **Przeglądanie raportów historycznych** – dostęp do archiwalnych analiz.  
-- **Eksport raportów** – zapisywanie raportów w formatach PDF / CSV.  
-
-### **Zakładka faktur**  
-Moduł do obsługi dokumentów księgowych, obejmujący:  
-- **Podgląd faktur** – przeglądanie wystawionych faktur VAT.  
-- **Historia faktur** – dostęp do archiwum dokumentów.  
-
-### **Zakładka ustawień systemowych** 
-Interfejs do konfiguracji aplikacji, umożliwiający:  
-- **Zarządzanie powiadomieniami** – konfiguracja alertów systemowych.  
+- **Podgląd faktur** – przeglądanie wystawionych dokumentów księgowych. 
 
 ## Typy wymaganych dokumentów w projekcie oraz dostęp do nich 
 - **Raporty** - system powinien umożliwiać generowanie raportów na podstawie danych dotyczących realizacji zadań, historii zgłoszeń. Raporty powinny obejmować **różne zakresy czasowe** (dziennie, tygodniowo, miesięcznie). Musi być możliwe także **eksportowanie danych do formatów CSV/PDF**.
@@ -115,13 +83,13 @@ Przepływ informacji w środowisku systemu jest scentralizowany i oparty na bazi
 
 ### Recepcjonista
 - Tworzenie i zarządzanie rezerwacjami pokoi
-- Zarządzanie zgłoszeniami (tworzenie, modyfikowanie, usuwanie)
+- Zarządzanie zgłoszeniami gości hotelowych (tworzenie, modyfikowanie, usuwanie)
 
 ### Konserwator
-- Monitorowanie i aktualizacja zgłoszeń technicznych
+- Monitorowanie i aktualizacja zgłoszeń usterek
 
 ### Pokojówka
-- Monitorowanie i aktualizacja zgłoszeń dotyczących stanu pokoi
+- Monitorowanie i aktualizacja zleceń dotyczących stanu pokoi
 
 ### Manager hotelu
 - Zarządzanie pracownikami (tworzenie, modyfikowanie i usuwanie kont pracowników)
@@ -131,16 +99,7 @@ Przepływ informacji w środowisku systemu jest scentralizowany i oparty na bazi
 - Przeglądanie wystawionych faktur
 
 ## Interesariusze 
-
-### Interesariusze wewnętrzni
-- **Recepcjoniści** – zarządzają rezerwacjami pokoi oraz zgłoszeniami od gości, delegują zadania do odpowiednich działów oraz monitorują ich realizację.  
-- **Konserwatorzy** – odpowiadają za wykonywanie i aktualizację statusu zadań związanych z naprawami i konserwacją w hotelu.  
-- **Pokojówki** – realizują zadania związane z utrzymaniem czystości, przygotowaniem pokoi oraz zgłaszaniem ewentualnych usterek.  
-- **Manager hotelu** – nadzoruje realizację zadań, analizuje statystyki dotyczące pracy zespołów i zarządza personelem.  
-
-### Interesariusze zewnętrzni
-- **Goście hotelowi** – mogą pośrednio rezerwować pokoje poprzez kontakt z recepcją (telefonicznie lub osobiście), a także zgłaszają usterki, które są przekazywane przez recepcję do systemu.
-- **Właściciele hotelu** – analizują raporty dotyczące efektywności pracy i jakości usług.
+Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hoteli, którzy chcą poprawić organizację pracy w swoim biznesie.
 
 ## Diagramy UML
 - ###### [Diagram przypadków użycia]
