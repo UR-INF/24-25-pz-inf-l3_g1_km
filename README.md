@@ -117,8 +117,8 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 ![Diagram aktywności - Usuwanie pracowników](uml/activityDiagram_workerRemove.png)
 #### Podgląd raportów
 ![Diagram aktywności - Podgląd raportów](uml/activityDiagram_raportsCheck.png)
-#### Modyfikacja raportów
-![Diagram aktywności - Modyfikacja raportów](uml/activityDiagram_reservationUpdate.png)
+#### Modyfikacja rezerwacji
+![Diagram aktywności - Modyfikacja rezerwacji](uml/activityDiagram_reservationUpdate.png)
 - ###### [Diagramy sekwencji]
 #### Logowanie
 ![Diagram sekwencji - Logowanie](uml/sequenceDiagram_login.png)
