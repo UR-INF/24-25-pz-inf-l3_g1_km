@@ -108,17 +108,17 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 #### Logowanie
 ![Diagram aktywności - Logowanie](uml/activityDiagram_login.png)
 #### Tworzenie zamówień
-![Diagram aktywności - Tworzenie zamówień](uml/activityDiagram_orderCreating.png)
+![Diagram aktywności - Tworzenie rezerwacji](uml/activityDiagram_reservationCreating.png)
 #### Zarządzanie zadaniami
-![Diagram aktywności - Zarządzanie zadaniami](uml/activityDiagram_orderManagement.png)
+![Diagram aktywności - Podgląd statystyk pracowników](uml/activityDiagram_workersStats.png)
 #### Resetowanie hasła
 ![Diagram aktywności - Resetowanie hasła](uml/activityDiagram_passwordReset.png)
 #### Zgłaszanie poprawek zadań
-![Diagram aktywności - Zgłaszanie poprawek zadań](uml/activityDiagram_submittingCorrections.png)
+![Diagram aktywności - Usuwanie pracowników](uml/activityDiagram_workerRemove.png)
 #### Zarządzanie zgłoszeniami
-![Diagram aktywności - Zarządzanie zgłoszeniami](uml/activityDiagram_ticketManagement.png)
+![Diagram aktywności - Podgląd raportów](uml/activityDiagram_raportsCheck.png)
 #### Zarządzanie pracownikami
-![Diagram aktywności - Zarządzanie pracownikami](uml/activityDiagram_workersManagement.png)
+![Diagram aktywności - Modyfikacja raportów](uml/activityDiagram_reservationUpdate.png)
 - ###### [Diagramy sekwencji]
 #### Logowanie
 ![Diagram sekwencji - Logowanie](uml/sequenceDiagram_login.png)
