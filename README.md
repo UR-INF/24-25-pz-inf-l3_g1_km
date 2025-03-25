@@ -139,6 +139,7 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 
 ## Baza danych
 ###### Diagram ERD
+![Diagram ERD](uml/ERD.png)
 
 ###### Skrypt do utworzenia struktury bazy danych
 
