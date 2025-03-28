@@ -9,6 +9,8 @@ app.whenReady().then(() => {
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true, // Pozwala na użycie `require` w rendererze
+            contextIsolation: false, // Wymagane, aby `require` działał
         }
     });
 
