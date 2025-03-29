@@ -26,7 +26,7 @@ public class Invoice {
     /**
      * Ścieżka lub nazwa pliku faktury PDF.
      */
-    @Column(name = "pdf_file", length = 255)
+    @Column(name = "pdf_file")
     private String pdfFile;
 
     /**
@@ -44,6 +44,6 @@ public class Invoice {
     /**
      * Adres firmy.
      */
-    @Column(name = "company_address", length = 255)
+    @Column(name = "company_address")
     private String companyAddress;
 }

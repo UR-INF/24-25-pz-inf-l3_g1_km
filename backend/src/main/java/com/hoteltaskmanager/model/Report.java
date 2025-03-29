@@ -23,7 +23,7 @@ public class Report {
     /**
      * Nazwa lub ścieżka do pliku raportu.
      */
-    @Column(name = "report_file", length = 255)
+    @Column(name = "report_file")
     private String reportFile;
 
     /**

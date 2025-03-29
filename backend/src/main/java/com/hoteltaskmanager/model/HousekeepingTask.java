@@ -31,7 +31,7 @@ public class HousekeepingTask {
      * Pokój, którego dotyczy zadanie.
      */
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = true)
+    @JoinColumn(name = "room_id")
     private Room room;
 
     /**

@@ -37,7 +37,7 @@ public class MaintenanceRequest {
      * Pokój, którego dotyczy zgłoszenie.
      */
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = true)
+    @JoinColumn(name = "room_id")
     private Room room;
 
     /**
