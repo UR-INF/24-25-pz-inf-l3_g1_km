@@ -52,19 +52,19 @@ public class ReservationSeeder {
             // Lista przykładowych rezerwacji
             Reservation r1 = createReservation("Karolina", "Maj", "88010156789", "508999777", ReservationStatus.ACTIVE,
                     LocalDate.now().plusDays(2), LocalDate.now().plusDays(5),
-                    "Pokoj blisko windy i lozeczko dzieciece", true);
+                    "Pokój blisko windy i łóżeczko dziecięce", true);
 
             Reservation r2 = createReservation("Marek", "Kowal", "81051233333", "600300200", ReservationStatus.COMPLETED,
                     LocalDate.now().plusDays(1), LocalDate.now().plusDays(4),
-                    "Brak alergii, bez pierza", false);
+                    "Alergia - poduszki bez pierza", false);
 
             Reservation r3 = createReservation("Julia", "Lewandowska", "92092398765", "507000111", ReservationStatus.ACTIVE,
                     LocalDate.now().plusDays(7), LocalDate.now().plusDays(14),
-                    "Pokoj z balkonem i widokiem", true);
+                    "Pokój z balkonem i widokiem", true);
 
             Reservation r4 = createReservation("Tomasz", "Nowak", "90011122233", "505505505", ReservationStatus.CANCELLED,
                     LocalDate.now().minusDays(3), LocalDate.now().minusDays(1),
-                    "Odwolano rezerwacje", false);
+                    "Odwołano rezerwacje", false);
 
             Reservation r5 = createReservation("Agnieszka", "Bielska", "85101010101", "512345678", ReservationStatus.COMPLETED,
                     LocalDate.now().minusDays(10), LocalDate.now().minusDays(5),
@@ -72,11 +72,11 @@ public class ReservationSeeder {
 
             Reservation r6 = createReservation("Kamil", "Rogalski", "95010145678", "504123321", ReservationStatus.ACTIVE,
                     LocalDate.now().plusDays(1), LocalDate.now().plusDays(2),
-                    "Zamowienie bez wymagan", false);
+                    "Zamówienie bez wymagań", false);
 
             Reservation r7 = createReservation("Ewa", "Sosna", "87050578901", "501202303", ReservationStatus.ACTIVE,
                     LocalDate.now().plusDays(4), LocalDate.now().plusDays(8),
-                    "Prosba o cicha lokalizacje", true);
+                    "Prośba o cichą lokalizację", true);
 
             // Zapisz wszystkie rezerwacje
             reservationRepository.saveAll(List.of(r1, r2, r3, r4, r5, r6, r7));

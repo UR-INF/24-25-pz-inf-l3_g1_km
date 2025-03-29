@@ -56,7 +56,7 @@ public class MaintenanceRequestSeeder {
             req1.setRequester(requester);
             req1.setAssignee(assignee);
             req1.setRequestDate(LocalDateTime.now().minusDays(3));
-            req1.setDescription("W lazience przecieka kran.");
+            req1.setDescription("W łazience przecieka kran.");
             req1.setStatus(MaintenanceStatus.COMPLETED);
             req1.setCompletionDate(LocalDateTime.now().minusDays(1));
             req1.setServiceSummary("Wymieniono uszczelkę w kranie.");
@@ -68,7 +68,7 @@ public class MaintenanceRequestSeeder {
             req2.setRequester(requester);
             req2.setAssignee(assignee);
             req2.setRequestDate(LocalDateTime.now().minusDays(4));
-            req2.setDescription("Nie dziala swiatlo w lazience.");
+            req2.setDescription("Nie działa światło w łazience.");
             req2.setStatus(MaintenanceStatus.COMPLETED);
             req2.setCompletionDate(LocalDateTime.now().minusDays(2));
             req2.setServiceSummary("Wymieniono żarówkę i przełącznik.");
