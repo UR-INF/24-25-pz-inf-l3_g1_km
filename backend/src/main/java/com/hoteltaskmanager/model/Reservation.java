@@ -1,10 +1,13 @@
 package com.hoteltaskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reprezentuje rezerwację dokonano przez gościa w systemie.
@@ -14,6 +17,9 @@ import java.time.LocalDateTime;
 @Table(name = "reservations")
 public class Reservation {
 
+    /**
+     * Unikalny identyfikator rezerwacji.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,42 +37,61 @@ public class Reservation {
     private LocalDate endDate;
 
     /**
-     * Status rezerwacji (ACTIVE, CANCELLED, COMPLETED).
+     * Aktualny status rezerwacji (np. ACTIVE, COMPLETED, CANCELLED).
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationStatus status;
 
     /**
-     * Specjalne życzenia gościa.
+     * Dodatkowe życzenia lub uwagi gościa.
      */
     @Column(name = "special_requests", columnDefinition = "TEXT")
     private String specialRequests;
 
     /**
-     * Data ostatniej modyfikacji rezerwacji.
+     * Data i czas ostatniej modyfikacji rezerwacji.
      */
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
     /**
-     * Czy obejmuje catering.
+     * Flaga informująca, czy rezerwacja zawiera catering.
      */
     @Column(nullable = false)
     private boolean catering;
 
     /**
-     * Dane kontaktowe gościa.
+     * Imię gościa dokonującego rezerwacji.
      */
     private String guestFirstName;
+
+    /**
+     * Nazwisko gościa dokonującego rezerwacji.
+     */
     private String guestLastName;
+
+    /**
+     * PESEL gościa.
+     */
     private String guestPesel;
+
+    /**
+     * Numer telefonu kontaktowego gościa.
+     */
     private String guestPhone;
 
     /**
-     * Faktura powiązana z rezerwacją.
+     * Faktura powiązana z rezerwacją (jeśli istnieje).
      */
     @OneToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
+
+    /**
+     * Lista pokoi przypisanych do rezerwacji.
+     */
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ReservationRoom> reservationRooms = new ArrayList<>();
 }

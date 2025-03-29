@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * gdy właściwość `app.db.seed` jest ustawiona na `true`.
  *
  * Seeder wywołuje osobne komponenty odpowiedzialne za wstawianie danych
- * do konkretnych tabel (np. RoleSeeder, EmployeeSeeder).
+ * do konkretnych tabel (np. RoleSeeder, EmployeeSeeder, itd.).
  */
 @Configuration
 public class DatabaseSeeder implements CommandLineRunner {
@@ -24,19 +24,39 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private final RoleSeeder roleSeeder;
     private final EmployeeSeeder employeeSeeder;
+    private final RoomSeeder roomSeeder;
+    private final HousekeepingTaskSeeder housekeepingTaskSeeder;
+    private final MaintenanceRequestSeeder maintenanceRequestSeeder;
+    private final ReservationSeeder reservationSeeder;
+    private final DatabaseCleanerService databaseCleanerService; // ✅ Dodane czyszczenie
 
     /**
-     * Konstruktor wstrzykujący seederów dla konkretnych modeli.
+     * Konstruktor wstrzykujący seederów dla konkretnych modeli oraz DatabaseCleanerService.
      *
-     * @param roleSeeder      komponent odpowiedzialny za dane w tabeli ról
-     * @param employeeSeeder  komponent odpowiedzialny za dane w tabeli pracowników
+     * @param roleSeeder                 komponent odpowiedzialny za dane w tabeli ról
+     * @param employeeSeeder             komponent odpowiedzialny za dane w tabeli pracowników
+     * @param roomSeeder                 komponent odpowiedzialny za dane w tabeli pokoi
+     * @param housekeepingTaskSeeder     komponent odpowiedzialny za dane w tabeli zadań sprzątających
+     * @param maintenanceRequestSeeder   komponent odpowiedzialny za dane w tabeli zgłoszeń usterek
+     * @param reservationSeeder          komponent odpowiedzialny za dane w tabeli rezerwacji
+     * @param databaseCleanerService     serwis czyszczący wszystkie dane z bazy
      */
     public DatabaseSeeder(
             RoleSeeder roleSeeder,
-            EmployeeSeeder employeeSeeder
+            EmployeeSeeder employeeSeeder,
+            RoomSeeder roomSeeder,
+            HousekeepingTaskSeeder housekeepingTaskSeeder,
+            MaintenanceRequestSeeder maintenanceRequestSeeder,
+            ReservationSeeder reservationSeeder,
+            DatabaseCleanerService databaseCleanerService // ✅ wstrzyknięcie zależności
     ) {
         this.roleSeeder = roleSeeder;
         this.employeeSeeder = employeeSeeder;
+        this.roomSeeder = roomSeeder;
+        this.housekeepingTaskSeeder = housekeepingTaskSeeder;
+        this.maintenanceRequestSeeder = maintenanceRequestSeeder;
+        this.reservationSeeder = reservationSeeder;
+        this.databaseCleanerService = databaseCleanerService;
     }
 
     /**
@@ -48,13 +68,23 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (!seedEnabled) {
-            System.out.println("Seeding wyłączony (app.db.seed=false)");
+            System.out.println("⚠️ Seeding wyłączony (app.db.seed=false)");
             return;
         }
 
-        System.out.println("Rozpoczynanie inicjalizacji danych...");
+        System.out.println("📦 Rozpoczynanie inicjalizacji danych...");
+
+        // ✅ Najpierw czyścimy bazę danych
+        databaseCleanerService.clearDatabase();
+
+        // 🔁 A potem uruchamiamy seedery w odpowiedniej kolejności
         roleSeeder.seed();
         employeeSeeder.seed();
-        System.out.println("Inicjalizacja danych zakończona.");
+        roomSeeder.seed();
+        housekeepingTaskSeeder.seed();
+        maintenanceRequestSeeder.seed();
+        reservationSeeder.seed();
+
+        System.out.println("✅ Inicjalizacja danych zakończona.");
     }
 }

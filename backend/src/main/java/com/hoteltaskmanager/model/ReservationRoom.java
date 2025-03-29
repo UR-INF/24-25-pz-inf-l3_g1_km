@@ -1,5 +1,6 @@
 package com.hoteltaskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,6 +13,9 @@ import lombok.Data;
 @Table(name = "reservation_rooms")
 public class ReservationRoom {
 
+    /**
+     * Unikalny identyfikator przypisania.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +25,7 @@ public class ReservationRoom {
      */
     @ManyToOne
     @JoinColumn(name = "reservation_id", nullable = false)
+    @JsonBackReference
     private Reservation reservation;
 
     /**
