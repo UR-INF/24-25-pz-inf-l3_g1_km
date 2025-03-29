@@ -50,7 +50,7 @@ public class MaintenanceRequestSeeder {
                     .findFirst()
                     .orElse(requester);
 
-            // ✅ Zgłoszenie 1 - zakończona naprawa
+            // Zgłoszenie 1 - zakończona naprawa
             MaintenanceRequest req1 = new MaintenanceRequest();
             req1.setRoom(room1);
             req1.setRequester(requester);
@@ -59,10 +59,10 @@ public class MaintenanceRequestSeeder {
             req1.setDescription("W lazience przecieka kran.");
             req1.setStatus(MaintenanceStatus.COMPLETED);
             req1.setCompletionDate(LocalDateTime.now().minusDays(1));
-            req1.setServiceSummary("Wymieniono uszczelke w kranie.");
+            req1.setServiceSummary("Wymieniono uszczelkę w kranie.");
             requestRepository.save(req1);
 
-            // ✅ Zgłoszenie 2 - zakończona naprawa
+            // Zgłoszenie 2 - zakończona naprawa
             MaintenanceRequest req2 = new MaintenanceRequest();
             req2.setRoom(room2);
             req2.setRequester(requester);
@@ -71,22 +71,22 @@ public class MaintenanceRequestSeeder {
             req2.setDescription("Nie dziala swiatlo w lazience.");
             req2.setStatus(MaintenanceStatus.COMPLETED);
             req2.setCompletionDate(LocalDateTime.now().minusDays(2));
-            req2.setServiceSummary("Wymieniono zarowke i przelacznik.");
+            req2.setServiceSummary("Wymieniono żarówkę i przełącznik.");
             requestRepository.save(req2);
 
-            // ⏳ Zgłoszenie 3 - w trakcie (pokój powinien być niedostępny)
+            // Zgłoszenie 3 - w trakcie (pokój powinien być niedostępny)
             MaintenanceRequest req3 = new MaintenanceRequest();
             req3.setRoom(room3);
             req3.setRequester(requester);
             req3.setAssignee(assignee);
             req3.setRequestDate(LocalDateTime.now().minusDays(1));
-            req3.setDescription("Klimatyzacja nie chlodzi.");
+            req3.setDescription("Klimatyzacja nie chłodzi.");
             req3.setStatus(MaintenanceStatus.PENDING);
             req3.setServiceSummary(null);
             req3.setCompletionDate(null);
             requestRepository.save(req3);
 
-            // 🔄 Ustawiamy pokój jako wyłączony z użytku
+            // Ustawiamy pokój jako wyłączony z użytku
             room3.setStatus(RoomStatus.OUT_OF_SERVICE);
             roomRepository.save(room3);
 

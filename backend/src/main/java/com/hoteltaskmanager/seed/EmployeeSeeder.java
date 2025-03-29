@@ -39,10 +39,12 @@ public class EmployeeSeeder {
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-            addEmployee("Jan", "Nowak", "admin@hotel.pl", "admin123", RoleName.MANAGER, "123456789", encoder);
-            addEmployee("Dawid", "Wojcik", "dawid@hotel.pl", "tiger89", RoleName.MANAGER, "987654321", encoder);
-            addEmployee("Anna", "Zielinska", "anna@hotel.pl", "haslo123", RoleName.HOUSEKEEPER, "111222333", encoder);
-            addEmployee("Robert", "Kowalski", "robert@hotel.pl", "serwis12", RoleName.MAINTENANCE, "444555666", encoder);
+            String defaultPassword = "admin123";
+
+            addEmployee("Jan", "Nowak", "admin@hotel.pl", defaultPassword, RoleName.MANAGER, "123456789", encoder);
+            addEmployee("Dawid", "Wojcik", "dawid@hotel.pl", defaultPassword, RoleName.RECEPTIONIST, "987654321", encoder);
+            addEmployee("Anna", "Zielinska", "anna@hotel.pl", defaultPassword, RoleName.HOUSEKEEPER, "111222333", encoder);
+            addEmployee("Robert", "Kowalski", "robert@hotel.pl", defaultPassword, RoleName.MAINTENANCE, "444555666", encoder);
 
             System.out.println("✅ Dodano wszystkich przykładowych pracowników.");
         }

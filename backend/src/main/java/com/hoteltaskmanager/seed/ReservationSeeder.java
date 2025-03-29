@@ -49,7 +49,7 @@ public class ReservationSeeder {
                 return;
             }
 
-            // 📋 Lista przykładowych rezerwacji
+            // Lista przykładowych rezerwacji
             Reservation r1 = createReservation("Karolina", "Maj", "88010156789", "508999777", ReservationStatus.ACTIVE,
                     LocalDate.now().plusDays(2), LocalDate.now().plusDays(5),
                     "Pokoj blisko windy i lozeczko dzieciece", true);
@@ -78,20 +78,20 @@ public class ReservationSeeder {
                     LocalDate.now().plusDays(4), LocalDate.now().plusDays(8),
                     "Prosba o cicha lokalizacje", true);
 
-            // 💾 Zapisz wszystkie rezerwacje
+            // Zapisz wszystkie rezerwacje
             reservationRepository.saveAll(List.of(r1, r2, r3, r4, r5, r6, r7));
 
-            // 🔗 Przypisz pokoje do każdej rezerwacji i ustaw status jako zajęty
+            // Przypisz pokoje do każdej rezerwacji i ustaw status jako zajęty
             List<Reservation> reservations = List.of(r1, r2, r3, r4, r5, r6, r7);
             for (int i = 0; i < reservations.size(); i++) {
                 Room room = availableRooms.get(i);
                 Reservation reservation = reservations.get(i);
 
-                // 🔄 Ustaw status pokoju na zajęty
+                // Ustaw status pokoju na zajęty
                 room.setStatus(RoomStatus.OCCUPIED);
                 roomRepository.save(room);
 
-                // 🔗 Stwórz powiązanie pokoju z rezerwacją
+                // Stwórz powiązanie pokoju z rezerwacją
                 ReservationRoom rr = new ReservationRoom();
                 rr.setReservation(reservation);
                 rr.setRoom(room);

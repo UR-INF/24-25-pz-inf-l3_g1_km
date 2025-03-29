@@ -10,17 +10,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * REST API dla zarządzania zadaniami sprzątającymi (housekeeping).
+ * REST API dla zarządzania zadaniami personelu sprzątającego.
  *
  * Dostępne endpointy:
  *
- * GET    /api/housekeeping-tasks                - Pobierz wszystkie zadania
- * GET    /api/housekeeping-tasks/{id}           - Pobierz zadanie po ID
- * POST   /api/housekeeping-tasks                - Dodaj nowe zadanie
- * PUT    /api/housekeeping-tasks/{id}           - Zaktualizuj istniejące zadanie
- * DELETE /api/housekeeping-tasks/{id}           - Usuń zadanie po ID
- * GET    /api/housekeeping-tasks/status/{status}      - Zadania wg statusu (np. COMPLETED)
- * GET    /api/housekeeping-tasks/employee/{employeeId} - Zadania przypisane do konkretnego pracownika
+ * GET    /api/housekeeping-tasks                           - Pobierz wszystkie zadania
+ * GET    /api/housekeeping-tasks/{id}                      - Pobierz zadanie po ID
+ * POST   /api/housekeeping-tasks                           - Dodaj nowe zadanie
+ * PUT    /api/housekeeping-tasks/{id}                      - Zaktualizuj istniejące zadanie
+ * DELETE /api/housekeeping-tasks/{id}                      - Usuń zadanie po ID
+ * GET    /api/housekeeping-tasks/status/{status}           - Zadania wg statusu (np. COMPLETED)
+ * GET    /api/housekeeping-tasks/employee/{employeeId}     - Zadania przypisane do konkretnego pracownika
  */
 @RestController
 @RequestMapping("/api/housekeeping-tasks")
@@ -34,7 +34,7 @@ public class HousekeepingTaskController {
 
     /**
      * GET /api/housekeeping-tasks
-     * Pobierz wszystkie zadania sprzątające
+     * Pobierz wszystkie zadania
      */
     @GetMapping
     public List<HousekeepingTask> getAll() {
@@ -54,7 +54,7 @@ public class HousekeepingTaskController {
 
     /**
      * POST /api/housekeeping-tasks
-     * Dodaj nowe zadanie sprzątające
+     * Dodaj nowe zadanie
      */
     @PostMapping
     public ResponseEntity<HousekeepingTask> create(@RequestBody HousekeepingTask task) {

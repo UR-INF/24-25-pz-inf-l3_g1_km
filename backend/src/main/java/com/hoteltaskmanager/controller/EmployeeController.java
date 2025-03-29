@@ -14,12 +14,12 @@ import java.util.Optional;
  *
  * Dostępne endpointy:
  *
- * GET    /api/employees             - Pobierz wszystkich pracowników
- * GET    /api/employees/{id}        - Pobierz pracownika po ID
- * POST   /api/employees             - Dodaj nowego pracownika
- * PUT    /api/employees/{id}        - Zaktualizuj dane pracownika
- * DELETE /api/employees/{id}        - Usuń pracownika po ID
- * GET    /api/employees/search?email={email} - Znajdź pracownika po e-mailu
+ * GET    /api/employees                        - Pobierz wszystkich pracowników
+ * GET    /api/employees/{id}                   - Pobierz pracownika po ID
+ * POST   /api/employees                        - Dodaj nowego pracownika
+ * PUT    /api/employees/{id}                   - Zaktualizuj dane pracownika
+ * DELETE /api/employees/{id}                   - Usuń pracownika po ID
+ * GET    /api/employees/search?email={email}   - Znajdź pracownika po e-mailu
  */
 
 @RestController

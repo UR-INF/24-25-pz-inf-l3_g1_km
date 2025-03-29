@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Komponent odpowiedzialny za inicjalizację danych zadań sprzątających.
+ * Komponent odpowiedzialny za inicjalizację danych zadań personelu sprzątającego.
  * Dodaje przykładowe zadania, jeśli tabela 'housekeeping_tasks' jest pusta.
  */
 @Component
@@ -26,7 +26,7 @@ public class HousekeepingTaskSeeder {
     /**
      * Konstruktor z wstrzyknięciem repozytoriów wymaganych do zbudowania zadań.
      *
-     * @param taskRepository      repozytorium zadań sprzątających
+     * @param taskRepository      repozytorium zadań personelu sprzątającego
      * @param employeeRepository  repozytorium pracowników
      * @param roomRepository      repozytorium pokoi
      */
@@ -39,7 +39,7 @@ public class HousekeepingTaskSeeder {
     }
 
     /**
-     * Dodaje przykładowe zadania sprzątające do bazy danych,
+     * Dodaje przykładowe zadania do bazy danych,
      * tylko jeśli tabela 'housekeeping_tasks' jest pusta.
      */
     public void seed() {
@@ -53,26 +53,26 @@ public class HousekeepingTaskSeeder {
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Brak pracownika z rolą HOUSEKEEPER"));
 
-            // ✅ Zadanie zakończone
+            // Zadanie zakończone
             HousekeepingTask task1 = new HousekeepingTask();
             task1.setEmployee(housekeeper);
             task1.setRoom(room1);
             task1.setRequestDate(LocalDateTime.now().minusDays(1));
             task1.setCompletionDate(LocalDateTime.now());
             task1.setStatus(HousekeepingStatus.COMPLETED);
-            task1.setDescription("Sprzatanie po gosciu VIP z apartamentu 101.");
+            task1.setDescription("Sprzątanie po gościu VIP z apartamentu 101.");
             taskRepository.save(task1);
 
-            // ⏳ Zadanie w trakcie
+            // Zadanie w trakcie
             HousekeepingTask task2 = new HousekeepingTask();
             task2.setEmployee(housekeeper);
             task2.setRoom(room2);
             task2.setRequestDate(LocalDateTime.now());
             task2.setStatus(HousekeepingStatus.IN_PROGRESS);
-            task2.setDescription("Sprzatanie po dluzszym pobycie rodziny z dziecmi.");
+            task2.setDescription("Sprzątanie po dłuższym pobycie rodziny z dziećmi.");
             taskRepository.save(task2);
 
-            System.out.println("🧽 Dodano 2 przykładowe zadania housekeeping.");
+            System.out.println("🧽 Dodano 2 przykładowe zadania personelu sprzątającego.");
         }
     }
 }

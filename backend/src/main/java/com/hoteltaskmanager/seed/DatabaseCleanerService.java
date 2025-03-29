@@ -19,6 +19,7 @@ public class DatabaseCleanerService {
     private final HousekeepingTaskRepository housekeepingTaskRepository;
     private final EmployeeRepository employeeRepository;
     private final RoomRepository roomRepository;
+    private final RoleRepository roleRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -28,13 +29,15 @@ public class DatabaseCleanerService {
                                   MaintenanceRequestRepository maintenanceRequestRepository,
                                   HousekeepingTaskRepository housekeepingTaskRepository,
                                   EmployeeRepository employeeRepository,
-                                  RoomRepository roomRepository) {
+                                  RoomRepository roomRepository,
+                                  RoleRepository roleRepository) {
         this.reservationRoomRepository = reservationRoomRepository;
         this.reservationRepository = reservationRepository;
         this.maintenanceRequestRepository = maintenanceRequestRepository;
         this.housekeepingTaskRepository = housekeepingTaskRepository;
         this.employeeRepository = employeeRepository;
         this.roomRepository = roomRepository;
+        this.roleRepository = roleRepository;
     }
 
     /**
@@ -64,6 +67,10 @@ public class DatabaseCleanerService {
         employeeRepository.deleteAll();
         resetAutoIncrement("employee");
         System.out.println("🗑️ Usunięto dane z employees");
+
+        roleRepository.deleteAll();
+        resetAutoIncrement("roles");
+        System.out.println("🗑️ Usunięto dane z roles");
 
         roomRepository.deleteAll();
         resetAutoIncrement("rooms");

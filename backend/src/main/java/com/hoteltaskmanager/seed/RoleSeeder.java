@@ -34,7 +34,7 @@ public class RoleSeeder {
                 Role role = new Role();
                 role.setName(name);
                 roleRepository.save(role);
-                System.out.println("Dodano rolę: " + name);
+                System.out.println("🛡️ Dodano rolę: " + name);
             }
         }
     }

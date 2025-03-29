@@ -74,7 +74,7 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<Reservation> create(@RequestBody Reservation reservation) {
         Reservation saved = reservationRepository.save(reservation);
-        roomStatusManagerService.refreshRoomStatuses(); // 🔄 Odśwież statusy pokoi po dodaniu rezerwacji
+        roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy pokoi po dodaniu rezerwacji
         return ResponseEntity.ok(saved);
     }
 
@@ -102,7 +102,7 @@ public class ReservationController {
         existing.setGuestPhone(updated.getGuestPhone());
 
         Reservation saved = reservationRepository.save(existing);
-        roomStatusManagerService.refreshRoomStatuses(); // 🔄 Odśwież statusy pokoi po edycji rezerwacji
+        roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy pokoi po edycji rezerwacji
         return ResponseEntity.ok(saved);
     }
 
@@ -116,7 +116,7 @@ public class ReservationController {
             return ResponseEntity.notFound().build();
         }
         reservationRepository.deleteById(id);
-        roomStatusManagerService.refreshRoomStatuses(); // 🔄 Odśwież statusy pokoi po usunięciu rezerwacji
+        roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy pokoi po usunięciu rezerwacji
         return ResponseEntity.noContent().build();
     }
 

@@ -68,7 +68,7 @@ public class RoomSeeder {
         room.setFloor(floor);
         room.setBedCount(bedCount);
         room.setPricePerNight(price);
-        room.setStatus(RoomStatus.AVAILABLE); // Ustawiamy dostępność jako domyślną
+        room.setStatus(RoomStatus.AVAILABLE);
         return room;
     }
 }
