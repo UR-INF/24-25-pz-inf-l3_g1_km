@@ -144,7 +144,7 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 ###### Skrypt do utworzenia struktury bazy danych
 
 ###### Opis bazy danych
-![Opis bazy danych](uml/Opis_bazy_danych.pdf)
+Szczegółowy opis struktury bazy danych, zawierający informacje na temat tabel, relacji między nimi oraz atrybutów, znajduje się w pliku 📄 [Opis bazy danych](uml/Opis_bazy_danych.pdf).
 
 ## Wykorzystane technologie 
 - Język Java 17
