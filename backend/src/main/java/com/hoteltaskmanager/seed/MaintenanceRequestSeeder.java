@@ -44,7 +44,7 @@ public class MaintenanceRequestSeeder {
             Room room2 = rooms.get(1);
             Room room3 = rooms.get(2);
 
-            Employee requester = employees.getFirst();
+            Employee requester = employees.get(0);
             Employee assignee = employees.stream()
                     .filter(e -> e.getRole().getName().name().equals("MAINTENANCE"))
                     .findFirst()
