@@ -32,7 +32,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/login").permitAll()
-                .requestMatchers("/api/logout").permitAll() 
+                .requestMatchers("/api/logout").permitAll()
+                .requestMatchers("/api/password/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

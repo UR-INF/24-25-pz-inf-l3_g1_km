@@ -58,4 +58,11 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    /**
+     * Token wykorzystywany do resetowania hasła.
+     * Generowany losowo i przypisany tymczasowo do użytkownika.
+     */
+    @Column(name = "reset_token", length = 36)
+    private String resetToken;
 }

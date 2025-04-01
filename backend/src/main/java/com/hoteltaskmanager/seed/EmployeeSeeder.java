@@ -41,7 +41,7 @@ public class EmployeeSeeder {
 
             String defaultPassword = "admin123";
 
-            addEmployee("Jan", "Nowak", "admin@hotel.pl", defaultPassword, RoleName.MANAGER, "123456789", encoder);
+            addEmployee("Krzysztof", "Motas", "motas.krzysztof@gmail.com", defaultPassword, RoleName.MANAGER, "123456789", encoder);
             addEmployee("Dawid", "Wojcik", "dawid@hotel.pl", defaultPassword, RoleName.RECEPTIONIST, "987654321", encoder);
             addEmployee("Anna", "Zielinska", "anna@hotel.pl", defaultPassword, RoleName.HOUSEKEEPER, "111222333", encoder);
             addEmployee("Robert", "Kowalski", "robert@hotel.pl", defaultPassword, RoleName.MAINTENANCE, "444555666", encoder);
