@@ -6,6 +6,7 @@ function loginUser(email, password) {
     .then(response => {
       if (response.data.success) {
         console.log('Zalogowano pomyślnie!');
+        localStorage.setItem('token', response.data.token);
         window.location.href = '../home/home.html';
       } else {
         alert('Błąd logowania! Spróbuj ponownie.');
