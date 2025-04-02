@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -29,12 +30,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable())  // Wyłączenie CSRF
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/login").permitAll()
-                .requestMatchers("/api/logout").permitAll()
-                .requestMatchers("/api/password/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/login", "/api/password/**").permitAll()
+                .anyRequest().authenticated()  // reszta endpointów będzie wymagać autoryzacji
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
