@@ -14,7 +14,7 @@ import java.util.Optional;
  * Kontroler obsługujący logowanie użytkowników.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class LoginController {
 
     @Autowired

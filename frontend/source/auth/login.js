@@ -2,7 +2,7 @@ const axios = require('axios');
 
 
 function loginUser(email, password) {
-  axios.post('http://localhost:8080/api/login', { email, password })
+  axios.post('http://localhost:8080/api/auth/login', { email, password })
     .then(response => {
       if (response.data.success) {
         console.log('Zalogowano pomyślnie!');

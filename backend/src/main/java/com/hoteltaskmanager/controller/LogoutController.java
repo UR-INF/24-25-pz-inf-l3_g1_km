@@ -14,7 +14,7 @@ public class LogoutController {
      * Obsługuje wylogowanie użytkownika.
      * @return Odpowiedź HTTP z komunikatem o powodzeniu operacji.
      */
-    @PostMapping("/api/logout")
+    @PostMapping("/api/auth/logout")
     public ResponseEntity<?> logout() {
         System.out.println("Wylogowano pomyślnie!");
         return ResponseEntity.ok().body("Wylogowano pomyślnie!");

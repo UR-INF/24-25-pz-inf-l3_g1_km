@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 function logoutUser() {
-  axios.post('http://localhost:8080/api/logout', {}, {
+  axios.post('http://localhost:8080/api/auth/logout', {}, {
     headers: {
       'Authorization': 'Bearer ' + localStorage.getItem('token')
     }

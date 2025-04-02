@@ -22,6 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(false); // Nie zezwalaj na wysyłanie ciasteczek, nagłówków autoryzacyjnych ani poświadczeń w żądaniach cross-origin (CORS)
     }
 }

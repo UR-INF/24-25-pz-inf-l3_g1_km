@@ -32,7 +32,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())  // Wyłączenie CSRF
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/login", "/api/password/**").permitAll()
+                .requestMatchers("/api/auth/**", "/reset-password.html").permitAll()
                 .anyRequest().authenticated()  // reszta endpointów będzie wymagać autoryzacji
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

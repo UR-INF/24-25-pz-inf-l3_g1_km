@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * Reprezentuje pracownika hotelu.
  * Każdy pracownik posiada przypisaną rolę, dane kontaktowe oraz dane logowania.
@@ -65,4 +67,11 @@ public class Employee {
      */
     @Column(name = "reset_token", length = 36)
     private String resetToken;
+
+    /**
+     * Data i godzina wygaśnięcia tokenu do resetowania hasła.
+     * Token staje się nieważny po upływie 24 godzin od wygenerowania.
+     */
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
 }
