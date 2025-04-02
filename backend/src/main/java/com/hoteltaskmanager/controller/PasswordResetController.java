@@ -44,14 +44,14 @@ public class PasswordResetController {
      */
     @PostMapping("/reset-request")
     public ResponseEntity<?> requestReset(@RequestBody Map<String, String> request) {
-        String email = request.get("email"); // Pobranie emaila z JSON
+        String email = request.get("email");
         if (email == null || email.isBlank()) {
-            return ResponseEntity.badRequest().body("Email jest wymagany");
+            return ResponseEntity.badRequest().body("Email jest wymagany.");
         }
 
         Optional<Employee> employeeOptional = employeeRepository.findByEmail(email);
         if (employeeOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Nie znaleziono użytkownika");
+            return ResponseEntity.badRequest().body("Nie znaleziono użytkownika.");
         }
 
         Employee employee = employeeOptional.get();
@@ -63,7 +63,7 @@ public class PasswordResetController {
         employeeRepository.save(employee);
 
         emailService.sendPasswordResetEmail(email, token);
-        return ResponseEntity.ok("Link do resetu hasła został wysłany");
+        return ResponseEntity.ok("Link do resetu hasła został wysłany.");
     }
 
     /**
@@ -92,7 +92,7 @@ public class PasswordResetController {
 
         String newPassword = request.get("newPassword");
         if (newPassword == null || newPassword.length() < 8) {
-            return ResponseEntity.badRequest().body("Hasło musi mieć minimum 8 znaków");
+            return ResponseEntity.badRequest().body("Hasło musi mieć minimum 8 znaków.");
         }
 
         employee.setPassword(passwordHasher.hashPassword(newPassword));
