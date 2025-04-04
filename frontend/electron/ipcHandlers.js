@@ -1,6 +1,11 @@
-const { ipcMain } = require("electron");
-const api = require("./core/apiClient");
-const tokenStore = require("./core/tokenStore");
+import { ipcMain } from "electron";
+import api from "./core/apiClient.js";
+import {
+	setToken,
+	clearToken,
+	getEmailFromToken,
+	isTokenValid,
+} from "./core/tokenStore.js";
 
 // Obsługa żądania GET z renderera – przekazywane do apiClient
 ipcMain.handle("api:get", async (_, endpoint, config) => {
@@ -24,20 +29,20 @@ ipcMain.handle("api:delete", async (_, endpoint, config) => {
 
 // Ustawienie tokena z renderera – zapisuje go w electron-store
 ipcMain.on("api:setToken", (_, token) => {
-	tokenStore.setToken(token);
+	setToken(token);
 });
 
 // Usunięcie tokena – np. przy wylogowaniu
 ipcMain.on("api:clearToken", () => {
-	tokenStore.clearToken();
+	clearToken();
 });
 
 // Obsługuje zapytanie o email użytkownika z tokena JWT
 ipcMain.handle("api:getEmail", () => {
-	return tokenStore.getEmailFromToken();
+	return getEmailFromToken();
 });
 
 // Obsługuje zapytanie o status logowania – sprawdza, czy token jest ważny
 ipcMain.handle("api:isLoggedIn", () => {
-	return tokenStore.isTokenValid();
+	return isTokenValid();
 });

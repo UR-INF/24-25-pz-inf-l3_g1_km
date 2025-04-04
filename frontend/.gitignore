@@ -1,2 +1,5 @@
 # Katalog z zależnościami Node.js
 node_modules/
+
+# Folder z buildem aplikacji
+dist/

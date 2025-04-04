@@ -1,20 +1,18 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
-const tokenStore = require("./core/tokenStore");
-
-// Importujemy IPC, żeby zarejestrować obsługę zdarzeń
-require("./ipcHandlers");
+import { app, BrowserWindow } from "electron";
+import path from "path";
+import { isTokenValid } from "./core/tokenStore.js";
+import "./ipcHandlers.js";
 
 let mainWindow;
 
-app.whenReady().then(async () => {
-	const isLoggedIn = await tokenStore.isTokenValid(); // Sprawdzamy, czy token jest ważny
+app.whenReady().then(() => {
+	const isLoggedIn = isTokenValid(); // Sprawdzamy, czy token jest ważny
 
 	mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
 		webPreferences: {
-			preload: path.join(__dirname, "preload.js"),
+			preload: path.resolve("./electron/preload.js"),
 			nodeIntegration: false, // Wyłączony dostęp do Node.js w rendererze (dla bezpieczeństwa)
 			contextIsolation: true, // Umożliwia bezpieczne użycie preload.js
 		},

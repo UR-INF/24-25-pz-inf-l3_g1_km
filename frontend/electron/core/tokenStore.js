@@ -1,5 +1,5 @@
-const Store = require("electron-store").default;
-const jwt = require('jsonwebtoken');
+import Store from "electron-store";
+import jwt from "jsonwebtoken";
 
 // Tworzymy instancję storage – dane będą zapisywane w pliku JSON w katalogu użytkownika
 const store = new Store();
@@ -59,7 +59,9 @@ function isTokenValid() {
 		if (decoded?.exp) {
 			const expDate = new Date(decoded.exp * 1000).toLocaleString();
 			console.log(`Token wygasa o: ${expDate}`);
-			console.log(`Aktualny czas: ${new Date(now * 1000).toLocaleString()}`);
+			console.log(
+				`Aktualny czas: ${new Date(now * 1000).toLocaleString()}`
+			);
 		}
 
 		return decoded?.exp && now < decoded.exp;
@@ -70,10 +72,4 @@ function isTokenValid() {
 }
 
 // Eksportujemy funkcje do użycia w innych plikach (np. apiClient, ipcHandlers)
-module.exports = {
-	setToken,
-	getToken,
-	clearToken,
-	getEmailFromToken,
-	isTokenValid,
-};
+export { setToken, getToken, clearToken, getEmailFromToken, isTokenValid };

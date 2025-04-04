@@ -1,21 +1,50 @@
 {
   "name": "hotel-task-manager",
   "version": "1.0.0",
-  "description": "",
+  "description": "Aplikacja do zarządzania zadaniami hotelowymi",
   "main": "electron/main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron --es-module-specifier-resolution=node .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.hotel.taskmanager",
+    "productName": "Hotel Task Manager",
+    "directories": {
+      "output": "dist"
+    },
+    "asar": true,
+    "files": [
+      "electron/**/*",
+      "source/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "source/assets",
+        "to": "assets",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
-    "electron": "^35.0.1"
+    "electron": "^35.0.1",
+    "electron-builder": "^26.0.12"
   },
   "dependencies": {
     "axios": "^1.8.4",
-    "bootstrap": "^5.3.3",
     "electron-store": "^10.0.1",
     "jsonwebtoken": "^9.0.2"
   }

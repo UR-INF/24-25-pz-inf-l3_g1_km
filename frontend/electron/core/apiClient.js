@@ -1,5 +1,5 @@
-const axios = require("axios");
-const tokenStore = require("./tokenStore");
+import axios from "axios";
+import { getToken, clearToken } from "./tokenStore.js";
 
 // Bazowy URL API backendu
 const API_BASE_URL = "http://localhost:8080/api";
@@ -17,7 +17,7 @@ const api = axios.create({
 api.interceptors.request.use(
 	(config) => {
 		const isAuthRoute = config.url.includes("/auth");
-		const token = tokenStore.getToken();
+		const token = getToken();
 
 		// Jeśli endpoint nie dotyczy /auth i token istnieje – dodaj nagłówek
 		if (!isAuthRoute && token) {
@@ -28,7 +28,7 @@ api.interceptors.request.use(
 	},
 	(error) => {
 		if (error.response?.status === 401 || error.response?.status === 403) {
-			tokenStore.clearToken(); // wyloguj użytkownika
+			clearToken(); // wyloguj użytkownika
 			// TODO: info do renderer, żeby przekierować
 		}
 
@@ -83,9 +83,4 @@ async function del(endpoint, config = {}) {
 }
 
 // Eksport publicznych metod klienta API
-module.exports = {
-	get,
-	post,
-	put,
-	delete: del,
-};
+export default { get, post, put, delete: del };
