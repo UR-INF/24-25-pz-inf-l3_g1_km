@@ -9,14 +9,18 @@ app.whenReady().then(() => {
 	const isLoggedIn = isTokenValid(); // Sprawdzamy, czy token jest ważny
 
 	mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: 500,
+		height: 450,
+		resizable: false,
 		webPreferences: {
 			preload: path.resolve("./electron/preload.js"),
 			nodeIntegration: false, // Wyłączony dostęp do Node.js w rendererze (dla bezpieczeństwa)
 			contextIsolation: true, // Umożliwia bezpieczne użycie preload.js
 		},
 	});
+
+	mainWindow.center();
+	// mainWindow.setMenuBarVisibility(false);
 
 	// Wybieramy, który plik HTML załadować na podstawie statusu logowania
 	mainWindow.loadFile(

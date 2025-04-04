@@ -1,27 +1,53 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Logowanie</title>
-    <!-- <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"> -->
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet" />
 </head>
-<body>
-    <div class="container text-center mt-5">
-        <h1>Logowanie</h1>
-        <form id="loginForm">
-            <input type="email" id="email" class="form-control mb-2" placeholder="E-mail" required>
-            <input type="password" id="password" class="form-control mb-2" placeholder="Hasło" required>
 
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <a href="#" id="forgotPassword" class="text-decoration-none">Zapomniałeś hasła?</a>
-                <button type="submit" class="btn btn-primary">Zaloguj</button>
-            </div>
-        </form>
+<body class="d-flex flex-column">
+    <div class="page page-center">
+        <div class="container container-tight px-6">
+            <h2 class="h2 text-center mb-4">Zaloguj się</h2>
+            <form id="loginForm" autocomplete="off">
+                <div class="mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" id="email" class="form-control" placeholder="wpisz email" required />
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">
+                        Hasło
+                        <span class="form-label-description">
+                            <a href="#" id="forgotPassword">Zapomniałeś hasła?</a>
+                        </span>
+                    </label>
+
+                    <div class="input-group input-group-flat">
+                        <input type="password" id="password" class="form-control" placeholder="wpisz hasło" required />
+                        <span class="input-group-text">
+                            <a href="#" id="toggle-password" class="link-secondary" title="Pokaż hasło"
+                                data-bs-toggle="tooltip">
+                                <i id="eye-icon" class="ti ti-eye fs-2"></i>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary w-100">Zaloguj</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <script src="login.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js" defer></script>
+    <script type="module" src="login.js"></script>
 </body>
+
 </html>
