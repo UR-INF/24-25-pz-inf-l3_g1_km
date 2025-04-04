@@ -23,7 +23,7 @@ app.whenReady().then(() => {
 	});
 
 	mainWindow.center();
-	mainWindow.setMenuBarVisibility(false);
+	// mainWindow.setMenuBarVisibility(false);
 
 	// Wybieramy, który plik HTML załadować na podstawie statusu logowania
 	mainWindow.loadFile(

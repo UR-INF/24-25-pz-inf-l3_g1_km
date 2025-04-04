@@ -89,7 +89,7 @@ async function del(endpoint, config = {}) {
  * @returns {Promise<any>} - Obiekt użytkownika
  */
 async function getCurrentUser() {
-	const res = await api.get("/employee/me");
+	const res = await api.get("/employees/me");
 	return res.data;
 }
 
