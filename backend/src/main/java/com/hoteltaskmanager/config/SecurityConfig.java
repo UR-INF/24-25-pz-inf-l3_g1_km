@@ -10,7 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Konfiguracja Spring Security i filtrowania żądań.
+ * Główna konfiguracja Spring Security.
  */
 @Configuration
 @EnableWebSecurity
@@ -23,18 +23,24 @@ public class SecurityConfig {
     }
 
     /**
-     * Konfiguracja zabezpieczeń HTTP.
-     * @param http Konfigurator HTTP Security.
-     * @return SecurityFilterChain.
+     * Konfiguracja filtrów zabezpieczeń HTTP.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Wyłączenie CSRF
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**", "/reset-password.html").permitAll()
-                .anyRequest().authenticated()  // reszta endpointów będzie wymagać autoryzacji
+            // Wyłączenie CSRF (zalecane dla API z JWT)
+            .csrf(csrf -> csrf.disable())
+
+            // Konfiguracja żądań - które endpointy są dostępne bez autoryzacji
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**", "/reset-password.html").permitAll() // publiczne
+                .anyRequest().authenticated() // reszta wymaga autoryzacji
             )
+
+            // Ustawienie polityki sesji na stateless (bez sesji HTTP)
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // Wstawienie naszego filtra JWT przed UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

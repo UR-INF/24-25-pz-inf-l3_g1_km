@@ -4,6 +4,7 @@ import com.hoteltaskmanager.model.Employee;
 import com.hoteltaskmanager.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Optional;
  * PUT    /api/employees/{id}                   - Zaktualizuj dane pracownika
  * DELETE /api/employees/{id}                   - Usuń pracownika po ID
  * GET    /api/employees/search?email={email}   - Znajdź pracownika po e-mailu
- * GET    /api/employees/me                     - Pobierz dane aktualnie zalogowanego pracownika (wymaga tokena JWT)
+ * GET    /api/employees/me                     - Pobierz dane aktualnie zalogowanego pracownika
  */
 
 @RestController
@@ -114,7 +115,9 @@ public class EmployeeController {
      * Pobierz dane zalogowanego użytkownika na podstawie tokena JWT
      */
     @GetMapping("/me")
-    public ResponseEntity<Employee> getCurrentUser(@RequestAttribute("user") String email) {
+    public ResponseEntity<Employee> getCurrentUser() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         return employeeRepository.findByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
