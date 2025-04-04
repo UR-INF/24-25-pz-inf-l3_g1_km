@@ -11,15 +11,16 @@ import java.util.Optional;
 
 /**
  * REST API dla zarządzania pracownikami.
- *
+ * <p>
  * Dostępne endpointy:
- *
+ * <p>
  * GET    /api/employees                        - Pobierz wszystkich pracowników
  * GET    /api/employees/{id}                   - Pobierz pracownika po ID
  * POST   /api/employees                        - Dodaj nowego pracownika
  * PUT    /api/employees/{id}                   - Zaktualizuj dane pracownika
  * DELETE /api/employees/{id}                   - Usuń pracownika po ID
  * GET    /api/employees/search?email={email}   - Znajdź pracownika po e-mailu
+ * GET    /api/employees/me                     - Pobierz dane aktualnie zalogowanego pracownika (wymaga tokena JWT)
  */
 
 @RestController
@@ -103,6 +104,17 @@ public class EmployeeController {
      */
     @GetMapping("/search")
     public ResponseEntity<Employee> findByEmail(@RequestParam String email) {
+        return employeeRepository.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * GET /api/employee/me
+     * Pobierz dane zalogowanego użytkownika na podstawie tokena JWT
+     */
+    @GetMapping("/me")
+    public ResponseEntity<Employee> getCurrentUser(@RequestAttribute("user") String email) {
         return employeeRepository.findByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

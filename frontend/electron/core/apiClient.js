@@ -24,6 +24,8 @@ api.interceptors.request.use(
 			config.headers["Authorization"] = `Bearer ${token}`;
 		}
 
+		// console.log(config);
+
 		return config;
 	},
 	(error) => {
@@ -82,5 +84,19 @@ async function del(endpoint, config = {}) {
 	return res.data;
 }
 
+/**
+ * Pobiera dane zalogowanego użytkownika z endpointu /api/employee/me.
+ * @returns {Promise<any>} - Obiekt użytkownika
+ */
+async function getCurrentUser() {
+	const res = await api.get("/employee/me");
+	return res.data;
+}
+
+/*
+const userData = await window.electronAPI.getCurrentUser();
+console.log(userData);
+*/
+
 // Eksport publicznych metod klienta API
-export default { get, post, put, delete: del };
+export default { get, post, put, delete: del, getCurrentUser };

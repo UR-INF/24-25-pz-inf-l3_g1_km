@@ -46,3 +46,8 @@ ipcMain.handle("api:getEmail", () => {
 ipcMain.handle("api:isLoggedIn", () => {
 	return isTokenValid();
 });
+
+// Obsługuje zapytanie o dane zalogowanego użytkownika
+ipcMain.handle("api:getCurrentUser", async () => {
+    return await api.getCurrentUser();
+});
