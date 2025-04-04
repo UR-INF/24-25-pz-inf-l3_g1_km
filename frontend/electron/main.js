@@ -9,9 +9,12 @@ app.whenReady().then(() => {
 	const isLoggedIn = isTokenValid(); // Sprawdzamy, czy token jest ważny
 
 	mainWindow = new BrowserWindow({
-		width: 500,
-		height: 450,
-		resizable: false,
+		width: isLoggedIn ? 1000 : 500, // szerokie dla zalogowanych, wąskie dla logowania
+		height: isLoggedIn ? 650 : 450, // wysokie dla zalogowanych, niskie dla logowania
+		minWidth: isLoggedIn ? 800 : 400, // minimalne szerokości
+		minHeight: isLoggedIn ? 600 : 400, // minimalne wysokości
+		
+		resizable: true,
 		webPreferences: {
 			preload: path.resolve("./electron/preload.js"),
 			nodeIntegration: false, // Wyłączony dostęp do Node.js w rendererze (dla bezpieczeństwa)
@@ -20,7 +23,7 @@ app.whenReady().then(() => {
 	});
 
 	mainWindow.center();
-	// mainWindow.setMenuBarVisibility(false);
+	mainWindow.setMenuBarVisibility(false);
 
 	// Wybieramy, który plik HTML załadować na podstawie statusu logowania
 	mainWindow.loadFile(
