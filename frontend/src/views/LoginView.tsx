@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../contexts/auth";
 import { api } from "../services/api";
 import { AxiosError } from "axios";
+import { useUser } from "../contexts/user";
 
 const LoginView = () => {
 	const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ const LoginView = () => {
 	} | null>(null);
 	const navigate = useNavigate();
 	const { login } = useAuth();
+	const { fetchUser } = useUser();
 
 	const loginUser = async () => {
 		try {
@@ -25,6 +27,10 @@ const LoginView = () => {
 
 			if (response?.data?.token) {
 				login({ email, token: response.data.token });
+
+				// Pobieranie danych z /api/employee/me do kontekstu użytkownika
+				fetchUser();
+
 				navigate("/");
 			} else {
 				setAlertMessage({

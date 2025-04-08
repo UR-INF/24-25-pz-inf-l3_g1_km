@@ -12,7 +12,7 @@ const App = () => {
 			<Route
 				path="/"
 				element={
-					state.loggedIn ? <LoginView /> : <Navigate to="/login" replace />
+					state.loggedIn ? <DashboardView /> : <Navigate to="/login" replace />
 				}
 			/>
 

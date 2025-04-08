@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { AuthProvider } from "./contexts/auth.tsx";
+import { UserProvider } from "./contexts/user.tsx";
 import { AuthInterceptor } from "./components/AuthInterceptor.tsx";
 import { BrowserRouter } from "react-router";
 
@@ -10,7 +11,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 		<BrowserRouter>
 			<AuthProvider>
 				<AuthInterceptor />
-				<App />
+				<UserProvider>
+					<App />
+				</UserProvider>
 			</AuthProvider>
 		</BrowserRouter>
 	</React.StrictMode>
