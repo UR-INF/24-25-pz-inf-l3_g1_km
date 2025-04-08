@@ -20,9 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(false); // Nie zezwalaj na wysyłanie ciasteczek, nagłówków autoryzacyjnych ani poświadczeń w żądaniach cross-origin (CORS)
+                .allowedHeaders("*");
+                //.allowCredentials(false); // Nie zezwalaj na wysyłanie ciasteczek, nagłówków autoryzacyjnych ani poświadczeń w żądaniach cross-origin (CORS)
     }
 }
