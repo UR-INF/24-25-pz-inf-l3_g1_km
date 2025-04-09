@@ -46,7 +46,9 @@ const DashboardView = () => {
 
   return (
     <div>
-      <h1>Witaj, {user?.firstName} {user?.lastName}</h1>
+      <h1>
+        Witaj, {user?.firstName} {user?.lastName}
+      </h1>
       <p>Email: {user?.email}</p>
       <p>Telefon: {user?.phoneNumber}</p>
       <p>Rola: {user?.role.name}</p>

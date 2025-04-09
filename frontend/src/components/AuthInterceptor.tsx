@@ -19,16 +19,16 @@ import { axiosInstance } from "../services/api";
  * @returns {null} Komponent nie renderuje żadnego JSX.
  */
 export const AuthInterceptor = (): null => {
-	const { state, logout } = useAuth();
+  const { state, logout } = useAuth();
 
-	useEffect(() => {
-		setupAuthInterceptor(axiosInstance, {
-			onUnauthorized: async () => {
-				logout();
-				// nawigacja do strony logowania?
-			},
-		});
-	}, [state.user]);
+  useEffect(() => {
+    setupAuthInterceptor(axiosInstance, {
+      onUnauthorized: async () => {
+        logout();
+        // nawigacja do strony logowania?
+      },
+    });
+  }, [state.user]);
 
-	return null;
+  return null;
 };

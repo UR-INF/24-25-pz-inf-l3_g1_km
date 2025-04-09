@@ -7,19 +7,19 @@ import { AuthInterceptor } from "./components/AuthInterceptor.tsx";
 import { BrowserRouter } from "react-router";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-	<React.StrictMode>
-		<BrowserRouter>
-			<AuthProvider>
-				<AuthInterceptor />
-				<UserProvider>
-					<App />
-				</UserProvider>
-			</AuthProvider>
-		</BrowserRouter>
-	</React.StrictMode>
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <AuthInterceptor />
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
 );
 
 // Use contextBridge
 window.ipcRenderer.on("main-process-message", (_event, message) => {
-	console.log(message);
+  console.log(message);
 });

@@ -21,10 +21,7 @@ function createWindow() {
     }
   });
   win.webContents.on("did-finish-load", () => {
-    win == null ? void 0 : win.webContents.send(
-      "main-process-message",
-      (/* @__PURE__ */ new Date()).toLocaleString()
-    );
+    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
   });
   ipcMain.on("window:minimize", () => win == null ? void 0 : win.minimize());
   ipcMain.on("window:maximize", () => {

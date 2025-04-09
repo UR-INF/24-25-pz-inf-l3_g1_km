@@ -1,8 +1,4 @@
-import {
-	AxiosInstance,
-	AxiosError,
-	AxiosResponse,
-} from "axios";
+import { AxiosInstance, AxiosError, AxiosResponse } from "axios";
 
 /**
  * Opcje przekazywane do interceptora autoryzacyjnego.
@@ -10,23 +6,20 @@ import {
  * @property {() => void} onUnauthorized - Funkcja wywoływana przy błędzie 401 (unauthorized).
  */
 type Options = {
-	onUnauthorized: () => void;
+  onUnauthorized: () => void;
 };
 
 // TODO dokumentacja
 
-export const setupAuthInterceptor = (
-	api: AxiosInstance,
-	{ onUnauthorized }: Options
-) => {
-	api.interceptors.response.use(
-		(response: AxiosResponse) => response,
-		async (error: AxiosError) => {
-			if (error.response?.status === 401) {
-				console.warn("401 - użytkownik niezautoryzowany");
-				onUnauthorized();
-			}
-			return Promise.reject(error);
-		}
-	);
+export const setupAuthInterceptor = (api: AxiosInstance, { onUnauthorized }: Options) => {
+  api.interceptors.response.use(
+    (response: AxiosResponse) => response,
+    async (error: AxiosError) => {
+      if (error.response?.status === 401) {
+        console.warn("401 - użytkownik niezautoryzowany");
+        onUnauthorized();
+      }
+      return Promise.reject(error);
+    },
+  );
 };

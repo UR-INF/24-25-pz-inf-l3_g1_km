@@ -6,18 +6,24 @@ import NotFoundView from "./views/NotFoundView";
 import MainLayout from "./layouts/MainLayout";
 
 const App = () => {
-	const { state } = useAuth();
+  const { state } = useAuth();
 
-	return (
-		<MainLayout>
-			<Routes>
-				<Route path="/" element={state.loggedIn ? <DashboardView /> : <Navigate to="/login" replace />} />
-				<Route path="/login" element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />} />
-				
-				<Route path="*" element={<NotFoundView />} />
-			</Routes>
-		</MainLayout>
-	);
+  return (
+    <MainLayout>
+      <Routes>
+        <Route
+          path="/"
+          element={state.loggedIn ? <DashboardView /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/login"
+          element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />}
+        />
+
+        <Route path="*" element={<NotFoundView />} />
+      </Routes>
+    </MainLayout>
+  );
 };
 
 export default App;
