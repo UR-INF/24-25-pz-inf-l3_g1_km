@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { useUser } from "../contexts/user"; // Używamy kontekstu użytkownika
+import { useUser } from "../contexts/user";
 import { useAuth } from "../contexts/auth";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
 
 const DashboardView = () => {
   const navigate = useNavigate();
-  const { user, loading, error, fetchUser } = useUser()
+  const { user, loading, error, fetchUser } = useUser();
   const { logout } = useAuth();
 
   // Funkcja do obsługi wylogowania
