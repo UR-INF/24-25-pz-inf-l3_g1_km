@@ -131,8 +131,8 @@ const LoginView = () => {
 	};
 
 	return (
-		<div className="page page-center d-flex justify-content-center align-items-center min-vh-100">
-			<div className="container container-tight px-6">
+		<div className="page page-center">
+			<div className="container container-tight p-6">
 				<h2 className="h2 text-center mb-4">Zaloguj się</h2>
 				<form id="loginForm" onSubmit={handleSubmit} autoComplete="off">
 					<div className="mb-3">

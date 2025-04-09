@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -11,6 +11,10 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    frame: false,
+    // Ukrycie systemowego paska
+    titleBarStyle: "hidden",
+    // macOS
     webPreferences: {
       webSecurity: false,
       preload: path.join(__dirname, "preload.mjs")
@@ -21,6 +25,18 @@ function createWindow() {
       "main-process-message",
       (/* @__PURE__ */ new Date()).toLocaleString()
     );
+  });
+  ipcMain.on("window:minimize", () => win == null ? void 0 : win.minimize());
+  ipcMain.on("window:maximize", () => {
+    if (win == null ? void 0 : win.isMaximized()) {
+      win == null ? void 0 : win.unmaximize();
+    } else {
+      win == null ? void 0 : win.maximize();
+    }
+  });
+  ipcMain.on("window:close", () => win == null ? void 0 : win.close());
+  ipcMain.on("window:devtools", () => {
+    win == null ? void 0 : win.webContents.openDevTools({ mode: "detach" });
   });
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
