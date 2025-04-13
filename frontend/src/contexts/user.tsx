@@ -80,12 +80,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      fetchUser(); // Jeśli użytkownik jest zalogowany (ma token), pobierz dane
-    } else {
-      setLoading(false); // Jeśli nie ma tokena, zakończ ładowanie
-    }
-  }, []);
+
+    // Opóźniamy sprawdzenie tokenu i pobieranie danych o sekundę
+    const timeout = setTimeout(() => {
+      if (token) {
+        fetchUser();
+      } else {
+        setLoading(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, []); // Uruchamia się tylko raz, przy pierwszym renderze komponentu
 
   return (
     <UserContext.Provider

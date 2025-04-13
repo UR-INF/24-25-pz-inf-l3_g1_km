@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useUser, RoleName } from "../contexts/user";
 import ReceptionistDashboard from "./ReceptionistDashboard.tsx";
 // import ManagerDashboard from "./ManagerDashboard.tsx";
@@ -6,16 +5,21 @@ import ReceptionistDashboard from "./ReceptionistDashboard.tsx";
 // import MaintenanceDashboard from "./MaintenanceDashboard.tsx";
 
 const RoleBasedDashboardView = () => {
-  const { user, loading, error, fetchUser, userRoleName } = useUser();
-
-  useEffect(() => {
-    if (!user) {
-      fetchUser(); // Pobieramy dane użytkownika, jeśli nie są załadowane
-    }
-  }, [user, fetchUser]);
+  const { loading, error, userRoleName } = useUser();
 
   if (loading) {
-    return <div>Ładowanie danych użytkownika...</div>;
+    return (
+      <div className="page page-center">
+        <div className="container container-slim py-4">
+          <div className="text-center">
+            <div className="text-secondary mb-3">Ładowanie aplikacji...</div>
+            <div className="progress progress-sm">
+              <div className="progress-bar progress-bar-indeterminate"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
