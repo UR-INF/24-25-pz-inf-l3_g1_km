@@ -2,10 +2,16 @@ import React, { createContext, useState, useEffect, useContext, ReactNode } from
 import { api } from "../services/api";
 import { AxiosResponse } from "axios";
 
-// Typy dla danych użytkownika
+export enum RoleName {
+  RECEPTIONIST = "RECEPTIONIST",
+  HOUSEKEEPER = "HOUSEKEEPER",
+  MAINTENANCE = "MAINTENANCE",
+  MANAGER = "MANAGER",
+}
+
 interface Role {
   id: number;
-  name: string;
+  name: RoleName;
 }
 
 interface User {
@@ -22,6 +28,13 @@ interface UserContextType {
   loading: boolean;
   error: string | null;
   fetchUser: () => void;
+
+  userFirstName: string;
+  userLastName: string;
+  userEmail: string;
+  userPhoneNumber: string;
+  userRole: Role;
+  userRoleName: RoleName;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -58,6 +71,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  const userFirstName = user?.firstName ?? "";
+  const userLastName = user?.lastName ?? "";
+  const userEmail = user?.email ?? "";
+  const userPhoneNumber = user?.phoneNumber ?? "";
+  const userRole = user?.role ?? { id: 0, name: RoleName.RECEPTIONIST };
+  const userRoleName = user?.role?.name ?? RoleName.RECEPTIONIST;
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -68,7 +88,20 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, error, fetchUser }}>
+    <UserContext.Provider
+      value={{
+        user,
+        loading,
+        error,
+        fetchUser,
+        userFirstName,
+        userLastName,
+        userEmail,
+        userPhoneNumber,
+        userRole,
+        userRoleName,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

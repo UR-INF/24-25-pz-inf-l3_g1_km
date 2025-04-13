@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router";
 import { useAuth } from "./contexts/auth";
 import LoginView from "./views/LoginView";
-import DashboardView from "./views/DashboardView";
+import RoleBasedDashboardView from "./views/RoleBasedDashboardView";
 import NotFoundView from "./views/NotFoundView";
 import MainLayout from "./layouts/MainLayout";
 
@@ -13,7 +13,7 @@ const App = () => {
       <Routes>
         <Route
           path="/"
-          element={state.loggedIn ? <DashboardView /> : <Navigate to="/login" replace />}
+          element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/login"

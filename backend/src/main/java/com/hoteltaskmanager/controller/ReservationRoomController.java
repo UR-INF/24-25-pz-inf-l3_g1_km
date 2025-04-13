@@ -63,7 +63,7 @@ public class ReservationRoomController {
 
         reservationRoom.setReservation(reservationOpt.get());
         ReservationRoom saved = reservationRoomRepository.save(reservationRoom);
-        roomStatusManagerService.refreshRoomStatuses(); // 🔄 Odśwież statusy
+        roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy
 
         return ResponseEntity.ok(saved);
     }
@@ -81,7 +81,7 @@ public class ReservationRoomController {
 
         ReservationRoom existing = optional.get();
         if (!existing.getReservation().getId().equals(reservationId)) {
-            return ResponseEntity.badRequest().build(); // 🛑 Rezerwacja nie pasuje
+            return ResponseEntity.badRequest().build(); // Rezerwacja nie pasuje
         }
 
         existing.setRoom(updated.getRoom());
