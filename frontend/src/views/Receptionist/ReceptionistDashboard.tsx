@@ -1,13 +1,14 @@
-import HeaderNav from "../components/HeaderNav";
-import ReservationCard from "../components/ReservationCard";
-import RoomsCard from "../components/RoomsCard";
-import RepairsCard from "../components/RepairsCard";
-import CleaningCard from "../components/CleaningCard";
-import CleaningPlot from "../components/CleaningPlot";
-import RepairTable from "../components/RepairTable";
-import CleaningTable from "../components/CleaningTable";
+import HeaderNav from "../../components/HeaderNav";
+import ReservationCard from "../../components/ReservationCard";
+import RoomsCard from "../../components/RoomsCard";
+import RepairsCard from "../../components/RepairsCard";
+import CleaningCard from "../../components/CleaningCard";
+import CleaningPlot from "../../components/ReservationsPlot";
+import RepairTable from "../../components/RepairTable";
+import CleaningTable from "../../components/CleaningTable";
 
 const ReceptionistDashboard = () => {
+
   return (
     <div>
       <HeaderNav />

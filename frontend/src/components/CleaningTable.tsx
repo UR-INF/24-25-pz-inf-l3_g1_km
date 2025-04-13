@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 const CleaningTable = () => {
+  const navigate = useNavigate();
+
+  const handleShowCleaningRequestDetails = () => {
+    navigate("/RecepcionistDashboard/CleaningOrders/CleaningOrderDetails", { replace: true });
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -45,6 +51,7 @@ const CleaningTable = () => {
               <th>Status</th>
               <th>Opis</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -61,8 +68,19 @@ const CleaningTable = () => {
               </td>
               <td>Sprzątanie po gościu</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowCleaningRequestDetails}
+                >
                   Zobacz
+                </a>
+              </td>
+              <td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
                 </a>
               </td>
             </tr>
@@ -79,8 +97,19 @@ const CleaningTable = () => {
               </td>
               <td>Sprzątanie i wymiana pościeli</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowCleaningRequestDetails}
+                >
                   Zobacz
+                </a>
+              </td>
+              <td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
                 </a>
               </td>
             </tr>
@@ -97,8 +126,19 @@ const CleaningTable = () => {
               </td>
               <td>Naprawa zasłon</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowCleaningRequestDetails}
+                >
                   Zobacz
+                </a>
+              </td>
+              <td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
                 </a>
               </td>
             </tr>
@@ -115,8 +155,19 @@ const CleaningTable = () => {
               </td>
               <td>Wymiana ręczników i sprzątanie łazienki</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowCleaningRequestDetails}
+                >
                   Zobacz
+                </a>
+              </td>
+              <td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
                 </a>
               </td>
             </tr>
@@ -133,8 +184,19 @@ const CleaningTable = () => {
               </td>
               <td>Sprzątanie okien</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowCleaningRequestDetails}
+                >
                   Zobacz
+                </a>
+              </td>
+              <td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
                 </a>
               </td>
             </tr>

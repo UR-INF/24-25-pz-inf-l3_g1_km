@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 const RepairTable = () => {
+  const navigate = useNavigate();
+
+  const handleShowRepairDetails = () => {
+    navigate("/RecepcionistDashboard/RepairOrders/RepairsOrderDetails", { replace: true });
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -47,6 +53,7 @@ const RepairTable = () => {
               <th>Podsumowanie Serwisu</th>
               <th>Data Zakończenia</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -65,8 +72,19 @@ const RepairTable = () => {
               <td>Wymiana filtra klimatyzacji</td>
               <td>20 Dec 2022</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href=""
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowRepairDetails}
+                >
                   Zobacz
+                </a>
+              </td>
+              <td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
                 </a>
               </td>
             </tr>
@@ -85,10 +103,20 @@ const RepairTable = () => {
               <td>Naprawa instalacji elektrycznej</td>
               <td>12 Dec 2022</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowRepairDetails}
+                >
                   Zobacz
                 </a>
               </td>
+              <td>
+                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                    Usuń
+                  </a>
+               </td>
             </tr>
             <tr>
               <td>
@@ -105,10 +133,21 @@ const RepairTable = () => {
               <td>Wymiana klimatyzatora</td>
               <td>23 Dec 2022</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowRepairDetails}
+                >
                   Zobacz
                 </a>
               </td>
+              <td>
+                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                    Usuń
+                  </a>
+               </td>
             </tr>
             <tr>
               <td>
@@ -125,10 +164,21 @@ const RepairTable = () => {
               <td>Naprawa instalacji wodnej</td>
               <td>26 Dec 2022</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowRepairDetails}
+                >
                   Zobacz
                 </a>
               </td>
+              <td>
+                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                    Usuń
+                  </a>
+               </td>
             </tr>
             <tr>
               <td>
@@ -145,10 +195,21 @@ const RepairTable = () => {
               <td>Wymiana telewizora w pokoju</td>
               <td>28 Dec 2022</td>
               <td className="text-end">
-                <a href="#" className="btn btn-primary" target="_blank" rel="noopener">
+                <a
+                  href="#"
+                  className="btn btn-primary"
+                  target="_blank"
+                  rel="noopener"
+                  onClick={handleShowRepairDetails}
+                >
                   Zobacz
                 </a>
               </td>
+              <td>
+                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                    Usuń
+                  </a>
+               </td>
             </tr>
           </tbody>
         </table>

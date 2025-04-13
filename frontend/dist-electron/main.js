@@ -6,9 +6,7 @@ process.env.APP_ROOT = path.join(__dirname, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
-  ? path.join(process.env.APP_ROOT, "public")
-  : RENDERER_DIST;
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
 let win;
 function createWindow() {
   win = new BrowserWindow({
@@ -19,15 +17,13 @@ function createWindow() {
     // macOS
     webPreferences: {
       webSecurity: false,
-      preload: path.join(__dirname, "preload.mjs"),
-    },
+      preload: path.join(__dirname, "preload.mjs")
+    }
   });
   win.webContents.on("did-finish-load", () => {
-    win == null
-      ? void 0
-      : win.webContents.send("main-process-message", /* @__PURE__ */ new Date().toLocaleString());
+    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
   });
-  ipcMain.on("window:minimize", () => (win == null ? void 0 : win.minimize()));
+  ipcMain.on("window:minimize", () => win == null ? void 0 : win.minimize());
   ipcMain.on("window:maximize", () => {
     if (win == null ? void 0 : win.isMaximized()) {
       win == null ? void 0 : win.unmaximize();
@@ -35,7 +31,7 @@ function createWindow() {
       win == null ? void 0 : win.maximize();
     }
   });
-  ipcMain.on("window:close", () => (win == null ? void 0 : win.close()));
+  ipcMain.on("window:close", () => win == null ? void 0 : win.close());
   ipcMain.on("window:devtools", () => {
     win == null ? void 0 : win.webContents.openDevTools({ mode: "detach" });
   });
@@ -57,4 +53,8 @@ app.on("activate", () => {
   }
 });
 app.whenReady().then(createWindow);
-export { MAIN_DIST, RENDERER_DIST, VITE_DEV_SERVER_URL };
+export {
+  MAIN_DIST,
+  RENDERER_DIST,
+  VITE_DEV_SERVER_URL
+};

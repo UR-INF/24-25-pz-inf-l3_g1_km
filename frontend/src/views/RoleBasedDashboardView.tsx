@@ -1,5 +1,5 @@
 import { useUser, RoleName } from "../contexts/user";
-import ReceptionistDashboard from "./ReceptionistDashboard.tsx";
+import ReceptionistDashboard from "./Receptionist/ReceptionistDashboard.tsx";
 // import ManagerDashboard from "./ManagerDashboard.tsx";
 // import HousekeeperDashboard from "./HousekeeperDashboard.tsx";
 // import MaintenanceDashboard from "./MaintenanceDashboard.tsx";

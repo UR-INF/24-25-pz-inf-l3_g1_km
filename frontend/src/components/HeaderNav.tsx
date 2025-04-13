@@ -13,6 +13,22 @@ const HeaderNav = () => {
     navigate("/login", { replace: true });
   };
 
+  const handleClickDashboard = () => {
+    navigate('/', { replace: true }); 
+  };
+
+  const handleClickReservation = () => {
+    navigate('/RecepcionistDashboard/Reservations', { replace: true }); 
+  };
+
+  const handleClickCleaningOrders = () => {
+    navigate('/RecepcionistDashboard/CleaningOrders', { replace: true }); 
+  };
+
+  const handleClickRepairsOrders = () => {
+    navigate('/RecepcionistDashboard/RepairsOrders', { replace: true }); 
+  };
+
   return (
     <header className="navbar-expand-md">
       <div className="collapse navbar-collapse" id="navbar-menu">
@@ -22,7 +38,7 @@ const HeaderNav = () => {
               <div className="col">
                 <ul className="navbar-nav">
                   <li className="nav-item active">
-                    <a className="nav-link" href="./">
+                    <a className="nav-link" href="" onClick={handleClickDashboard}>
                       <span className="nav-link-icon d-md-none d-lg-inline-block">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +61,7 @@ const HeaderNav = () => {
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="./form-elements.html">
+                    <a className="nav-link" href="" onClick={handleClickReservation}>
                       <span className="nav-link-title"> Rezerwacje </span>
                     </a>
                   </li>
@@ -63,11 +79,11 @@ const HeaderNav = () => {
                     <div className="dropdown-menu">
                       <div className="dropdown-menu-columns">
                         <div className="dropdown-menu-column">
-                          <a className="dropdown-item" href="./activity.html">
+                          <a className="dropdown-item" href="" onClick={handleClickCleaningOrders}>
                             {" "}
                             Zgłoszenia sprzątania{" "}
                           </a>
-                          <a className="dropdown-item" href="./chat.html">
+                          <a className="dropdown-item" href="" onClick={handleClickRepairsOrders}>
                             {" "}
                             Zgłoszenia naprawy{" "}
                           </a>
