@@ -4,7 +4,7 @@ const CleaningTable = () => {
   const navigate = useNavigate();
 
   const handleShowCleaningRequestDetails = () => {
-    navigate("/RecepcionistDashboard/Orders/CleaningOrderDetails", { replace: true });
+    navigate("/RecepcionistDashboard/Orders/CleaningOrderDetails");
   };
 
   return (

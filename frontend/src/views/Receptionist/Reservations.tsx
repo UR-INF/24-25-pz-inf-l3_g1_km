@@ -8,7 +8,7 @@ const Reservations = () => {
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
-    navigate("/RecepcionistDashboard/Reservations/NewReservation", { replace: true });
+    navigate("/RecepcionistDashboard/Reservations/NewReservation");
   };
 
   return (

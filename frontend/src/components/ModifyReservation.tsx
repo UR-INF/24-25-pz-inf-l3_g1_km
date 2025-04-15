@@ -25,7 +25,7 @@ const ModifyReservation = ({ reservationId }) => {
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
-    navigate("/RecepcionistDashboard/Reservations", { replace: true });
+    navigate("/RecepcionistDashboard/Reservations");
   };
 
   const getReservation = async () => {
@@ -171,14 +171,14 @@ const ModifyReservation = ({ reservationId }) => {
         console.error("Błąd podczas podmiany przypisania pokoju:", error);
       }
     }
-    if(formData.status === "COMPLETED") {
+    if (formData.status === "COMPLETED") {
       try {
         const now = new Date().toISOString().slice(0, 19);
         for (const rr of formData.reservationRooms) {
           await api.post("/housekeeping-tasks", {
             employee: {
-              "id": 1
-            }, 
+              id: 1,
+            },
             room: rr.room,
             requestDate: now,
             completionDate: now,

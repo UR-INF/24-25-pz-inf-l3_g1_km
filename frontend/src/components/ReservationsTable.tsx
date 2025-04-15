@@ -34,7 +34,6 @@ const ReservationsTable = () => {
 
   const handleShowReservation = (id) => {
     navigate("/RecepcionistDashboard/Reservations/ReservationDetails", {
-      replace: true,
       state: { reservationId: id },
     });
   };
