@@ -14,17 +14,6 @@ import ReservationsDetails from "./views/Receptionist/ReservationDetails";
 import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 
-// Typ dla propsów, w tym przypadku dla children
-interface ProtectedRouteProps {
-  children?: React.ReactNode; // Określamy typ dla children
-}
-
-// Komponent, który sprawdza, czy użytkownik jest zalogowany
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { state } = useAuth();
-  return state.loggedIn ? <>{children}</> : <Navigate to="/login" replace />;
-};
-
 const App = () => {
   const { state } = useAuth();
 
@@ -37,36 +26,52 @@ const App = () => {
           element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
         />
 
-        {/* Zabezpieczona grupa tras, które są dostępne tylko dla zalogowanych użytkowników */}
-        <Route element={<ProtectedRoute />}>
-          {/* Trasy związane z rezerwacjami */}
-          <Route path="/RecepcionistDashboard/Reservations" element={<Reservations />} />
-          <Route
-            path="/RecepcionistDashboard/Reservations/NewReservation"
-            element={<AddReservation />}
-          />
-          <Route
-            path="/RecepcionistDashboard/Reservations/ReservationDetails"
-            element={<ReservationsDetails />}
-          />
+        {/* Trasy związane z rezerwacjami */}
+        <Route
+          path="/RecepcionistDashboard/Reservations"
+          element={state.loggedIn ? <Reservations /> : <LoginView />}
+        />
 
-          {/* Trasy związane ze zgłoszeniami */}
-          <Route path="/RecepcionistDashboard/Orders/Repairs" element={<RepairsOrders />} />
-          <Route path="/RecepcionistDashboard/Orders/NewRepair" element={<AddRepair />} />
-          <Route path="/RecepcionistDashboard/Orders/Cleaning" element={<CleaningOrders />} />
-          <Route
-            path="/RecepcionistDashboard/Orders/NewCleaningOrder"
-            element={<AddCleaningOrder />}
-          />
-          <Route
-            path="/RecepcionistDashboard/Orders/CleaningOrderDetails"
-            element={<CleaningOrderDetails />}
-          />
-          <Route
-            path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
-            element={<RepairOrderDetails />}
-          />
-        </Route>
+        <Route
+          path="/RecepcionistDashboard/Reservations/NewReservation"
+          element={state.loggedIn ? <AddReservation /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Reservations/ReservationDetails"
+          element={state.loggedIn ? <ReservationsDetails /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/Repairs"
+          element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
+        />
+
+        {/* Trasy związane ze zgłoszeniami */}
+        <Route
+          path="/RecepcionistDashboard/Orders/NewRepair"
+          element={state.loggedIn ? <AddRepair /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/Cleaning"
+          element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/NewCleaningOrder"
+          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/CleaningOrderDetails"
+          element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
+          element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+        />
       </Route>
 
       {/* Trasa logowania: jeśli użytkownik jest już zalogowany, zostanie przekierowany na stronę główną */}
