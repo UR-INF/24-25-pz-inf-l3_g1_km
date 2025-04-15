@@ -26,7 +26,6 @@ import java.util.Optional;
  * DELETE /api/reservations/{id}                     - Usuń rezerwację po ID
  * GET    /api/reservations/status/{status}          - Znajdź rezerwacje wg statusu
  * GET    /api/reservations/after/{date}             - Znajdź rezerwacje po dacie rozpoczęcia
- * GET    /api/reservations/{id}/rooms               - Pobierz pokoje przypisane do rezerwacji
  */
 @RestController
 @RequestMapping("/api/reservations")
@@ -137,18 +136,5 @@ public class ReservationController {
     @GetMapping("/after/{date}")
     public List<Reservation> getByStartDateAfter(@PathVariable String date) {
         return reservationRepository.findByStartDateAfter(LocalDate.parse(date));
-    }
-
-    /**
-     * GET /api/reservations/{id}/rooms
-     * Pobierz przypisane pokoje dla rezerwacji
-     */
-    @GetMapping("/{id}/rooms")
-    public ResponseEntity<List<ReservationRoom>> getAssignedRooms(@PathVariable Long id) {
-        if (!reservationRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        List<ReservationRoom> rooms = reservationRoomRepository.findByReservationId(id);
-        return ResponseEntity.ok(rooms);
     }
 }
