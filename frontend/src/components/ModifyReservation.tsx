@@ -25,7 +25,7 @@ const ModifyReservation = ({ reservationId }) => {
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
-    navigate("/RecepcionistDashboard/Reservations", { replace: true });
+    navigate("/RecepcionistDashboard/Reservations");
   };
 
   const getReservation = async () => {
@@ -67,7 +67,6 @@ const ModifyReservation = ({ reservationId }) => {
   const getIdRef = async () => {
     try {
       const response = await api.get(`/reservations/${reservationId}/rooms`);
-      console.log("Pobrane przypisania pokoi:", response.data);
       setReservationRoomAssignments(response.data);
     } catch (error) {
       console.error("Błąd podczas pobierania przypisań pokoi:", error);
@@ -170,6 +169,26 @@ const ModifyReservation = ({ reservationId }) => {
         });
       } catch (error) {
         console.error("Błąd podczas podmiany przypisania pokoju:", error);
+      }
+    }
+    if (formData.status === "COMPLETED") {
+      try {
+        const now = new Date().toISOString().slice(0, 19);
+        for (const rr of formData.reservationRooms) {
+          await api.post("/housekeeping-tasks", {
+            employee: {
+              id: 1,
+            },
+            room: rr.room,
+            requestDate: now,
+            completionDate: now,
+            status: "PENDING",
+            description: "Sprzątanie po zakończonej rezerwacji.",
+          });
+          console.log(`Dodano zadanie sprzątania dla pokoju ${rr.room.roomNumber}`);
+        }
+      } catch (error) {
+        console.error("Błąd podczas dodawania zadań sprzątania:", error);
       }
     }
   };

@@ -7,7 +7,7 @@ const ReceptionistMenu = () => {
   return (
     <>
       <li className={getNavItemClass("/RecepcionistDashboard/Reservations", location.pathname)}>
-        <Link className="nav-link" to="/RecepcionistDashboard/Reservations" replace>
+        <Link className="nav-link" to="/RecepcionistDashboard/Reservations">
           <span className="nav-link-icon">
             <i className="ti ti-calendar-check fs-2"></i>
           </span>
@@ -32,11 +32,11 @@ const ReceptionistMenu = () => {
           <span className="nav-link-title">Zgłoszenia</span>
         </a>
         <div className="dropdown-menu">
-          <Link className="dropdown-item" to="/RecepcionistDashboard/Orders/Cleaning" replace>
+          <Link className="dropdown-item" to="/RecepcionistDashboard/Orders/Cleaning">
             Zgłoszenia sprzątania
           </Link>
 
-          <Link className="dropdown-item" to="/RecepcionistDashboard/Orders/Repairs" replace>
+          <Link className="dropdown-item" to="/RecepcionistDashboard/Orders/Repairs">
             Zgłoszenia naprawy
           </Link>
         </div>

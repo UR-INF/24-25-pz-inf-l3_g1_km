@@ -21,11 +21,13 @@ const App = () => {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
+        {/* Trasa główna, widok dashboardu, dostępny tylko dla zalogowanych */}
         <Route
           path="/"
           element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
         />
 
+        {/* Trasy związane z rezerwacjami */}
         <Route
           path="/RecepcionistDashboard/Reservations"
           element={state.loggedIn ? <Reservations /> : <LoginView />}
@@ -46,6 +48,7 @@ const App = () => {
           element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
         />
 
+        {/* Trasy związane ze zgłoszeniami */}
         <Route
           path="/RecepcionistDashboard/Orders/NewRepair"
           element={state.loggedIn ? <AddRepair /> : <LoginView />}
@@ -76,7 +79,11 @@ const App = () => {
           element={state.loggedIn ? <SettingsView /> : <LoginView />}
         />
       </Route>
+
+      {/* Trasa logowania: jeśli użytkownik jest już zalogowany, zostanie przekierowany na stronę główną */}
       <Route path="/login" element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />} />
+
+      {/* Trasa dla strony 404 (Not Found) */}
       <Route path="*" element={<NotFoundView />} />
     </Routes>
   );

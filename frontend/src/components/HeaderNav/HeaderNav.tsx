@@ -42,7 +42,7 @@ const HeaderNav = () => {
           <div className="col">
             <ul className="navbar-nav">
               <li className={getNavItemClass("/", location.pathname)}>
-                <Link className="nav-link" to="/" replace>
+                <Link className="nav-link" to="/">
                   <span className="nav-link-icon">
                     <i className="ti ti-home fs-2"></i>
                   </span>

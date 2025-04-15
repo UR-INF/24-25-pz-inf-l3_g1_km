@@ -6,7 +6,7 @@ const RepairsOrders = () => {
   const navigate = useNavigate();
 
   const handleClickNewRepairOrder = () => {
-    navigate("/RecepcionistDashboard/RepairsOrders/NewRepair", { replace: true });
+    navigate("/RecepcionistDashboard/Orders/NewRepair");
   };
 
   return (

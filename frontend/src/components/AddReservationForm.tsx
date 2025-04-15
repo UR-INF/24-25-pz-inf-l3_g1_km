@@ -23,7 +23,7 @@ const AddReservationForm = () => {
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
-    navigate("/RecepcionistDashboard/Reservations", { replace: true });
+    navigate("/RecepcionistDashboard/Reservations");
   };
 
   const getRooms = async () => {

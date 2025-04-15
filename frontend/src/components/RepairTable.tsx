@@ -19,7 +19,7 @@ const RepairTable = () => {
   };
 
   const handleShowRepairDetails = (id: number) => {
-    navigate(`/RecepcionistDashboard/RepairOrders/RepairsOrderDetails/${id}`, { replace: true });
+    navigate(`/RecepcionistDashboard/RepairOrders/RepairsOrderDetails/${id}`);
   };
 
   const handleDelete = async (id: number) => {
