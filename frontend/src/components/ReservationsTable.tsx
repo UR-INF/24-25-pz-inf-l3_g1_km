@@ -10,9 +10,7 @@ const [reservations, setReservations] = useState([]);
 const getReservations = async () => {
     try {
       const response = await api.get('/reservations');
-      //const availableReservations = response.data.filter(reser => reser.status === "AVAILABLE");
       setReservations(response.data);
-      //console.log(reservations)
     } catch (error) {
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
@@ -42,7 +40,6 @@ useEffect(() => {
         state: { reservationId: id },
       });
     };
-  console.log('reservations',reservations)
   return (
     <div className="card">
       <div className="card">

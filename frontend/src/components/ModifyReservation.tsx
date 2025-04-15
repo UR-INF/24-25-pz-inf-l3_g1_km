@@ -7,6 +7,7 @@ const ModifyReservation = ({reservationId}) => {
   const [bedFilter, setBedFilter] = useState("all");
   const [isEditable, setIsEditable] = useState(false);
   const [rooms, setRooms] = useState([]); 
+  const [reservationRoomAssignments, setReservationRoomAssignments] = useState([]);
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
     endDate: "2023-03-07",
@@ -61,8 +62,19 @@ const ModifyReservation = ({reservationId}) => {
         console.error("Błąd podczas dodawania rezerwacji:", error);
       }
     };
+    const getIdRef = async () => {
+      try {
+        const response = await api.get(`/reservations/${reservationId}/rooms`);
+        console.log("Pobrane przypisania pokoi:", response.data);
+        setReservationRoomAssignments(response.data);
+      } catch (error) {
+        console.error("Błąd podczas pobierania przypisań pokoi:", error);
+      }
+    };
+    
     
     useEffect(() => {
+      getIdRef();
       getReservation();
     }, []);
 
@@ -92,24 +104,86 @@ const ModifyReservation = ({reservationId}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditable(false);
-    await modifyReservation();
-  }
 
-  const modifyReservation = async () => {
+    const updatedFormData = {
+      ...formData,
+      reservationRooms: formData.reservationRooms.map((rr) => ({
+        ...rr,
+        guestCount: rr.guestCount,
+      })),
+    };
+
+    await modifyReservation(updatedFormData);
+    await updateRoomAssignments();
+    handleClickNewReservation();
+  };
+ 
+
+  const modifyReservation = async (updatedFormData) => {
     try {
-      console.log("Reservation to send:", JSON.stringify(formData, null, 2));
-      const response = await api.put(`/reservations/${reservationId}`, formData);
-      console.log("Reservation added:", response.data);
-      handleClickNewReservation()
+      const response = await api.put(`/reservations/${reservationId}`, updatedFormData);
+      console.log("Rezerwacja została zaktualizowana:", response.data);
+      
     } catch (error) {
-      console.error("Błąd podczas dodawania rezerwacji:", error);
+      console.error("Błąd podczas aktualizacji rezerwacji:", error);
     }
   };
+  
+  const updateRoomAssignments = async () => {
+    for (const oldAssignment of reservationRoomAssignments) {
+      const existsInNew = formData.reservationRooms.some(
+        (r) => r.room.id === oldAssignment.room.id
+      );
+  
+      if (!existsInNew) {
+        try {
+          await api.delete(`/reservations/${reservationId}/rooms/${oldAssignment.id}`);
+        } catch (error) {
+          console.error("Błąd podczas usuwania przypisania:", error);
+        }
+      }
+    }
+
+    for (const rr of formData.reservationRooms) {
+      const sameAssignment = reservationRoomAssignments.find(
+        (a) => a.room.id === rr.room.id
+      );
+  
+      if (sameAssignment) {
+        continue;
+      }
+      const oldAssignment = reservationRoomAssignments.find(
+        (a) => !formData.reservationRooms.some((r) => r.room.id === a.room.id)
+      );
+  
+      if (!oldAssignment) {
+        await api.post(`/reservations/${reservationId}/rooms`, {
+          guestCount: rr.guestCount,
+          room: rr.room,
+        });
+        continue;
+      }
+
+      try {
+        await api.delete(`/reservations/${reservationId}/rooms/${oldAssignment.id}`);
+
+        await api.post(`/reservations/${reservationId}/rooms`, {
+          guestCount: rr.guestCount,
+          room: rr.room,
+        });
+      } catch (error) {
+        console.error("Błąd podczas podmiany przypisania pokoju:", error);
+      }
+    }
+  };
+  
 
   const handleRoomToggle = (room) => {
     setFormData((prevData) => {
-      const isSelected = prevData.reservationRooms.some(rr => rr.room.id === room.id);
-  
+      const isSelected = prevData.reservationRooms.some(
+        (rr) => rr.room.id === room.id
+      );
+
       let updatedReservationRooms;
       if (isSelected) {
         updatedReservationRooms = prevData.reservationRooms.filter(rr => rr.room.id !== room.id);
@@ -123,7 +197,6 @@ const ModifyReservation = ({reservationId}) => {
           }
         ];
       }
-  
       return {
         ...prevData,
         reservationRooms: updatedReservationRooms,

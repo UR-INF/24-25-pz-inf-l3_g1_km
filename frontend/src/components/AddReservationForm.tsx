@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import { useNavigate } from "react-router";
 const AddReservationForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
+  const [bedFilter, setBedFilter] = useState("all");
   const [formData, setFormData] = useState({
     startDate: new Date().toISOString().split("T")[0],
     endDate: "",
@@ -17,6 +17,7 @@ const AddReservationForm = () => {
     guestPhone: "",
     invoiceId: "",
     rooms: [],
+    reservationRooms: [],
   });
   const [rooms, setRooms] = useState([]); 
   const navigate = useNavigate();
@@ -56,13 +57,22 @@ const AddReservationForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+  
     if (name === "rooms") {
       const roomId = parseInt(value);
+      const selectedRoom = rooms.find(room => room.id === roomId);
+  
       setFormData((prevData) => ({
         ...prevData,
-        rooms: checked
-          ? [...prevData.rooms, roomId]
-          : prevData.rooms.filter((id) => id !== roomId),
+        reservationRooms: checked
+          ? [
+              ...prevData.reservationRooms,
+              {
+                room: selectedRoom,
+                guestCount: 1,
+              }
+            ]
+          : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
       }));
     } else {
       setFormData((prevData) => ({
@@ -70,8 +80,8 @@ const AddReservationForm = () => {
         [name]: type === "checkbox" ? checked : value,
       }));
     }
-
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,7 +94,6 @@ const AddReservationForm = () => {
       console.log("Reservation added:", response.data);
       handleClickNewReservation();
     } catch (error) {
-      console.log("Reservation added:", formData);
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
   };
