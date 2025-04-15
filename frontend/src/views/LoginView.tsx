@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/auth";
 import { api } from "../services/api";
 import { AxiosError } from "axios";
 import { useUser } from "../contexts/user";
+import Titlebar from "../components/Titlebar";
 
 const LoginView = () => {
   const [email, setEmail] = useState("");
@@ -129,90 +130,100 @@ const LoginView = () => {
   };
 
   return (
-    <div className="page page-center">
-      <div className="container container-tight p-6">
-        <h2 className="h2 text-center mb-4">Zaloguj się</h2>
-        <form id="loginForm" onSubmit={handleSubmit} autoComplete="off">
-          <div className="mb-3">
-            <label className="form-label">E-mail</label>
-            <input
-              type="email"
-              id="email"
-              className="form-control"
-              placeholder="wpisz email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+    <>
+      <div className="sticky-top">
+        <Titlebar />
+      </div>
 
-          <div className="mb-2">
-            <label className="form-label">
-              Hasło
-              <span className="form-label-description">
-                <a href="#" id="forgotPassword" onClick={handlePasswordReset}>
-                  Zapomniałeś hasła?
-                </a>
-              </span>
-            </label>
-
-            <div className="input-group input-group-flat">
+      <div className="page page-center">
+        <div className="container container-tight p-6">
+          <h2 className="h2 text-center mb-4">Zaloguj się</h2>
+          <form id="loginForm" onSubmit={handleSubmit} autoComplete="off">
+            <div className="mb-3">
+              <label className="form-label">E-mail</label>
               <input
-                type="password"
-                id="password"
+                type="email"
+                id="email"
                 className="form-control"
-                placeholder="wpisz hasło"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="wpisz email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <span className="input-group-text">
-                <a
-                  href="#"
-                  id="toggle-password"
-                  onClick={togglePasswordVisibility}
-                  className="link-secondary"
-                  title="Pokaż hasło"
-                >
-                  <i id="eye-icon" className="ti ti-eye fs-2"></i>
-                </a>
-              </span>
             </div>
-          </div>
 
-          {alertMessage && (
-            <div
-              className={`alert alert-important alert-${alertMessage.type} alert-dismissible mt-3`}
-              role="alert"
-            >
-              <div className="alert-icon">
-                <i className={`ti ${getAlertIcon()} fs-1`}></i>
+            <div className="mb-2">
+              <label className="form-label">
+                Hasło
+                <span className="form-label-description">
+                  <a href="#" id="forgotPassword" onClick={handlePasswordReset}>
+                    Zapomniałeś hasła?
+                  </a>
+                </span>
+              </label>
+
+              <div className="input-group input-group-flat">
+                <input
+                  type="password"
+                  id="password"
+                  className="form-control"
+                  placeholder="wpisz hasło"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <span className="input-group-text">
+                  <a
+                    href="#"
+                    id="toggle-password"
+                    onClick={togglePasswordVisibility}
+                    className="link-secondary"
+                    title="Pokaż hasło"
+                  >
+                    <i id="eye-icon" className="ti ti-eye fs-2"></i>
+                  </a>
+                </span>
               </div>
-              <div>
-                {alertMessage.title && <h4 className="alert-heading">{alertMessage.title}</h4>}
-                <div className="alert-description">
-                  {alertMessage.text}
-                  {alertMessage.details && (
-                    <ul className="alert-list mt-2">
-                      {alertMessage.details.map((detail, index) => (
-                        <li key={index}>{detail}</li>
-                      ))}
-                    </ul>
-                  )}
+            </div>
+
+            {alertMessage && (
+              <div
+                className={`alert alert-important alert-${alertMessage.type} alert-dismissible mt-3`}
+                role="alert"
+              >
+                <div className="alert-icon">
+                  <i className={`ti ${getAlertIcon()} fs-1`}></i>
                 </div>
+                <div>
+                  {alertMessage.title && <h4 className="alert-heading">{alertMessage.title}</h4>}
+                  <div className="alert-description">
+                    {alertMessage.text}
+                    {alertMessage.details && (
+                      <ul className="alert-list mt-2">
+                        {alertMessage.details.map((detail, index) => (
+                          <li key={index}>{detail}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+                <a
+                  className="btn-close"
+                  onClick={() => setAlertMessage(null)}
+                  aria-label="close"
+                ></a>
               </div>
-              <a className="btn-close" onClick={() => setAlertMessage(null)} aria-label="close"></a>
-            </div>
-          )}
+            )}
 
-          <div className="form-footer">
-            <button type="submit" className="btn btn-primary w-100">
-              Zaloguj
-            </button>
-          </div>
-        </form>
+            <div className="form-footer">
+              <button type="submit" className="btn btn-primary w-100">
+                Zaloguj
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -3,7 +3,6 @@ import { useAuth } from "./contexts/auth";
 import LoginView from "./views/LoginView";
 import RoleBasedDashboardView from "./views/RoleBasedDashboardView";
 import NotFoundView from "./views/NotFoundView";
-import ApplicationLayout from "./layouts/ApplicationLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Reservations from "./views/Receptionist/Reservations";
 import AddReservation from "./views/Receptionist/AddReservation";
@@ -20,63 +19,58 @@ const App = () => {
 
   return (
     <Routes>
-      <Route element={<ApplicationLayout />}>
+      <Route element={<DashboardLayout />}>
         <Route
-          path="/login"
-          element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />}
+          path="/"
+          element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
         />
-        <Route element={<DashboardLayout />}>
-          <Route
-            path="/"
-            element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
-          />
 
-          <Route
-            path="/RecepcionistDashboard/Reservations"
-            element={state.loggedIn ? <Reservations /> : <LoginView />}
-          />
-          <Route
-            path="/RecepcionistDashboard/Reservations/NewReservation"
-            element={state.loggedIn ? <AddReservation /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/Reservations"
+          element={state.loggedIn ? <Reservations /> : <LoginView />}
+        />
+        <Route
+          path="/RecepcionistDashboard/Reservations/NewReservation"
+          element={state.loggedIn ? <AddReservation /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/RepairsOrders"
-            element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/RepairsOrders"
+          element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/RepairsOrders/NewRepair"
-            element={state.loggedIn ? <AddRepair /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/RepairsOrders/NewRepair"
+          element={state.loggedIn ? <AddRepair /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/CleaningOrders"
-            element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/CleaningOrders"
+          element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/CleaningOrders/NewCleaningOrder"
-            element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/CleaningOrders/NewCleaningOrder"
+          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/Reservations/ReservationDetails"
-            element={state.loggedIn ? <ReservationsDetails /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/Reservations/ReservationDetails"
+          element={state.loggedIn ? <ReservationsDetails /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/CleaningOrders/CleaningOrderDetails"
-            element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
-          />
+        <Route
+          path="/RecepcionistDashboard/CleaningOrders/CleaningOrderDetails"
+          element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
+        />
 
-          <Route
-            path="/RecepcionistDashboard/RepairOrders/RepairsOrderDetails"
-            element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
-          />
-        </Route>
-        <Route path="*" element={<NotFoundView />} />
+        <Route
+          path="/RecepcionistDashboard/RepairOrders/RepairsOrderDetails"
+          element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+        />
       </Route>
+      <Route path="/login" element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />} />
+      <Route path="*" element={<NotFoundView />} />
     </Routes>
   );
 };

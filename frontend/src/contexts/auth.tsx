@@ -14,16 +14,21 @@ interface User {
 interface AuthState {
   loggedIn: boolean;
   user: User | null;
+  loading: boolean;
 }
 
 /**
  * Akcje autoryzacyjne.
  */
-type AuthAction = { type: "LOGIN"; payload: User } | { type: "LOGOUT" };
+type AuthAction =
+  | { type: "LOGIN"; payload: User }
+  | { type: "LOGOUT" }
+  | { type: "SET_LOADING"; payload: boolean };
 
 const initialState: AuthState = {
   loggedIn: false,
   user: null,
+  loading: true,
 };
 
 /**
@@ -35,12 +40,16 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return {
         loggedIn: true,
         user: action.payload,
+        loading: false,
       };
     case "LOGOUT":
       return {
         loggedIn: false,
         user: null,
+        loading: false,
       };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
     default:
       return state;
   }
@@ -90,6 +99,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Automatyczne logowanie przy starcie aplikacji
   useEffect(() => {
     const token = localStorage.getItem("token");
+    dispatch({ type: "SET_LOADING", payload: true });
+
     if (token && !isTokenExpired(token)) {
       const payload = JSON.parse(atob(token.split(".")[1]));
       const email = payload.email;

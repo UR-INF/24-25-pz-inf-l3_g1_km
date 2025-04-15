@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { api } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { api } from "../services/api";
 
 const RepairsCard = () => {
   const [pendingCount, setPendingCount] = useState<number | null>(null);
@@ -7,10 +7,10 @@ const RepairsCard = () => {
   useEffect(() => {
     const fetchPendingRepairs = async () => {
       try {
-        const response = await api.get('/housekeeping-tasks/status/PENDING');
+        const response = await api.get("/housekeeping-tasks/status/PENDING");
         setPendingCount(response.data.length);
       } catch (error: any) {
-        console.error('Błąd podczas pobierania otwartych serwisów:', error);
+        console.error("Błąd podczas pobierania otwartych serwisów:", error);
         setPendingCount(0); // fallback
       }
     };
@@ -25,9 +25,7 @@ const RepairsCard = () => {
           <div className="d-flex align-items-center">
             <div className="subheader">Otwarte serwisy</div>
           </div>
-          <div className="h1 mb-3">
-            {pendingCount !== null ? pendingCount : '...'}
-          </div>
+          <div className="h1 mb-3">{pendingCount !== null ? pendingCount : "..."}</div>
           <div className="d-flex mb-2">
             <div>
               <a href="/zgloszenia" className="btn btn-primary">

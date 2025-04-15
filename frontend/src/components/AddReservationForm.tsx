@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { api } from '../services/api';
+import { useState, useEffect } from "react";
+import { api } from "../services/api";
 import { useNavigate } from "react-router";
 const AddReservationForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,7 +19,7 @@ const AddReservationForm = () => {
     rooms: [],
     reservationRooms: [],
   });
-  const [rooms, setRooms] = useState([]); 
+  const [rooms, setRooms] = useState([]);
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
@@ -28,14 +28,14 @@ const AddReservationForm = () => {
 
   const getRooms = async () => {
     try {
-      const response = await api.get('/rooms');
-      const availableRooms = response.data.filter(room => room.status === "AVAILABLE");
+      const response = await api.get("/rooms");
+      const availableRooms = response.data.filter((room) => room.status === "AVAILABLE");
       setRooms(availableRooms);
     } catch (error) {
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
   };
-  
+
   useEffect(() => {
     getRooms();
   }, []);
@@ -90,7 +90,7 @@ const AddReservationForm = () => {
 
   const addReservation = async () => {
     try {
-      const response = await api.post('/reservations', formData);
+      const response = await api.post("/reservations", formData);
       console.log("Reservation added:", response.data);
       handleClickNewReservation();
     } catch (error) {
@@ -189,7 +189,6 @@ const AddReservationForm = () => {
             placeholder="Wyszukaj pokój"
             value={searchTerm}
             onChange={handleSearchChange}
-            
           />
         </div>
 
