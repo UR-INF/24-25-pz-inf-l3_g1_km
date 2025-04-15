@@ -1,5 +1,6 @@
 import { useUser } from "../../contexts/user";
 import { getRoleNameInPolish } from "../../utils/roleUtils";
+import { useNavigate } from "react-router";
 
 interface UserDropdownProps {
   handleLogout: () => void;
@@ -9,6 +10,11 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
   const { userFirstName, userLastName, userRoleName } = useUser();
   const avatarUrl =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpAklFXnBaXsEsy_Y08157gUwnacNh7gQgLQ&s";
+
+  const navigate = useNavigate();
+  const handleClickSetting = () => {
+    navigate("/Settings", { replace: true });
+  };
 
   return (
     <div className="navbar-nav nav-item dropdown">
@@ -32,7 +38,7 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
         </div>
       </a>
       <div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-        <a href="#" className="dropdown-item">
+        <a href="#" className="dropdown-item" onClick={handleClickSetting}>
           Ustawienia
         </a>
         <a href="#" className="dropdown-item text-danger" onClick={handleLogout}>

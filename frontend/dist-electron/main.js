@@ -11,8 +11,11 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    width: 1e3,
+    height: 700,
+    minWidth: 550,
+    minHeight: 400,
     frame: false,
-    // Ukrycie systemowego paska
     titleBarStyle: "hidden",
     // macOS
     webPreferences: {

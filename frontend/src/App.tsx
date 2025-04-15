@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router";
 import { useAuth } from "./contexts/auth";
 import LoginView from "./views/LoginView";
+import SettingsView from "./views/SettingsView";
 import RoleBasedDashboardView from "./views/RoleBasedDashboardView";
 import NotFoundView from "./views/NotFoundView";
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -68,6 +69,11 @@ const App = () => {
         <Route
           path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+        />
+
+        <Route
+          path="/Settings"
+          element={state.loggedIn ? <SettingsView /> : <LoginView />}
         />
       </Route>
       <Route path="/login" element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />} />
