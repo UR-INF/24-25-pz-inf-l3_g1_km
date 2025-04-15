@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { api } from '../services/api';
+import { api } from "../services/api";
 const AddReservationForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
@@ -17,19 +17,18 @@ const AddReservationForm = () => {
     invoiceId: "",
     rooms: [],
   });
-  const [rooms, setRooms] = useState([]); 
-
+  const [rooms, setRooms] = useState([]);
 
   const getRooms = async () => {
     try {
-      const response = await api.get('/rooms');
-      const availableRooms = response.data.filter(room => room.status === "AVAILABLE");
+      const response = await api.get("/rooms");
+      const availableRooms = response.data.filter((room) => room.status === "AVAILABLE");
       setRooms(availableRooms);
     } catch (error) {
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
   };
-  
+
   useEffect(() => {
     getRooms();
   }, []);
@@ -55,9 +54,7 @@ const AddReservationForm = () => {
       const roomId = parseInt(value);
       setFormData((prevData) => ({
         ...prevData,
-        rooms: checked
-          ? [...prevData.rooms, roomId]
-          : prevData.rooms.filter((id) => id !== roomId),
+        rooms: checked ? [...prevData.rooms, roomId] : prevData.rooms.filter((id) => id !== roomId),
       }));
     } else {
       setFormData((prevData) => ({
@@ -65,7 +62,6 @@ const AddReservationForm = () => {
         [name]: type === "checkbox" ? checked : value,
       }));
     }
-
   };
 
   const handleSubmit = async (e) => {
@@ -75,7 +71,7 @@ const AddReservationForm = () => {
 
   const addReservation = async () => {
     try {
-      const response = await api.post('/reservations', formData);
+      const response = await api.post("/reservations", formData);
       console.log("Reservation added:", response.data);
     } catch (error) {
       console.log("Reservation added:", formData);
@@ -174,7 +170,6 @@ const AddReservationForm = () => {
             placeholder="Wyszukaj pokój"
             value={searchTerm}
             onChange={handleSearchChange}
-            
           />
         </div>
 
