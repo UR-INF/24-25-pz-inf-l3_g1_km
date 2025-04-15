@@ -1,4 +1,4 @@
-import { useUser } from "../../contexts/user";
+import { useUser, RoleName } from "../../contexts/user";
 import { useAuth } from "../../contexts/auth";
 import { useNavigate, Link, useLocation } from "react-router";
 import { getNavItemClass } from "../../utils/navigationUtils";
@@ -22,13 +22,13 @@ const HeaderNav = () => {
 
   const renderMenuForRole = () => {
     switch (userRoleName) {
-      case "RECEPTIONIST":
+      case RoleName.RECEPTIONIST:
         return <ReceptionistMenu />;
-      case "MANAGER":
+      case RoleName.MANAGER:
         return <ManagerMenu />;
-      case "HOUSEKEEPER":
+      case RoleName.HOUSEKEEPER:
         return <HousekeeperMenu />;
-      case "MAINTENANCE":
+      case RoleName.MAINTENANCE:
         return <MaintenanceMenu />;
       default:
         return <></>;

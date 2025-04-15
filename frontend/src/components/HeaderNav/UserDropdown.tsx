@@ -11,7 +11,7 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpAklFXnBaXsEsy_Y08157gUwnacNh7gQgLQ&s";
 
   return (
-    <div className="nav-item dropdown">
+    <div className="navbar-nav nav-item dropdown">
       <a
         href="#"
         className="nav-link d-flex lh-1 p-0 px-2"
