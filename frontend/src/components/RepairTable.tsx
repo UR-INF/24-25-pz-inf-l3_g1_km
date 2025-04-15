@@ -113,10 +113,10 @@ const RepairTable = () => {
                 </a>
               </td>
               <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-               </td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
+                </a>
+              </td>
             </tr>
             <tr>
               <td>
@@ -144,10 +144,10 @@ const RepairTable = () => {
                 </a>
               </td>
               <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-               </td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
+                </a>
+              </td>
             </tr>
             <tr>
               <td>
@@ -175,10 +175,10 @@ const RepairTable = () => {
                 </a>
               </td>
               <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-               </td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
+                </a>
+              </td>
             </tr>
             <tr>
               <td>
@@ -206,10 +206,10 @@ const RepairTable = () => {
                 </a>
               </td>
               <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-               </td>
+                <a href="" className="btn btn-danger" target="_blank" rel="noopener">
+                  Usuń
+                </a>
+              </td>
             </tr>
           </tbody>
         </table>

@@ -14,19 +14,19 @@ const HeaderNav = () => {
   };
 
   const handleClickDashboard = () => {
-    navigate('/', { replace: true }); 
+    navigate("/", { replace: true });
   };
 
   const handleClickReservation = () => {
-    navigate('/RecepcionistDashboard/Reservations', { replace: true }); 
+    navigate("/RecepcionistDashboard/Reservations", { replace: true });
   };
 
   const handleClickCleaningOrders = () => {
-    navigate('/RecepcionistDashboard/CleaningOrders', { replace: true }); 
+    navigate("/RecepcionistDashboard/CleaningOrders", { replace: true });
   };
 
   const handleClickRepairsOrders = () => {
-    navigate('/RecepcionistDashboard/RepairsOrders', { replace: true }); 
+    navigate("/RecepcionistDashboard/RepairsOrders", { replace: true });
   };
 
   return (

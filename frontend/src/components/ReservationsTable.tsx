@@ -4,7 +4,7 @@ const ReservationsTable = () => {
   const navigate = useNavigate();
 
   const handleShowReservation = () => {
-    navigate('/RecepcionistDashboard/Reservations/ReservationDetails', { replace: true }); 
+    navigate("/RecepcionistDashboard/Reservations/ReservationDetails", { replace: true });
   };
 
   return (
@@ -70,7 +70,13 @@ const ReservationsTable = () => {
                 <td>Tak</td>
                 <td>2</td>
                 <td className="text-end">
-                  <a href="" className="btn btn-primary" target="_blank" rel="noopener" onClick={handleShowReservation}>
+                  <a
+                    href=""
+                    className="btn btn-primary"
+                    target="_blank"
+                    rel="noopener"
+                    onClick={handleShowReservation}
+                  >
                     Zobacz
                   </a>
                 </td>
@@ -93,7 +99,13 @@ const ReservationsTable = () => {
                 <td>Nie</td>
                 <td>1</td>
                 <td className="text-end">
-                  <a href="" className="btn btn-primary" target="_blank" rel="noopener" onClick={handleShowReservation}>
+                  <a
+                    href=""
+                    className="btn btn-primary"
+                    target="_blank"
+                    rel="noopener"
+                    onClick={handleShowReservation}
+                  >
                     Zobacz
                   </a>
                 </td>
@@ -116,7 +128,13 @@ const ReservationsTable = () => {
                 <td>Tak</td>
                 <td>3</td>
                 <td className="text-end">
-                  <a href="" className="btn btn-primary" target="_blank" rel="noopener" onClick={handleShowReservation}>
+                  <a
+                    href=""
+                    className="btn btn-primary"
+                    target="_blank"
+                    rel="noopener"
+                    onClick={handleShowReservation}
+                  >
                     Zobacz
                   </a>
                 </td>
@@ -162,11 +180,17 @@ const ReservationsTable = () => {
                 <td>Tak</td>
                 <td>2</td>
                 <td className="text-end">
-                  <a href="" className="btn btn-primary" target="_blank" rel="noopener" onClick={handleShowReservation}>
+                  <a
+                    href=""
+                    className="btn btn-primary"
+                    target="_blank"
+                    rel="noopener"
+                    onClick={handleShowReservation}
+                  >
                     Zobacz
                   </a>
                 </td>
-                                <td>
+                <td>
                   <a href="" className="btn btn-danger" target="_blank" rel="noopener">
                     Usuń
                   </a>

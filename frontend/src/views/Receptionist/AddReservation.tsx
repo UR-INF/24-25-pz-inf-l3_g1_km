@@ -1,9 +1,7 @@
-
 import HeaderNav from "../../components/HeaderNav";
 import AddReservationForm from "../../components/AddReservationForm";
 
 const AddReservation = () => {
-
   return (
     <div>
       <HeaderNav />

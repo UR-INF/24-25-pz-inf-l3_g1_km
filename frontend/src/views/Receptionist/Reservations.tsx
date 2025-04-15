@@ -5,14 +5,11 @@ import ReservationsTable from "../../components/ReservationsTable";
 import RoomsTable from "../../components/RoomsTable";
 import { useNavigate } from "react-router";
 
-
-
 const Reservations = () => {
-  
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
-    navigate('/RecepcionistDashboard/Reservations/NewReservation', { replace: true }); 
+    navigate("/RecepcionistDashboard/Reservations/NewReservation", { replace: true });
   };
 
   return (
@@ -28,7 +25,11 @@ const Reservations = () => {
               </div>
 
               <div className="col-auto ms-auto d-print-none">
-                <button type="button" onClick={handleClickNewReservation} className="btn btn-primary">
+                <button
+                  type="button"
+                  onClick={handleClickNewReservation}
+                  className="btn btn-primary"
+                >
                   <i className="ti ti-plus fs-2 me-2"></i>
                   Stwórz nową rezerwację
                 </button>

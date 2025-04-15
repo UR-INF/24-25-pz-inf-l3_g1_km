@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AddCleaningRequestForm = () => {
   const [formData, setFormData] = useState({
-    employeeId: '',
-    roomId: '',
-    requestDate: new Date().toISOString().split('T')[0], // Automatycznie ustawiona dzisiejsza data
-    completionDate: '',
-    status: 'pending',  // Domyślny status
-    description: '',
+    employeeId: "",
+    roomId: "",
+    requestDate: new Date().toISOString().split("T")[0], // Automatycznie ustawiona dzisiejsza data
+    completionDate: "",
+    status: "pending", // Domyślny status
+    description: "",
   });
 
   const handleChange = (e) => {
@@ -21,7 +21,7 @@ const AddCleaningRequestForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Można tutaj dodać logikę do wysyłania danych na backend
-    console.log('Form Data:', formData);
+    console.log("Form Data:", formData);
   };
 
   return (
@@ -72,8 +72,12 @@ const AddCleaningRequestForm = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">Anuluj</a>
-            <button type="submit" className="btn btn-primary btn-2">Zatwierdź</button>
+            <a href="#" className="btn btn-1">
+              Anuluj
+            </a>
+            <button type="submit" className="btn btn-primary btn-2">
+              Zatwierdź
+            </button>
           </div>
         </div>
       </form>

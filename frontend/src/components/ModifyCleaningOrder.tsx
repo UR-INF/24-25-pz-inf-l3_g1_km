@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const ModifyCleaningOrder = () => {
   const [formData, setFormData] = useState({
-    employeeId: '',
-    roomId: '',
-    requestDate: new Date().toISOString().split('T')[0], // Automatycznie ustawiona dzisiejsza data
-    completionDate: '',
-    status: 'pending', 
-    description: '',
+    employeeId: "",
+    roomId: "",
+    requestDate: new Date().toISOString().split("T")[0], // Automatycznie ustawiona dzisiejsza data
+    completionDate: "",
+    status: "pending",
+    description: "",
   });
 
   const [isEditable, setIsEditable] = useState(false); // Zmienna kontrolująca tryb edycji
@@ -15,12 +15,12 @@ const ModifyCleaningOrder = () => {
   // Symulacja pobierania danych o zleceniu sprzątania z API
   useEffect(() => {
     setFormData({
-      employeeId: '123',
-      roomId: '101',
-      requestDate: '2023-03-01',
-      completionDate: '2023-03-02',
-      status: 'pending',
-      description: 'Sprzątanie po remoncie',
+      employeeId: "123",
+      roomId: "101",
+      requestDate: "2023-03-01",
+      completionDate: "2023-03-02",
+      status: "pending",
+      description: "Sprzątanie po remoncie",
     });
   }, []);
 
@@ -38,7 +38,7 @@ const ModifyCleaningOrder = () => {
 
   const handleSaveClick = (e) => {
     e.preventDefault();
-    console.log('Updated Form Data:', formData);
+    console.log("Updated Form Data:", formData);
     setIsEditable(false); // Po zapisaniu, formularz staje się tylko do odczytu
   };
 
@@ -46,12 +46,12 @@ const ModifyCleaningOrder = () => {
     setIsEditable(false); // Anulowanie edycji przywraca stan formularza do pierwotnego
     // Resetowanie formularza do pierwotnych danych (opcjonalnie)
     setFormData({
-      employeeId: '123',
-      roomId: '101',
-      requestDate: '2023-03-01',
-      completionDate: '2023-03-02',
-      status: 'pending',
-      description: 'Sprzątanie po remoncie',
+      employeeId: "123",
+      roomId: "101",
+      requestDate: "2023-03-01",
+      completionDate: "2023-03-02",
+      status: "pending",
+      description: "Sprzątanie po remoncie",
     });
   };
 
@@ -129,7 +129,7 @@ const ModifyCleaningOrder = () => {
             className="form-check-input"
             name="status"
             value="pending"
-            checked={formData.status === 'pending'}
+            checked={formData.status === "pending"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -141,7 +141,7 @@ const ModifyCleaningOrder = () => {
             className="form-check-input"
             name="status"
             value="in_progress"
-            checked={formData.status === 'in_progress'}
+            checked={formData.status === "in_progress"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -153,7 +153,7 @@ const ModifyCleaningOrder = () => {
             className="form-check-input"
             name="status"
             value="completed"
-            checked={formData.status === 'completed'}
+            checked={formData.status === "completed"}
             onChange={handleChange}
             disabled={!isEditable}
           />

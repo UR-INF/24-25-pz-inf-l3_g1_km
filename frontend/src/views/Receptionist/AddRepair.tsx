@@ -1,9 +1,7 @@
-
 import HeaderNav from "../../components/HeaderNav";
 import AddRepairRequestForm from "../../components/AddRepairRequestForm";
 
 const AddRepair = () => {
-
   return (
     <div>
       <HeaderNav />

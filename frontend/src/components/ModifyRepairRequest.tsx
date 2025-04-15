@@ -1,39 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const ModifyRepairRequest = () => {
-  const [isEditable, setIsEditable] = useState(false);  // Zmienna kontrolująca tryb edycji
+  const [isEditable, setIsEditable] = useState(false); // Zmienna kontrolująca tryb edycji
   const [formData, setFormData] = useState({
-    repairType: 'appliance',  // Typ naprawy
-    repairDescription: 'Naprawa urządzenia AGD.',
-    status: 'pending',  // Status zlecenia
-    responsiblePerson: 'Jan Kowalski',
-    requestDate: '2023-04-01',  // Data zgłoszenia
+    repairType: "appliance", // Typ naprawy
+    repairDescription: "Naprawa urządzenia AGD.",
+    status: "pending", // Status zlecenia
+    responsiblePerson: "Jan Kowalski",
+    requestDate: "2023-04-01", // Data zgłoszenia
   });
 
   // Opcje dostępnych typów napraw
   const repairTypes = [
-    { id: 'lightbulb', label: 'Wymiana żarówki' },
-    { id: 'appliance', label: 'Naprawa urządzeń' },
-    { id: 'plumbing', label: 'Naprawa hydrauliczna' },
-    { id: 'other', label: 'Inne' },
+    { id: "lightbulb", label: "Wymiana żarówki" },
+    { id: "appliance", label: "Naprawa urządzeń" },
+    { id: "plumbing", label: "Naprawa hydrauliczna" },
+    { id: "other", label: "Inne" },
   ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Updated Repair Request:', formData);
-    setIsEditable(false);  // Po zatwierdzeniu, zablokuj edytowanie
+    console.log("Updated Repair Request:", formData);
+    setIsEditable(false); // Po zatwierdzeniu, zablokuj edytowanie
   };
 
   const handleEditClick = () => {
-    setIsEditable(true);  // Włącz tryb edycji
+    setIsEditable(true); // Włącz tryb edycji
   };
 
   return (
@@ -42,7 +42,7 @@ const ModifyRepairRequest = () => {
 
       <form onSubmit={handleSubmit}>
         <h3 className="card-title">Szczegóły Zlecenia Naprawy</h3>
-        
+
         <div className="row g-3">
           <div className="col-md">
             <div className="form-label">Typ Naprawy</div>
@@ -93,7 +93,7 @@ const ModifyRepairRequest = () => {
             className="form-check-input"
             name="status"
             value="pending"
-            checked={formData.status === 'pending'}
+            checked={formData.status === "pending"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -105,7 +105,7 @@ const ModifyRepairRequest = () => {
             className="form-check-input"
             name="status"
             value="in-progress"
-            checked={formData.status === 'in-progress'}
+            checked={formData.status === "in-progress"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -117,7 +117,7 @@ const ModifyRepairRequest = () => {
             className="form-check-input"
             name="status"
             value="completed"
-            checked={formData.status === 'completed'}
+            checked={formData.status === "completed"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -126,11 +126,7 @@ const ModifyRepairRequest = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleEditClick}
-            >
+            <button type="button" className="btn btn-secondary" onClick={handleEditClick}>
               Edytuj
             </button>
             {isEditable && (

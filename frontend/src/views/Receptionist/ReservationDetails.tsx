@@ -2,7 +2,6 @@ import HeaderNav from "../../components/HeaderNav";
 import ModifyReservation from "../../components/ModifyReservation";
 
 const ReservationsDetails = () => {
-
   return (
     <div>
       <HeaderNav />

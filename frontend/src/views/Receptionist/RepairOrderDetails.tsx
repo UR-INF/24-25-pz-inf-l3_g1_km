@@ -2,7 +2,6 @@ import HeaderNav from "../../components/HeaderNav";
 import ModifyRepairRequest from "../../components/ModifyRepairRequest";
 
 const RepairOrderDetails = () => {
-
   return (
     <div>
       <HeaderNav />

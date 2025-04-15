@@ -70,7 +70,7 @@ const App = () => {
 
         <Route
           path="/RecepcionistDashboard/RepairOrders/RepairsOrderDetails"
-          element={state.loggedIn ? <RepairOrderDetails/> : <LoginView />}
+          element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
         />
 
         <Route path="*" element={<NotFoundView />} />

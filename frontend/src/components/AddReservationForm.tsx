@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AddReservationForm = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [bedFilter, setBedFilter] = useState('all');  // Filtr po liczbie łóżek
+  const [searchTerm, setSearchTerm] = useState("");
+  const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
   const [formData, setFormData] = useState({
-    startDate: '',
-    endDate: '',
-    status: 'active',
-    specialRequests: '',
-    modifiedAt: '',
+    startDate: "",
+    endDate: "",
+    status: "active",
+    specialRequests: "",
+    modifiedAt: "",
     catering: false,
-    guestFirstName: '',
-    guestLastName: '',
-    guestPesel: '',
-    guestPhone: '',
-    invoiceId: '',
+    guestFirstName: "",
+    guestLastName: "",
+    guestPesel: "",
+    guestPhone: "",
+    invoiceId: "",
     rooms: [],
   });
 
   const rooms = [
-    { id: 1, name: 'Pokój 101', floor: 1, beds: 2 },
-    { id: 2, name: 'Pokój 102', floor: 1, beds: 1 },
-    { id: 3, name: 'Pokój 103', floor: 2, beds: 3 },
-    { id: 4, name: 'Pokój 104', floor: 2, beds: 2 },
-    { id: 5, name: 'Pokój 105', floor: 3, beds: 1 },
+    { id: 1, name: "Pokój 101", floor: 1, beds: 2 },
+    { id: 2, name: "Pokój 102", floor: 1, beds: 1 },
+    { id: 3, name: "Pokój 103", floor: 2, beds: 3 },
+    { id: 4, name: "Pokój 104", floor: 2, beds: 2 },
+    { id: 5, name: "Pokój 105", floor: 3, beds: 1 },
   ];
 
   // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
   const filteredRooms = rooms.filter((room) => {
     const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBeds = bedFilter === 'all' || room.beds === parseInt(bedFilter);
+    const matchesBeds = bedFilter === "all" || room.beds === parseInt(bedFilter);
     return matchesSearch && matchesBeds;
   });
 
@@ -45,13 +45,13 @@ const AddReservationForm = () => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
+    console.log("Form Data:", formData);
   };
 
   return (
@@ -128,7 +128,7 @@ const AddReservationForm = () => {
         </div>
 
         <h3 className="card-title mt-4">Wybór Pokoi</h3>
-        
+
         {/* Search bar */}
         <div className="form-group mb-3">
           <input
@@ -143,11 +143,7 @@ const AddReservationForm = () => {
         {/* Bed Filter Dropdown */}
         <div className="form-group mb-3">
           <label className="form-label">Liczba Łóżek</label>
-          <select
-            className="form-control"
-            value={bedFilter}
-            onChange={handleBedFilterChange}
-          >
+          <select className="form-control" value={bedFilter} onChange={handleBedFilterChange}>
             <option value="all">Wszystkie</option>
             <option value="1">1 Łóżko</option>
             <option value="2">2 Łóżka</option>
@@ -156,7 +152,7 @@ const AddReservationForm = () => {
         </div>
 
         {/* Scrollable room list */}
-        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredRooms.length > 0 ? (
             filteredRooms.map((room) => (
               <div key={room.id} className="form-check">
@@ -222,7 +218,7 @@ const AddReservationForm = () => {
             className="form-check-input"
             name="status"
             value="active"
-            checked={formData.status === 'active'}
+            checked={formData.status === "active"}
             onChange={handleChange}
           />
           <label className="form-check-label">Aktywna</label>
@@ -233,7 +229,7 @@ const AddReservationForm = () => {
             className="form-check-input"
             name="status"
             value="cancelled"
-            checked={formData.status === 'cancelled'}
+            checked={formData.status === "cancelled"}
             onChange={handleChange}
           />
           <label className="form-check-label">Anulowana</label>
@@ -244,7 +240,7 @@ const AddReservationForm = () => {
             className="form-check-input"
             name="status"
             value="completed"
-            checked={formData.status === 'completed'}
+            checked={formData.status === "completed"}
             onChange={handleChange}
           />
           <label className="form-check-label">Zakończona</label>
@@ -252,8 +248,12 @@ const AddReservationForm = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">Anuluj</a>
-            <button type="submit" className="btn btn-primary btn-2">Zatwierdź</button>
+            <a href="#" className="btn btn-1">
+              Anuluj
+            </a>
+            <button type="submit" className="btn btn-primary btn-2">
+              Zatwierdź
+            </button>
           </div>
         </div>
       </form>

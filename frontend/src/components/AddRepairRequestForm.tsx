@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const AddRepairRequestForm = () => {
   const [formData, setFormData] = useState({
-    repairType: '',
-    repairDescription: '',
-    status: 'pending',  // Domyślny status
-    responsiblePerson: '',
-    requestDate: new Date().toISOString().split('T')[0], // Automatycznie ustawiona dzisiejsza data
+    repairType: "",
+    repairDescription: "",
+    status: "pending", // Domyślny status
+    responsiblePerson: "",
+    requestDate: new Date().toISOString().split("T")[0], // Automatycznie ustawiona dzisiejsza data
   });
 
   const handleChange = (e) => {
@@ -20,7 +20,7 @@ const AddRepairRequestForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Można tutaj dodać logikę do wysyłania danych na backend
-    console.log('Form Data:', formData);
+    console.log("Form Data:", formData);
   };
 
   return (
@@ -29,7 +29,7 @@ const AddRepairRequestForm = () => {
 
       <form onSubmit={handleSubmit}>
         <h3 className="card-title">Szczegóły Zlecenia</h3>
-        
+
         <div className="row g-3">
           <div className="col-md">
             <div className="form-label">Typ Naprawy</div>
@@ -74,8 +74,12 @@ const AddRepairRequestForm = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">Anuluj</a>
-            <button type="submit" className="btn btn-primary btn-2">Zatwierdź</button>
+            <a href="#" className="btn btn-1">
+              Anuluj
+            </a>
+            <button type="submit" className="btn btn-primary btn-2">
+              Zatwierdź
+            </button>
           </div>
         </div>
       </form>

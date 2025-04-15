@@ -2,7 +2,6 @@ import HeaderNav from "../../components/HeaderNav";
 import ModifyCleaningOrder from "../../components/ModifyCleaningOrder";
 
 const CleaningOrderDetails = () => {
-
   return (
     <div>
       <HeaderNav />

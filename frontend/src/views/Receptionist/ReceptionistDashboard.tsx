@@ -8,7 +8,6 @@ import RepairTable from "../../components/RepairTable";
 import CleaningTable from "../../components/CleaningTable";
 
 const ReceptionistDashboard = () => {
-
   return (
     <div>
       <HeaderNav />

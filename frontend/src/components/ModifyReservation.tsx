@@ -1,36 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const ModifyReservation = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [bedFilter, setBedFilter] = useState('all');  // Filtr po liczbie łóżek
-  const [isEditable, setIsEditable] = useState(false);  // Zmienna kontrolująca tryb edycji
+  const [searchTerm, setSearchTerm] = useState("");
+  const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
+  const [isEditable, setIsEditable] = useState(false); // Zmienna kontrolująca tryb edycji
   const [formData, setFormData] = useState({
-    startDate: '2023-03-01',
-    endDate: '2023-03-07',
-    guestFirstName: 'Jan',
-    guestLastName: 'Kowalski',
-    guestPesel: '12345678901',
-    guestPhone: '123-456-789',
-    rooms: ['Pokój 101', 'Pokój 102'],
-    specialRequests: 'Brak',
-    invoiceId: 'INV123456',
+    startDate: "2023-03-01",
+    endDate: "2023-03-07",
+    guestFirstName: "Jan",
+    guestLastName: "Kowalski",
+    guestPesel: "12345678901",
+    guestPhone: "123-456-789",
+    rooms: ["Pokój 101", "Pokój 102"],
+    specialRequests: "Brak",
+    invoiceId: "INV123456",
     catering: true,
-    status: 'active',
+    status: "active",
   });
 
   // Lista dostępnych pokoi
   const rooms = [
-    { id: 1, name: 'Pokój 101', floor: 1, beds: 2 },
-    { id: 2, name: 'Pokój 102', floor: 1, beds: 1 },
-    { id: 3, name: 'Pokój 103', floor: 2, beds: 3 },
-    { id: 4, name: 'Pokój 104', floor: 2, beds: 2 },
-    { id: 5, name: 'Pokój 105', floor: 3, beds: 1 },
+    { id: 1, name: "Pokój 101", floor: 1, beds: 2 },
+    { id: 2, name: "Pokój 102", floor: 1, beds: 1 },
+    { id: 3, name: "Pokój 103", floor: 2, beds: 3 },
+    { id: 4, name: "Pokój 104", floor: 2, beds: 2 },
+    { id: 5, name: "Pokój 105", floor: 3, beds: 1 },
   ];
 
   // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
   const filteredRooms = rooms.filter((room) => {
     const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBeds = bedFilter === 'all' || room.beds === parseInt(bedFilter);
+    const matchesBeds = bedFilter === "all" || room.beds === parseInt(bedFilter);
     return matchesSearch && matchesBeds;
   });
 
@@ -46,13 +46,13 @@ const ModifyReservation = () => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Updated Form Data:', formData);
+    console.log("Updated Form Data:", formData);
     setIsEditable(false); // After submission, lock the form again
   };
 
@@ -140,7 +140,7 @@ const ModifyReservation = () => {
         </div>
 
         <h3 className="card-title mt-4">Wybór Pokoi</h3>
-        
+
         {/* Search bar */}
         <div className="form-group mb-3">
           <input
@@ -170,7 +170,7 @@ const ModifyReservation = () => {
         </div>
 
         {/* Scrollable room list */}
-        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredRooms.length > 0 ? (
             filteredRooms.map((room) => (
               <div key={room.id} className="form-check">
@@ -241,7 +241,7 @@ const ModifyReservation = () => {
             className="form-check-input"
             name="status"
             value="active"
-            checked={formData.status === 'active'}
+            checked={formData.status === "active"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -253,7 +253,7 @@ const ModifyReservation = () => {
             className="form-check-input"
             name="status"
             value="cancelled"
-            checked={formData.status === 'cancelled'}
+            checked={formData.status === "cancelled"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -265,7 +265,7 @@ const ModifyReservation = () => {
             className="form-check-input"
             name="status"
             value="completed"
-            checked={formData.status === 'completed'}
+            checked={formData.status === "completed"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -274,11 +274,7 @@ const ModifyReservation = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setIsEditable(true)}
-            >
+            <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
               Edytuj
             </button>
             {isEditable && (

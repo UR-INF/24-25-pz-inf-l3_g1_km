@@ -3,15 +3,12 @@ import { useNavigate } from "react-router";
 import CleaningTable from "../../components/CleaningTable";
 import CleaningCard from "../../components/CleaningCard";
 
-
-
 const CleaningOrders = () => {
-  
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleClickNewCleaningOrder = () => {
-      navigate('/RecepcionistDashboard/CleaningOrders/NewCleaningOrder', { replace: true }); 
-    };
+  const handleClickNewCleaningOrder = () => {
+    navigate("/RecepcionistDashboard/CleaningOrders/NewCleaningOrder", { replace: true });
+  };
 
   return (
     <div>
@@ -25,7 +22,11 @@ const CleaningOrders = () => {
               </div>
 
               <div className="col-auto ms-auto d-print-none">
-                <button type="button" className="btn btn-primary" onClick={handleClickNewCleaningOrder}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleClickNewCleaningOrder}
+                >
                   <i className="ti ti-plus fs-2 me-2"></i>
                   Stwórz nowe zlecenie sprzątania
                 </button>
