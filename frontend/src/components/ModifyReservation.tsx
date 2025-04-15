@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from '../services/api';
+import { useNavigate } from "react-router";
 
 const ModifyReservation = ({reservationId}) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,6 +21,11 @@ const ModifyReservation = ({reservationId}) => {
     catering: true,
     status: "ACTIVE",
   });
+ const navigate = useNavigate();
+
+  const handleClickNewReservation = () => {
+    navigate("/RecepcionistDashboard/Reservations", { replace: true });
+  };
 
   const getReservation = async () => {
     try {
@@ -86,14 +92,15 @@ const ModifyReservation = ({reservationId}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditable(false);
-    await addReservation();
+    await modifyReservation();
   }
 
-  const addReservation = async () => {
+  const modifyReservation = async () => {
     try {
       console.log("Reservation to send:", JSON.stringify(formData, null, 2));
       const response = await api.put(`/reservations/${reservationId}`, formData);
       console.log("Reservation added:", response.data);
+      handleClickNewReservation()
     } catch (error) {
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }

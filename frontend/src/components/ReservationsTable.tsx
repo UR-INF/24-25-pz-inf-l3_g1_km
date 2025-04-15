@@ -18,6 +18,20 @@ const getReservations = async () => {
     }
   };
 
+  const handleDelete = async (id) => {
+  
+    if (window.confirm("Czy na pewno chcesz usunąć tę rezerwację?")) {
+      try {
+        const response = await api.delete(`/reservations/${id}`);
+        console.log("Rezerwacja została usunięta:", response.data);
+        getReservations();
+      } catch (error) {
+        console.error("Błąd podczas usuwania rezerwacji:", error);
+      }
+    }
+  };
+  
+
 useEffect(() => {
   getReservations();
     }, []);
@@ -118,7 +132,14 @@ useEffect(() => {
         </a>
       </td>
       <td>
-        <a href="#" className="btn btn-danger">
+        <a 
+          href="#" 
+          className="btn btn-danger" 
+          onClick={(e) => {
+            e.preventDefault();
+            handleDelete(res.id);
+          }}
+        >
           Usuń
         </a>
       </td>
