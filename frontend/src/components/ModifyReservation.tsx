@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { api } from '../services/api';
+import { useNavigate } from "react-router";
 
-const ModifyReservation = () => {
+const ModifyReservation = ({reservationId}) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
-  const [isEditable, setIsEditable] = useState(false); // Zmienna kontrolująca tryb edycji
+  const [bedFilter, setBedFilter] = useState("all");
+  const [isEditable, setIsEditable] = useState(false);
+  const [rooms, setRooms] = useState([]); 
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
     endDate: "2023-03-07",
@@ -12,25 +15,61 @@ const ModifyReservation = () => {
     guestPesel: "12345678901",
     guestPhone: "123-456-789",
     rooms: ["Pokój 101", "Pokój 102"],
+    reservationRooms: [],
     specialRequests: "Brak",
     invoiceId: "INV123456",
     catering: true,
-    status: "active",
+    status: "ACTIVE",
   });
+ const navigate = useNavigate();
 
-  // Lista dostępnych pokoi
-  const rooms = [
-    { id: 1, name: "Pokój 101", floor: 1, beds: 2 },
-    { id: 2, name: "Pokój 102", floor: 1, beds: 1 },
-    { id: 3, name: "Pokój 103", floor: 2, beds: 3 },
-    { id: 4, name: "Pokój 104", floor: 2, beds: 2 },
-    { id: 5, name: "Pokój 105", floor: 3, beds: 1 },
-  ];
+  const handleClickNewReservation = () => {
+    navigate("/RecepcionistDashboard/Reservations", { replace: true });
+  };
+
+  const getReservation = async () => {
+    try {
+      const response = await api.get(`/reservations/${reservationId}`);
+      const data = response.data;
+
+    setFormData({
+      startDate: data.startDate || "",
+      endDate: data.endDate || "",
+      guestFirstName: data.guestFirstName || "",
+      guestLastName: data.guestLastName || "",
+      guestPesel: data.guestPesel || "",
+      guestPhone: data.guestPhone || "",
+      rooms: data.reservationRooms?.map(rr => rr.room.roomNumber) || [],
+      reservationRooms: data.reservationRooms || [],
+      specialRequests: data.specialRequests || "",
+      invoiceId: data.invoiceId || "",
+      catering: data.catering ?? false,
+      status: data.status || "",
+    });
+    getRooms(data.reservationRooms?.map(rr => rr.room.id));
+    } catch (error) {
+      console.error("Błąd podczas dodawania rezerwacji:", error);
+    }
+  };
+
+    const getRooms = async (idRoom) => {
+      try {
+        const response = await api.get('/rooms');
+        const availableRooms = response.data.filter(room => room.status === "AVAILABLE" || idRoom.includes(room.id));
+        setRooms(availableRooms);
+      } catch (error) {
+        console.error("Błąd podczas dodawania rezerwacji:", error);
+      }
+    };
+    
+    useEffect(() => {
+      getReservation();
+    }, []);
 
   // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
   const filteredRooms = rooms.filter((room) => {
-    const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBeds = bedFilter === "all" || room.beds === parseInt(bedFilter);
+    const matchesSearch = room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBeds = bedFilter === "all" || room.bedCount === parseInt(bedFilter);
     return matchesSearch && matchesBeds;
   });
 
@@ -50,15 +89,49 @@ const ModifyReservation = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Form Data:", formData);
-    setIsEditable(false); // After submission, lock the form again
+    setIsEditable(false);
+    await modifyReservation();
+  }
+
+  const modifyReservation = async () => {
+    try {
+      console.log("Reservation to send:", JSON.stringify(formData, null, 2));
+      const response = await api.put(`/reservations/${reservationId}`, formData);
+      console.log("Reservation added:", response.data);
+      handleClickNewReservation()
+    } catch (error) {
+      console.error("Błąd podczas dodawania rezerwacji:", error);
+    }
   };
 
-  const handleEditClick = () => {
-    setIsEditable(true); // Enable editing
+  const handleRoomToggle = (room) => {
+    setFormData((prevData) => {
+      const isSelected = prevData.reservationRooms.some(rr => rr.room.id === room.id);
+  
+      let updatedReservationRooms;
+      if (isSelected) {
+        updatedReservationRooms = prevData.reservationRooms.filter(rr => rr.room.id !== room.id);
+      } else {
+        updatedReservationRooms = [
+          ...prevData.reservationRooms,
+          {
+            room: room,
+            guestCount: room.bedCount,
+            id: room.id,
+          }
+        ];
+      }
+  
+      return {
+        ...prevData,
+        reservationRooms: updatedReservationRooms,
+        rooms: updatedReservationRooms.map(rr => rr.room.roomNumber),
+      };
+    });
   };
+  
 
   return (
     <div className="card-body">
@@ -171,8 +244,13 @@ const ModifyReservation = () => {
 
         {/* Scrollable room list */}
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-          {filteredRooms.length > 0 ? (
-            filteredRooms.map((room) => (
+        {filteredRooms.length > 0 ? (
+          filteredRooms.map((room) => {
+            const isSelected = formData.reservationRooms?.some(
+              (rr) => rr.room.id === room.id
+            );
+
+            return (
               <div key={room.id} className="form-check">
                 <input
                   type="checkbox"
@@ -180,18 +258,19 @@ const ModifyReservation = () => {
                   id={`room${room.id}`}
                   name="rooms"
                   value={room.id}
-                  checked={formData.rooms.includes(room.name)}
-                  onChange={handleChange}
+                  checked={isSelected}
+                  onChange={() => handleRoomToggle(room)}
                   disabled={!isEditable}
                 />
                 <label className="form-check-label" htmlFor={`room${room.id}`}>
-                  {room.name} - Piętro {room.floor}, {room.beds} łóżek
+                  Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
                 </label>
               </div>
-            ))
-          ) : (
-            <div>Brak pokoi spełniających kryteria wyszukiwania.</div>
-          )}
+            );
+          })
+        ) : (
+          <div>Brak pokoi spełniających kryteria wyszukiwania.</div>
+        )}
         </div>
 
         <h3 className="card-title mt-4">Dodatkowe Informacje</h3>
@@ -240,8 +319,8 @@ const ModifyReservation = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="active"
-            checked={formData.status === "active"}
+            value="ACTIVE"
+            checked={formData.status === "ACTIVE"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -252,8 +331,8 @@ const ModifyReservation = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="cancelled"
-            checked={formData.status === "cancelled"}
+            value="CANCELLED"
+            checked={formData.status === "CANCELLED"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -264,8 +343,8 @@ const ModifyReservation = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="completed"
-            checked={formData.status === "completed"}
+            value="COMPLETED"
+            checked={formData.status === "COMPLETED"}
             onChange={handleChange}
             disabled={!isEditable}
           />

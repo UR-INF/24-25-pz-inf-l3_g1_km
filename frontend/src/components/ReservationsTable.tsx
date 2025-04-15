@@ -1,12 +1,48 @@
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { api } from '../services/api';
 
 const ReservationsTable = () => {
   const navigate = useNavigate();
 
-  const handleShowReservation = () => {
-    navigate("/RecepcionistDashboard/Reservations/ReservationDetails", { replace: true });
+const [reservations, setReservations] = useState([]); 
+
+const getReservations = async () => {
+    try {
+      const response = await api.get('/reservations');
+      //const availableReservations = response.data.filter(reser => reser.status === "AVAILABLE");
+      setReservations(response.data);
+      //console.log(reservations)
+    } catch (error) {
+      console.error("Błąd podczas dodawania rezerwacji:", error);
+    }
   };
 
+  const handleDelete = async (id) => {
+  
+    if (window.confirm("Czy na pewno chcesz usunąć tę rezerwację?")) {
+      try {
+        const response = await api.delete(`/reservations/${id}`);
+        console.log("Rezerwacja została usunięta:", response.data);
+        getReservations();
+      } catch (error) {
+        console.error("Błąd podczas usuwania rezerwacji:", error);
+      }
+    }
+  };
+  
+
+useEffect(() => {
+  getReservations();
+    }, []);
+
+    const handleShowReservation = (id) => {
+      navigate("/RecepcionistDashboard/Reservations/ReservationDetails", {
+        replace: true,
+        state: { reservationId: id },
+      });
+    };
+  console.log('reservations',reservations)
   return (
     <div className="card">
       <div className="card">
@@ -57,146 +93,59 @@ const ReservationsTable = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <span className="text-secondary">1</span>
-                </td>
-                <td>Jan Kowalski</td>
-                <td>
-                  <span className="badge bg-success me-1"></span> Aktywna
-                </td>
-                <td>15 Dec 2022</td>
-                <td>17 Dec 2022</td>
-                <td>Tak</td>
-                <td>2</td>
-                <td className="text-end">
-                  <a
-                    href=""
-                    className="btn btn-primary"
-                    target="_blank"
-                    rel="noopener"
-                    onClick={handleShowReservation}
-                  >
-                    Zobacz
-                  </a>
-                </td>
-                <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="text-secondary">2</span>
-                </td>
-                <td>Anna Nowak</td>
-                <td>
-                  <span className="badge bg-warning me-1"></span> Anulowana
-                </td>
-                <td>20 Dec 2022</td>
-                <td>22 Dec 2022</td>
-                <td>Nie</td>
-                <td>1</td>
-                <td className="text-end">
-                  <a
-                    href=""
-                    className="btn btn-primary"
-                    target="_blank"
-                    rel="noopener"
-                    onClick={handleShowReservation}
-                  >
-                    Zobacz
-                  </a>
-                </td>
-                <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="text-secondary">3</span>
-                </td>
-                <td>Piotr Wójcik</td>
-                <td>
-                  <span className="badge bg-danger me-1"></span> Ukończona
-                </td>
-                <td>25 Dec 2022</td>
-                <td>27 Dec 2022</td>
-                <td>Tak</td>
-                <td>3</td>
-                <td className="text-end">
-                  <a
-                    href=""
-                    className="btn btn-primary"
-                    target="_blank"
-                    rel="noopener"
-                    onClick={handleShowReservation}
-                  >
-                    Zobacz
-                  </a>
-                </td>
-                <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="text-secondary">4</span>
-                </td>
-                <td>Maria Zielińska</td>
-                <td>
-                  <span className="badge bg-secondary me-1"></span> Aktywna
-                </td>
-                <td>1 Jan 2023</td>
-                <td>5 Jan 2023</td>
-                <td>Nie</td>
-                <td>1</td>
-                <td className="text-end">
-                  <a href="" className="btn btn-primary" target="_blank" rel="noopener">
-                    Zobacz
-                  </a>
-                </td>
-                <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className="text-secondary">5</span>
-                </td>
-                <td>Adam Wiśniewski</td>
-                <td>
-                  <span className="badge bg-success me-1"></span> Aktywna
-                </td>
-                <td>3 Jan 2023</td>
-                <td>8 Jan 2023</td>
-                <td>Tak</td>
-                <td>2</td>
-                <td className="text-end">
-                  <a
-                    href=""
-                    className="btn btn-primary"
-                    target="_blank"
-                    rel="noopener"
-                    onClick={handleShowReservation}
-                  >
-                    Zobacz
-                  </a>
-                </td>
-                <td>
-                  <a href="" className="btn btn-danger" target="_blank" rel="noopener">
-                    Usuń
-                  </a>
-                </td>
-              </tr>
-            </tbody>
+  {reservations.map((res) => (
+    <tr key={res.id}>
+      <td><span className="text-secondary">{res.id}</span></td>
+      <td>{res.guestFirstName && res.guestLastName ? `${res.guestFirstName} ${res.guestLastName}` : 'Brak danych'}</td>
+      <td>
+        <span className={`badge me-1 ${
+          res.status === 'ACTIVE'
+            ? 'bg-success'
+            : res.status === 'CANCELLED'
+            ? 'bg-warning'
+            : res.status === 'COMPLETED'
+            ? 'bg-danger'
+            : 'bg-secondary'
+        }`}></span>
+        {res.status === 'ACTIVE'
+          ? 'Aktywna'
+          : res.status === 'CANCELLED'
+          ? 'Anulowana'
+          : res.status === 'COMPLETED'
+          ? 'Ukończona'
+          : res.status}
+      </td>
+      <td>{new Date(res.startDate).toLocaleDateString()}</td>
+      <td>{new Date(res.endDate).toLocaleDateString()}</td>
+      <td>{res.catering ? 'Tak' : 'Nie'}</td>
+      <td>{res.roomsCount || 1}</td>
+      <td className="text-end">
+        <a
+          href="#"
+          className="btn btn-primary"
+          onClick={(e) => {
+            e.preventDefault();
+            handleShowReservation(res.id);
+          }}
+        >
+          Zobacz
+        </a>
+      </td>
+      <td>
+        <a 
+          href="#" 
+          className="btn btn-danger" 
+          onClick={(e) => {
+            e.preventDefault();
+            handleDelete(res.id);
+          }}
+        >
+          Usuń
+        </a>
+      </td>
+    </tr>
+  ))}
+</tbody>
           </table>
         </div>
 

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../services/api";
+import { useNavigate } from "react-router";
 const AddReservationForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
@@ -18,6 +19,11 @@ const AddReservationForm = () => {
     rooms: [],
   });
   const [rooms, setRooms] = useState([]);
+  const navigate = useNavigate();
+
+  const handleClickNewReservation = () => {
+    navigate("/RecepcionistDashboard/Reservations", { replace: true });
+  };
 
   const getRooms = async () => {
     try {
@@ -73,6 +79,7 @@ const AddReservationForm = () => {
     try {
       const response = await api.post("/reservations", formData);
       console.log("Reservation added:", response.data);
+      handleClickNewReservation();
     } catch (error) {
       console.log("Reservation added:", formData);
       console.error("Błąd podczas dodawania rezerwacji:", error);
