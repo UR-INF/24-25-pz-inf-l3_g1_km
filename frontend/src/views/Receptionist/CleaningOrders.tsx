@@ -6,7 +6,7 @@ const CleaningOrders = () => {
   const navigate = useNavigate();
 
   const handleClickNewCleaningOrder = () => {
-    navigate("/RecepcionistDashboard/CleaningOrders/NewCleaningOrder", { replace: true });
+    navigate("/RecepcionistDashboard/Orders/NewCleaningOrder", { replace: true });
   };
 
   return (

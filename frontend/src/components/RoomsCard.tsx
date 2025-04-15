@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 const RoomsCard = () => {
   return (
     <div className="col-sm-6 col-lg-3">

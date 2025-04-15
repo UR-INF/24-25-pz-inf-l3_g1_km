@@ -29,29 +29,10 @@ const App = () => {
           path="/RecepcionistDashboard/Reservations"
           element={state.loggedIn ? <Reservations /> : <LoginView />}
         />
+
         <Route
           path="/RecepcionistDashboard/Reservations/NewReservation"
           element={state.loggedIn ? <AddReservation /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/RepairsOrders"
-          element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/RepairsOrders/NewRepair"
-          element={state.loggedIn ? <AddRepair /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/CleaningOrders"
-          element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/CleaningOrders/NewCleaningOrder"
-          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
         />
 
         <Route
@@ -60,12 +41,32 @@ const App = () => {
         />
 
         <Route
-          path="/RecepcionistDashboard/CleaningOrders/CleaningOrderDetails"
+          path="/RecepcionistDashboard/Orders/Repairs"
+          element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/NewRepair"
+          element={state.loggedIn ? <AddRepair /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/Cleaning"
+          element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/NewCleaningOrder"
+          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Orders/CleaningOrderDetails"
           element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
         />
 
         <Route
-          path="/RecepcionistDashboard/RepairOrders/RepairsOrderDetails"
+          path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
         />
       </Route>

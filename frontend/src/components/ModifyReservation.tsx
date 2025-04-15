@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { api } from '../services/api';
+import { api } from "../services/api";
 import { useNavigate } from "react-router";
 
-const ModifyReservation = ({reservationId}) => {
+const ModifyReservation = ({ reservationId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all");
   const [isEditable, setIsEditable] = useState(false);
-  const [rooms, setRooms] = useState([]); 
+  const [rooms, setRooms] = useState([]);
   const [reservationRoomAssignments, setReservationRoomAssignments] = useState([]);
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
@@ -22,7 +22,7 @@ const ModifyReservation = ({reservationId}) => {
     catering: true,
     status: "ACTIVE",
   });
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
     navigate("/RecepcionistDashboard/Reservations", { replace: true });
@@ -33,50 +33,51 @@ const ModifyReservation = ({reservationId}) => {
       const response = await api.get(`/reservations/${reservationId}`);
       const data = response.data;
 
-    setFormData({
-      startDate: data.startDate || "",
-      endDate: data.endDate || "",
-      guestFirstName: data.guestFirstName || "",
-      guestLastName: data.guestLastName || "",
-      guestPesel: data.guestPesel || "",
-      guestPhone: data.guestPhone || "",
-      rooms: data.reservationRooms?.map(rr => rr.room.roomNumber) || [],
-      reservationRooms: data.reservationRooms || [],
-      specialRequests: data.specialRequests || "",
-      invoiceId: data.invoiceId || "",
-      catering: data.catering ?? false,
-      status: data.status || "",
-    });
-    getRooms(data.reservationRooms?.map(rr => rr.room.id));
+      setFormData({
+        startDate: data.startDate || "",
+        endDate: data.endDate || "",
+        guestFirstName: data.guestFirstName || "",
+        guestLastName: data.guestLastName || "",
+        guestPesel: data.guestPesel || "",
+        guestPhone: data.guestPhone || "",
+        rooms: data.reservationRooms?.map((rr) => rr.room.roomNumber) || [],
+        reservationRooms: data.reservationRooms || [],
+        specialRequests: data.specialRequests || "",
+        invoiceId: data.invoiceId || "",
+        catering: data.catering ?? false,
+        status: data.status || "",
+      });
+      getRooms(data.reservationRooms?.map((rr) => rr.room.id));
     } catch (error) {
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
   };
 
-    const getRooms = async (idRoom) => {
-      try {
-        const response = await api.get('/rooms');
-        const availableRooms = response.data.filter(room => room.status === "AVAILABLE" || idRoom.includes(room.id));
-        setRooms(availableRooms);
-      } catch (error) {
-        console.error("Błąd podczas dodawania rezerwacji:", error);
-      }
-    };
-    const getIdRef = async () => {
-      try {
-        const response = await api.get(`/reservations/${reservationId}/rooms`);
-        console.log("Pobrane przypisania pokoi:", response.data);
-        setReservationRoomAssignments(response.data);
-      } catch (error) {
-        console.error("Błąd podczas pobierania przypisań pokoi:", error);
-      }
-    };
-    
-    
-    useEffect(() => {
-      getIdRef();
-      getReservation();
-    }, []);
+  const getRooms = async (idRoom) => {
+    try {
+      const response = await api.get("/rooms");
+      const availableRooms = response.data.filter(
+        (room) => room.status === "AVAILABLE" || idRoom.includes(room.id),
+      );
+      setRooms(availableRooms);
+    } catch (error) {
+      console.error("Błąd podczas dodawania rezerwacji:", error);
+    }
+  };
+  const getIdRef = async () => {
+    try {
+      const response = await api.get(`/reservations/${reservationId}/rooms`);
+      console.log("Pobrane przypisania pokoi:", response.data);
+      setReservationRoomAssignments(response.data);
+    } catch (error) {
+      console.error("Błąd podczas pobierania przypisań pokoi:", error);
+    }
+  };
+
+  useEffect(() => {
+    getIdRef();
+    getReservation();
+  }, []);
 
   // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
   const filteredRooms = rooms.filter((room) => {
@@ -117,24 +118,22 @@ const ModifyReservation = ({reservationId}) => {
     await updateRoomAssignments();
     handleClickNewReservation();
   };
- 
 
   const modifyReservation = async (updatedFormData) => {
     try {
       const response = await api.put(`/reservations/${reservationId}`, updatedFormData);
       console.log("Rezerwacja została zaktualizowana:", response.data);
-      
     } catch (error) {
       console.error("Błąd podczas aktualizacji rezerwacji:", error);
     }
   };
-  
+
   const updateRoomAssignments = async () => {
     for (const oldAssignment of reservationRoomAssignments) {
       const existsInNew = formData.reservationRooms.some(
-        (r) => r.room.id === oldAssignment.room.id
+        (r) => r.room.id === oldAssignment.room.id,
       );
-  
+
       if (!existsInNew) {
         try {
           await api.delete(`/reservations/${reservationId}/rooms/${oldAssignment.id}`);
@@ -145,17 +144,15 @@ const ModifyReservation = ({reservationId}) => {
     }
 
     for (const rr of formData.reservationRooms) {
-      const sameAssignment = reservationRoomAssignments.find(
-        (a) => a.room.id === rr.room.id
-      );
-  
+      const sameAssignment = reservationRoomAssignments.find((a) => a.room.id === rr.room.id);
+
       if (sameAssignment) {
         continue;
       }
       const oldAssignment = reservationRoomAssignments.find(
-        (a) => !formData.reservationRooms.some((r) => r.room.id === a.room.id)
+        (a) => !formData.reservationRooms.some((r) => r.room.id === a.room.id),
       );
-  
+
       if (!oldAssignment) {
         await api.post(`/reservations/${reservationId}/rooms`, {
           guestCount: rr.guestCount,
@@ -176,17 +173,14 @@ const ModifyReservation = ({reservationId}) => {
       }
     }
   };
-  
 
   const handleRoomToggle = (room) => {
     setFormData((prevData) => {
-      const isSelected = prevData.reservationRooms.some(
-        (rr) => rr.room.id === room.id
-      );
+      const isSelected = prevData.reservationRooms.some((rr) => rr.room.id === room.id);
 
       let updatedReservationRooms;
       if (isSelected) {
-        updatedReservationRooms = prevData.reservationRooms.filter(rr => rr.room.id !== room.id);
+        updatedReservationRooms = prevData.reservationRooms.filter((rr) => rr.room.id !== room.id);
       } else {
         updatedReservationRooms = [
           ...prevData.reservationRooms,
@@ -194,17 +188,16 @@ const ModifyReservation = ({reservationId}) => {
             room: room,
             guestCount: room.bedCount,
             id: room.id,
-          }
+          },
         ];
       }
       return {
         ...prevData,
         reservationRooms: updatedReservationRooms,
-        rooms: updatedReservationRooms.map(rr => rr.room.roomNumber),
+        rooms: updatedReservationRooms.map((rr) => rr.room.roomNumber),
       };
     });
   };
-  
 
   return (
     <div className="card-body">
@@ -317,33 +310,31 @@ const ModifyReservation = ({reservationId}) => {
 
         {/* Scrollable room list */}
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-        {filteredRooms.length > 0 ? (
-          filteredRooms.map((room) => {
-            const isSelected = formData.reservationRooms?.some(
-              (rr) => rr.room.id === room.id
-            );
+          {filteredRooms.length > 0 ? (
+            filteredRooms.map((room) => {
+              const isSelected = formData.reservationRooms?.some((rr) => rr.room.id === room.id);
 
-            return (
-              <div key={room.id} className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id={`room${room.id}`}
-                  name="rooms"
-                  value={room.id}
-                  checked={isSelected}
-                  onChange={() => handleRoomToggle(room)}
-                  disabled={!isEditable}
-                />
-                <label className="form-check-label" htmlFor={`room${room.id}`}>
-                  Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
-                </label>
-              </div>
-            );
-          })
-        ) : (
-          <div>Brak pokoi spełniających kryteria wyszukiwania.</div>
-        )}
+              return (
+                <div key={room.id} className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id={`room${room.id}`}
+                    name="rooms"
+                    value={room.id}
+                    checked={isSelected}
+                    onChange={() => handleRoomToggle(room)}
+                    disabled={!isEditable}
+                  />
+                  <label className="form-check-label" htmlFor={`room${room.id}`}>
+                    Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
+                  </label>
+                </div>
+              );
+            })
+          ) : (
+            <div>Brak pokoi spełniających kryteria wyszukiwania.</div>
+          )}
         </div>
 
         <h3 className="card-title mt-4">Dodatkowe Informacje</h3>

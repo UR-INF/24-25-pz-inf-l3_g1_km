@@ -1,4 +1,4 @@
-import HeaderNav from "../components/HeaderNav";
+import HeaderNav from "../components/HeaderNav/HeaderNav";
 import Titlebar from "../components/Titlebar";
 import { Outlet } from "react-router";
 

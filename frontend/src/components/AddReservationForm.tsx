@@ -57,11 +57,11 @@ const AddReservationForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-  
+
     if (name === "rooms") {
       const roomId = parseInt(value);
-      const selectedRoom = rooms.find(room => room.id === roomId);
-  
+      const selectedRoom = rooms.find((room) => room.id === roomId);
+
       setFormData((prevData) => ({
         ...prevData,
         reservationRooms: checked
@@ -70,7 +70,7 @@ const AddReservationForm = () => {
               {
                 room: selectedRoom,
                 guestCount: 1,
-              }
+              },
             ]
           : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
       }));
@@ -81,7 +81,6 @@ const AddReservationForm = () => {
       }));
     }
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
