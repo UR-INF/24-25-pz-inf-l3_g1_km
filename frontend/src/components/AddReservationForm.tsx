@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { api } from '../services/api';
 const AddReservationForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all"); // Filtr po liczbie łóżek
   const [formData, setFormData] = useState({
-    startDate: "",
+    startDate: new Date().toISOString().split("T")[0],
     endDate: "",
-    status: "active",
+    status: "ACTIVE",
     specialRequests: "",
     modifiedAt: "",
     catering: false,
@@ -17,19 +17,27 @@ const AddReservationForm = () => {
     invoiceId: "",
     rooms: [],
   });
+  const [rooms, setRooms] = useState([]); 
 
-  const rooms = [
-    { id: 1, name: "Pokój 101", floor: 1, beds: 2 },
-    { id: 2, name: "Pokój 102", floor: 1, beds: 1 },
-    { id: 3, name: "Pokój 103", floor: 2, beds: 3 },
-    { id: 4, name: "Pokój 104", floor: 2, beds: 2 },
-    { id: 5, name: "Pokój 105", floor: 3, beds: 1 },
-  ];
+
+  const getRooms = async () => {
+    try {
+      const response = await api.get('/rooms');
+      const availableRooms = response.data.filter(room => room.status === "AVAILABLE");
+      setRooms(availableRooms);
+    } catch (error) {
+      console.error("Błąd podczas dodawania rezerwacji:", error);
+    }
+  };
+  
+  useEffect(() => {
+    getRooms();
+  }, []);
 
   // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
   const filteredRooms = rooms.filter((room) => {
-    const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBeds = bedFilter === "all" || room.beds === parseInt(bedFilter);
+    const matchesSearch = room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBeds = bedFilter === "all" || room.bedCount === parseInt(bedFilter);
     return matchesSearch && matchesBeds;
   });
 
@@ -43,15 +51,36 @@ const AddReservationForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    if (name === "rooms") {
+      const roomId = parseInt(value);
+      setFormData((prevData) => ({
+        ...prevData,
+        rooms: checked
+          ? [...prevData.rooms, roomId]
+          : prevData.rooms.filter((id) => id !== roomId),
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
+
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    await addReservation();
+  };
+
+  const addReservation = async () => {
+    try {
+      const response = await api.post('/reservations', formData);
+      console.log("Reservation added:", response.data);
+    } catch (error) {
+      console.log("Reservation added:", formData);
+      console.error("Błąd podczas dodawania rezerwacji:", error);
+    }
   };
 
   return (
@@ -69,6 +98,8 @@ const AddReservationForm = () => {
               name="startDate"
               value={formData.startDate}
               onChange={handleChange}
+              required
+              title="To pole jest wymagane"
             />
           </div>
           <div className="col-md">
@@ -79,6 +110,8 @@ const AddReservationForm = () => {
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
+              required
+              title="To pole jest wymagane"
             />
           </div>
         </div>
@@ -93,6 +126,7 @@ const AddReservationForm = () => {
               name="guestFirstName"
               value={formData.guestFirstName}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="col-md">
@@ -103,6 +137,7 @@ const AddReservationForm = () => {
               name="guestLastName"
               value={formData.guestLastName}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="col-md">
@@ -113,6 +148,7 @@ const AddReservationForm = () => {
               name="guestPesel"
               value={formData.guestPesel}
               onChange={handleChange}
+              required
             />
           </div>
           <div className="col-md">
@@ -123,6 +159,7 @@ const AddReservationForm = () => {
               name="guestPhone"
               value={formData.guestPhone}
               onChange={handleChange}
+              required
             />
           </div>
         </div>
@@ -137,6 +174,7 @@ const AddReservationForm = () => {
             placeholder="Wyszukaj pokój"
             value={searchTerm}
             onChange={handleSearchChange}
+            
           />
         </div>
 
@@ -165,7 +203,7 @@ const AddReservationForm = () => {
                   onChange={handleChange}
                 />
                 <label className="form-check-label" htmlFor={`room${room.id}`}>
-                  {room.name} - Piętro {room.floor}, {room.beds} łóżek
+                  Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
                 </label>
               </div>
             ))
@@ -217,8 +255,8 @@ const AddReservationForm = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="active"
-            checked={formData.status === "active"}
+            value="ACTIVE"
+            checked={formData.status === "ACTIVE"}
             onChange={handleChange}
           />
           <label className="form-check-label">Aktywna</label>
@@ -228,8 +266,8 @@ const AddReservationForm = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="cancelled"
-            checked={formData.status === "cancelled"}
+            value="CANCELLED"
+            checked={formData.status === "CANCELLED"}
             onChange={handleChange}
           />
           <label className="form-check-label">Anulowana</label>
@@ -239,8 +277,8 @@ const AddReservationForm = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="completed"
-            checked={formData.status === "completed"}
+            value="COMPLETED"
+            checked={formData.status === "COMPLETED"}
             onChange={handleChange}
           />
           <label className="form-check-label">Zakończona</label>
