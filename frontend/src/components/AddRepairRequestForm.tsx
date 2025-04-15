@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { api } from "../services/api";
 
 const AddRepairRequestForm = () => {
   const [formData, setFormData] = useState({
-    repairType: '',
-    repairDescription: '',
-    status: 'pending',
-    responsiblePerson: '',
-    requestDate: new Date().toISOString().split('T')[0],
+    repairType: "",
+    repairDescription: "",
+    status: "pending",
+    responsiblePerson: "",
+    requestDate: new Date().toISOString().split("T")[0],
   });
 
   const [rooms, setRooms] = useState([]);
@@ -31,7 +31,9 @@ const AddRepairRequestForm = () => {
     fetchRoomsAndEmployees();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -44,45 +46,47 @@ const AddRepairRequestForm = () => {
 
     try {
       const selectedRoom = rooms.find((room) => room.id.toString() === formData.repairType);
-      const selectedEmployee = employees.find((emp) => emp.id.toString() === formData.responsiblePerson);
+      const selectedEmployee = employees.find(
+        (emp) => emp.id.toString() === formData.responsiblePerson,
+      );
 
       if (!selectedRoom) {
-        alert('Wybrany pokój nie istnieje.');
+        alert("Wybrany pokój nie istnieje.");
         return;
       }
 
       if (!selectedEmployee) {
-        alert('Wybrany pracownik nie istnieje.');
+        alert("Wybrany pracownik nie istnieje.");
         return;
       }
 
-      const updatedRoom = { ...selectedRoom, status: 'OUT_OF_SERVICE' };
+      const updatedRoom = { ...selectedRoom, status: "OUT_OF_SERVICE" };
       await api.put(`/rooms/${selectedRoom.id}`, updatedRoom);
 
       const requestPayload = {
         employee: selectedEmployee,
         room: selectedRoom,
-        requestDate: `${formData.requestDate}T${new Date().toTimeString().split(' ')[0]}`,
+        requestDate: `${formData.requestDate}T${new Date().toTimeString().split(" ")[0]}`,
         completionDate: null,
         status: formData.status.toUpperCase(),
         description: formData.repairDescription,
       };
 
-      const response = await api.post('/housekeeping-tasks', requestPayload);
+      const response = await api.post("/housekeeping-tasks", requestPayload);
 
-      console.log('Zlecenie dodane:', response.data);
-      alert('Zlecenie naprawy dodane pomyślnie! Pokój oznaczony jako niedostępny.');
+      console.log("Zlecenie dodane:", response.data);
+      alert("Zlecenie naprawy dodane pomyślnie! Pokój oznaczony jako niedostępny.");
 
       setFormData({
-        repairType: '',
-        repairDescription: '',
-        status: 'pending',
-        responsiblePerson: '',
-        requestDate: new Date().toISOString().split('T')[0],
+        repairType: "",
+        repairDescription: "",
+        status: "pending",
+        responsiblePerson: "",
+        requestDate: new Date().toISOString().split("T")[0],
       });
     } catch (error: any) {
       console.error(error);
-      alert('Wystąpił błąd podczas przetwarzania zgłoszenia.');
+      alert("Wystąpił błąd podczas przetwarzania zgłoszenia.");
     }
   };
 
@@ -157,8 +161,12 @@ const AddRepairRequestForm = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">Anuluj</a>
-            <button type="submit" className="btn btn-primary btn-2">Zatwierdź</button>
+            <a href="#" className="btn btn-1">
+              Anuluj
+            </a>
+            <button type="submit" className="btn btn-primary btn-2">
+              Zatwierdź
+            </button>
           </div>
         </div>
       </form>

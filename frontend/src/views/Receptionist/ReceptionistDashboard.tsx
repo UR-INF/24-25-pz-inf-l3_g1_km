@@ -1,4 +1,3 @@
-import HeaderNav from "../../components/HeaderNav";
 import ReservationCard from "../../components/ReservationCard";
 import RoomsCard from "../../components/RoomsCard";
 import RepairsCard from "../../components/RepairsCard";
@@ -9,43 +8,40 @@ import CleaningTable from "../../components/CleaningTable";
 
 const ReceptionistDashboard = () => {
   return (
-    <div>
-      <HeaderNav />
-      <div className="page-wrapper">
-        <div className="page-header d-print-none">
-          <div className="container-xl">
-            <div className="row g-2 align-items-center">
-              <div className="col">
-                <div className="page-pretitle">Przegląd obowiązków</div>
-                <h1 className="page-title">Podsumowanie</h1>
-              </div>
+    <div className="page-wrapper">
+      <div className="page-header d-print-none">
+        <div className="container-xl">
+          <div className="row g-2 align-items-center">
+            <div className="col">
+              <div className="page-pretitle">Przegląd obowiązków</div>
+              <h1 className="page-title">Podsumowanie</h1>
+            </div>
 
-              <div className="col-auto ms-auto d-print-none">
-                <button type="button" className="btn btn-primary">
-                  <i className="ti ti-plus fs-2 me-2"></i>
-                  Stwórz nową rezerwację
-                </button>
-              </div>
+            <div className="col-auto ms-auto d-print-none">
+              <button type="button" className="btn btn-primary">
+                <i className="ti ti-plus fs-2 me-2"></i>
+                Stwórz nową rezerwację
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="page-body">
-          <div className="container-xl">
-            <div className="row row-deck row-cards">
-              <ReservationCard />
-              <RoomsCard />
-              <RepairsCard />
-              <CleaningCard />
-              <div className="col-lg-12">
-                <CleaningPlot />
-              </div>
-              <div className="col-lg-12">
-                <RepairTable />
-              </div>
-              <div className="col-lg-12">
-                <CleaningTable />
-              </div>
+      <div className="page-body">
+        <div className="container-xl">
+          <div className="row row-deck row-cards">
+            <ReservationCard />
+            <RoomsCard />
+            <RepairsCard />
+            <CleaningCard />
+            <div className="col-lg-12">
+              <CleaningPlot />
+            </div>
+            <div className="col-lg-12">
+              <RepairTable />
+            </div>
+            <div className="col-lg-12">
+              <CleaningTable />
             </div>
           </div>
         </div>
