@@ -1,6 +1,7 @@
 import { useUser } from "../../contexts/user";
 import { getRoleNameInPolish } from "../../utils/roleUtils";
-import { useNavigate } from "react-router";
+import { getNavItemClass } from "../../utils/navigationUtils";
+import { useLocation, Link } from "react-router";
 
 interface UserDropdownProps {
   handleLogout: () => void;
@@ -11,13 +12,10 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
   const avatarUrl =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpAklFXnBaXsEsy_Y08157gUwnacNh7gQgLQ&s";
 
-  const navigate = useNavigate();
-  const handleClickSetting = () => {
-    navigate("/Settings", { replace: true });
-  };
+  const location = useLocation();
 
   return (
-    <div className="navbar-nav nav-item dropdown">
+    <div className={`${getNavItemClass("/Settings", location.pathname)} navbar-nav dropdown`}>
       <a
         href="#"
         className="nav-link d-flex lh-1 p-0 px-2"
@@ -30,6 +28,7 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
             backgroundImage: `url(${avatarUrl})`,
           }}
         ></span>
+
         <div className="ps-2">
           <div>
             {userFirstName} {userLastName}
@@ -38,9 +37,10 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
         </div>
       </a>
       <div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-        <a href="#" className="dropdown-item" onClick={handleClickSetting}>
+        <Link className="dropdown-item" to="/Settings">
           Ustawienia
-        </a>
+        </Link>
+
         <a href="#" className="dropdown-item text-danger" onClick={handleLogout}>
           Wyloguj się
         </a>

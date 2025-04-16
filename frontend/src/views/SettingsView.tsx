@@ -1,4 +1,9 @@
+import { useUser } from "../contexts/user";
+import { getRoleNameInPolish } from "../utils/roleUtils";
+
 const SettingsView = () => {
+  const { userFirstName, userLastName, userRoleName, userEmail } = useUser();
+
   return (
     <div className="page-wrapper">
       <div className="page-header d-print-none">
@@ -37,15 +42,20 @@ const SettingsView = () => {
               <div className="row g-3">
                 <div className="col-md">
                   <div className="form-label">Imię</div>
-                  <input type="text" className="form-control" value="Dawid" disabled />
+                  <input type="text" className="form-control" value={userFirstName} disabled />
                 </div>
                 <div className="col-md">
                   <div className="form-label">Nazwisko</div>
-                  <input type="text" className="form-control" value="Wojcik" disabled />
+                  <input type="text" className="form-control" value={userLastName} disabled />
                 </div>
                 <div className="col-md">
                   <div className="form-label">Stanowisko</div>
-                  <input type="text" className="form-control" value="Recepcjonista" disabled />
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={getRoleNameInPolish(userRoleName)}
+                    disabled
+                  />
                 </div>
               </div>
               <h3 className="card-title mt-4">Email</h3>
@@ -55,7 +65,7 @@ const SettingsView = () => {
               <div>
                 <div className="row g-2">
                   <div className="col-auto">
-                    <input type="text" className="form-control w-auto" value="dawid@hotel.pl" />
+                    <input type="text" className="form-control w-auto" value={userEmail} />
                   </div>
                   <div className="col-auto">
                     <a href="#" className="btn btn-1">
