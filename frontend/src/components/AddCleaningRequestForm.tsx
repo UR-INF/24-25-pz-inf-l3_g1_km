@@ -26,14 +26,14 @@ const AddCleaningRequestForm = () => {
 
   return (
     <div className="card-body">
-      <h2 className="mb-4">Dodaj Nowe Zlecenie Sprzątania</h2>
+      <h2 className="mb-4">Dodaj nowe zlecenie sprzątania</h2>
 
       <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły Zlecenia</h3>
+        <h3 className="card-title">Szczegóły zlecenia</h3>
 
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Numer Pokoju</div>
+            <div className="form-label">Numer pokoju</div>
             <input
               type="number"
               className="form-control"
@@ -44,7 +44,7 @@ const AddCleaningRequestForm = () => {
           </div>
         </div>
 
-        <h3 className="card-title mt-4">Data Zgłoszenia</h3>
+        <h3 className="card-title mt-4">Data zgłoszenia</h3>
         <div className="row g-3">
           <div className="col-md">
             <input
@@ -58,7 +58,7 @@ const AddCleaningRequestForm = () => {
           </div>
         </div>
 
-        <h3 className="card-title mt-4">Opis Zlecenia</h3>
+        <h3 className="card-title mt-4">Opis zlecenia</h3>
         <div className="row g-3">
           <div className="col-md">
             <textarea

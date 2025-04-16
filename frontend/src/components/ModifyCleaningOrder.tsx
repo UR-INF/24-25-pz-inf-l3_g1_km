@@ -57,10 +57,10 @@ const ModifyCleaningOrder = () => {
 
   return (
     <div className="card-body">
-      <h2 className="mb-4">Szczegóły Zlecenia Sprzątania</h2>
+      <h2 className="mb-4">Modyfikuj zlecenie sprzątania</h2>
 
       <form onSubmit={handleSaveClick}>
-        <h3 className="card-title">Szczegóły Zlecenia Sprzątania</h3>
+        <h3 className="card-title">Szczegóły zlecenia sprzątania</h3>
 
         {/* Numer Pokoju */}
         <div className="row g-3">

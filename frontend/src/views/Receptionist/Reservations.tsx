@@ -17,7 +17,7 @@ const Reservations = () => {
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">
-              <div className="page-pretitle">Przegląd obowiązków</div>
+              <div className="page-pretitle">Rezerwacje</div>
               <h1 className="page-title">Podsumowanie</h1>
             </div>
 

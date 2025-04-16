@@ -144,6 +144,7 @@ const LoginView = () => {
               <input
                 type="email"
                 id="email"
+                autoComplete="email"
                 className="form-control"
                 placeholder="wpisz email"
                 value={email}
@@ -166,6 +167,7 @@ const LoginView = () => {
                 <input
                   type="password"
                   id="password"
+                  autoComplete="current-password"
                   className="form-control"
                   placeholder="wpisz hasło"
                   value={password}

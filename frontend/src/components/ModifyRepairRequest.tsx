@@ -38,14 +38,14 @@ const ModifyRepairRequest = () => {
 
   return (
     <div className="card-body">
-      <h2 className="mb-4">Szczegóły Zlecenia Naprawy</h2>
+      <h2 className="mb-4">Modyfikuj zlecenie naprawy</h2>
 
       <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły Zlecenia Naprawy</h3>
+        <h3 className="card-title">Szczegóły zlecenia naprawy</h3>
 
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Typ Naprawy</div>
+            <div className="form-label">Typ naprawy</div>
             <select
               className="form-control"
               name="repairType"
@@ -61,7 +61,7 @@ const ModifyRepairRequest = () => {
             </select>
           </div>
           <div className="col-md">
-            <div className="form-label">Opis Naprawy</div>
+            <div className="form-label">Opis naprawy</div>
             <textarea
               className="form-control"
               name="repairDescription"
@@ -72,7 +72,7 @@ const ModifyRepairRequest = () => {
           </div>
         </div>
 
-        <h3 className="card-title mt-4">Data Zgłoszenia</h3>
+        <h3 className="card-title mt-4">Data zgłoszenia</h3>
         <div className="row g-3">
           <div className="col-md">
             <input

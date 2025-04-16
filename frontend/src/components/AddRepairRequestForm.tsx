@@ -95,7 +95,7 @@ const AddRepairRequestForm = () => {
       <h2 className="mb-4">Dodaj nowe zlecenie naprawy</h2>
 
       <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły Zlecenia</h3>
+        <h3 className="card-title">Szczegóły zlecenia</h3>
 
         <div className="row g-3">
           <div className="col-md">
@@ -116,7 +116,7 @@ const AddRepairRequestForm = () => {
             </select>
           </div>
           <div className="col-md">
-            <div className="form-label">Opis Naprawy</div>
+            <div className="form-label">Opis naprawy</div>
             <textarea
               className="form-control"
               name="repairDescription"
@@ -147,7 +147,7 @@ const AddRepairRequestForm = () => {
           </div>
 
           <div className="col-md">
-            <div className="form-label">Data Zgłoszenia</div>
+            <div className="form-label">Data zgłoszenia</div>
             <input
               type="date"
               className="form-control"

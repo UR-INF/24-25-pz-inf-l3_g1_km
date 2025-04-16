@@ -99,13 +99,13 @@ const AddReservationForm = () => {
 
   return (
     <div className="card-body">
-      <h2 className="mb-4">Dodaj Nową Rezerwację</h2>
+      <h2 className="mb-4">Dodaj nową rezerwację</h2>
 
       <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły Rezerwacji</h3>
+        <h3 className="card-title">Szczegóły rezerwacji</h3>
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Data Rozpoczęcia</div>
+            <div className="form-label">Data rozpoczęcia</div>
             <input
               type="date"
               className="form-control"
@@ -117,7 +117,7 @@ const AddReservationForm = () => {
             />
           </div>
           <div className="col-md">
-            <div className="form-label">Data Zakończenia</div>
+            <div className="form-label">Data zakończenia</div>
             <input
               type="date"
               className="form-control"
@@ -130,7 +130,7 @@ const AddReservationForm = () => {
           </div>
         </div>
 
-        <h3 className="card-title mt-4">Informacje o Gościu</h3>
+        <h3 className="card-title mt-4">Informacje o rezerwującym</h3>
         <div className="row g-3">
           <div className="col-md">
             <div className="form-label">Imię</div>
@@ -178,9 +178,8 @@ const AddReservationForm = () => {
           </div>
         </div>
 
-        <h3 className="card-title mt-4">Wybór Pokoi</h3>
+        <h3 className="card-title mt-4">Wybór pokoi</h3>
 
-        {/* Search bar */}
         <div className="form-group mb-3">
           <input
             type="text"
@@ -191,18 +190,16 @@ const AddReservationForm = () => {
           />
         </div>
 
-        {/* Bed Filter Dropdown */}
         <div className="form-group mb-3">
-          <label className="form-label">Liczba Łóżek</label>
+          <label className="form-label">Liczba łóżek</label>
           <select className="form-control" value={bedFilter} onChange={handleBedFilterChange}>
             <option value="all">Wszystkie</option>
-            <option value="1">1 Łóżko</option>
-            <option value="2">2 Łóżka</option>
-            <option value="3">3 Łóżka</option>
+            <option value="1">1 łóżko</option>
+            <option value="2">2 łóżka</option>
+            <option value="3">3 łóżka</option>
           </select>
         </div>
 
-        {/* Scrollable room list */}
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredRooms.length > 0 ? (
             filteredRooms.map((room) => (
@@ -225,10 +222,10 @@ const AddReservationForm = () => {
           )}
         </div>
 
-        <h3 className="card-title mt-4">Dodatkowe Informacje</h3>
+        <h3 className="card-title mt-4">Dodatkowe informacje</h3>
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Specjalne Życzenia</div>
+            <div className="form-label">Specjalne życzenia</div>
             <textarea
               className="form-control"
               name="specialRequests"
@@ -258,7 +255,7 @@ const AddReservationForm = () => {
               checked={formData.catering}
               onChange={handleChange}
             />
-            <span className="form-check-label">Dołącz Catering</span>
+            <span className="form-check-label">Dołącz catering dla gości hotelowych</span>
           </label>
         </div>
 
