@@ -23,7 +23,7 @@ const RepairTable = () => {
   };
 
   const handleShowRepairDetails = (id) => {
-    navigate(`/RecepcionistDashboard/RepairOrders/RepairsOrderDetails/${id}`);
+    navigate(`/RecepcionistDashboard/Orders/RepairsOrderDetails/${id}`);
   };
 
   const handleDelete = async (id) => {

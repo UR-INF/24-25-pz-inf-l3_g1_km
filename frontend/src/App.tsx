@@ -80,7 +80,7 @@ const App = () => {
         />
 
         <Route
-          path="/RecepcionistDashboard/RepairOrders/RepairsOrderDetails/:id"
+          path="/RecepcionistDashboard/Orders/RepairsOrderDetails/:id"
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
         />
 
