@@ -1,22 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router";
+import { api } from "../services/api";
 
 const ModifyRepairRequest = () => {
-  const [isEditable, setIsEditable] = useState(false); // Zmienna kontrolująca tryb edycji
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState({
-    repairType: "appliance", // Typ naprawy
-    repairDescription: "Naprawa urządzenia AGD.",
-    status: "pending", // Status zlecenia
-    responsiblePerson: "Jan Kowalski",
-    requestDate: "2023-04-01", // Data zgłoszenia
+    repairType: "",
+    repairDescription: "",
+    status: "pending",
+    responsiblePerson: "",
+    requestDate: "",
   });
 
-  // Opcje dostępnych typów napraw
-  const repairTypes = [
-    { id: "lightbulb", label: "Wymiana żarówki" },
-    { id: "appliance", label: "Naprawa urządzeń" },
-    { id: "plumbing", label: "Naprawa hydrauliczna" },
-    { id: "other", label: "Inne" },
-  ];
+  const [rooms, setRooms] = useState([]);
+  const [employees, setEmployees] = useState([]);
+
+  // Pobieranie szczegółów zgłoszenia
+  useEffect(() => {
+    const fetchRepair = async () => {
+      try {
+        const response = await api.get(`/housekeeping-tasks/${id}`);
+        const task = response.data;
+
+        setFormData({
+          repairType: task.room.id.toString(),
+          repairDescription: task.description,
+          status: task.status.toLowerCase(),
+          responsiblePerson: task.employee.id.toString(),
+          requestDate: task.requestDate.split("T")[0],
+        });
+      } catch (err) {
+        console.error("Błąd pobierania zgłoszenia:", err);
+        alert("Nie udało się pobrać danych zgłoszenia.");
+      }
+    };
+
+    fetchRepair();
+  }, [id]);
+
+  // Pobieranie pokoi i pracowników
+  useEffect(() => {
+    const fetchRoomsAndEmployees = async () => {
+      try {
+        const [roomsResponse, employeesResponse] = await Promise.all([
+          api.get("/rooms"),
+          api.get("/employees"),
+        ]);
+        setRooms(roomsResponse.data);
+        setEmployees(employeesResponse.data);
+      } catch (err) {
+        console.error("Błąd ładowania pokoi lub pracowników:", err);
+      }
+    };
+
+    fetchRoomsAndEmployees();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,14 +67,29 @@ const ModifyRepairRequest = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Repair Request:", formData);
-    setIsEditable(false); // Po zatwierdzeniu, zablokuj edytowanie
-  };
+    setIsEditable(false);
 
-  const handleEditClick = () => {
-    setIsEditable(true); // Włącz tryb edycji
+    try {
+      const room = { id: parseInt(formData.repairType) };
+      const employee = { id: parseInt(formData.responsiblePerson) };
+
+      await api.put(`/housekeeping-tasks/${id}`, {
+        room,
+        employee,
+        requestDate: `${formData.requestDate}T00:00:00`,
+        description: formData.repairDescription,
+        status: formData.status.toUpperCase(),
+        completionDate: null,
+      });
+
+      alert("Zlecenie zostało zaktualizowane.");
+      navigate("/RecepcionistDashboard/Orders/Repairs");
+    } catch (err) {
+      console.error("Błąd aktualizacji zgłoszenia:", err);
+      alert("Nie udało się zapisać zmian.");
+    }
   };
 
   return (
@@ -41,25 +97,28 @@ const ModifyRepairRequest = () => {
       <h2 className="mb-4">Modyfikuj zlecenie naprawy</h2>
 
       <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły zlecenia naprawy</h3>
+        <h3 className="card-title">Szczegóły zgłoszenia</h3>
 
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Typ naprawy</div>
+            <div className="form-label">Pokój</div>
             <select
               className="form-control"
               name="repairType"
               value={formData.repairType}
               onChange={handleChange}
               disabled={!isEditable}
+              required
             >
-              {repairTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.label}
+              <option value="">Wybierz pokój</option>
+              {rooms.map((room) => (
+                <option key={room.id} value={room.id}>
+                  {room.roomNumber} (Piętro: {room.floor})
                 </option>
               ))}
             </select>
           </div>
+
           <div className="col-md">
             <div className="form-label">Opis naprawy</div>
             <textarea
@@ -68,13 +127,33 @@ const ModifyRepairRequest = () => {
               value={formData.repairDescription}
               onChange={handleChange}
               disabled={!isEditable}
+              required
             ></textarea>
           </div>
         </div>
 
-        <h3 className="card-title mt-4">Data zgłoszenia</h3>
-        <div className="row g-3">
+        <div className="row g-3 mt-3">
           <div className="col-md">
+            <div className="form-label">Pracownik</div>
+            <select
+              className="form-control"
+              name="responsiblePerson"
+              value={formData.responsiblePerson}
+              onChange={handleChange}
+              disabled={!isEditable}
+              required
+            >
+              <option value="">Wybierz pracownika</option>
+              {employees.map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.firstName} {emp.lastName} ({emp.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="col-md">
+            <div className="form-label">Data zgłoszenia</div>
             <input
               type="date"
               className="form-control"
@@ -82,6 +161,7 @@ const ModifyRepairRequest = () => {
               value={formData.requestDate}
               onChange={handleChange}
               disabled
+              required
             />
           </div>
         </div>
@@ -104,8 +184,8 @@ const ModifyRepairRequest = () => {
             type="radio"
             className="form-check-input"
             name="status"
-            value="in-progress"
-            checked={formData.status === "in-progress"}
+            value="in_progress"
+            checked={formData.status === "in_progress"}
             onChange={handleChange}
             disabled={!isEditable}
           />
@@ -126,9 +206,11 @@ const ModifyRepairRequest = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <button type="button" className="btn btn-secondary" onClick={handleEditClick}>
-              Edytuj
-            </button>
+            {!isEditable && (
+              <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
+                Edytuj
+              </button>
+            )}
             {isEditable && (
               <button type="submit" className="btn btn-primary btn-2">
                 Zatwierdź

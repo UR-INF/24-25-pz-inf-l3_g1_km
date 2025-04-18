@@ -28,7 +28,7 @@ const RepairsCard = () => {
           <div className="h1 mb-3">{pendingCount !== null ? pendingCount : "..."}</div>
           <div className="d-flex mb-2">
             <div>
-              <a href="/zgloszenia" className="btn btn-primary">
+              <a href="/RecepcionistDashboard/Orders/Repairs" className="btn btn-primary">
                 Zobacz
               </a>
             </div>

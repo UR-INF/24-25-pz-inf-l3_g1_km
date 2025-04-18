@@ -75,6 +75,11 @@ const App = () => {
         />
 
         <Route
+          path="/RecepcionistDashboard/RepairOrders/RepairsOrderDetails/:id"
+          element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+        />
+
+        <Route
           path="/Settings"
           element={state.loggedIn ? <SettingsView /> : <LoginView />}
         />
