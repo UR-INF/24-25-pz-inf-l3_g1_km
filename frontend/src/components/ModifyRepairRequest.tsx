@@ -19,7 +19,6 @@ const ModifyRepairRequest = () => {
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
 
-  // Pobieranie szczegółów zgłoszenia
   useEffect(() => {
     const fetchRepair = async () => {
       try {
@@ -35,7 +34,7 @@ const ModifyRepairRequest = () => {
         };
 
         setFormData(mappedForm);
-        setOriginalData(mappedForm); // Zachowaj do anulowania edycji
+        setOriginalData(mappedForm);
       } catch (err) {
         console.error("Błąd pobierania zgłoszenia:", err);
         alert("Nie udało się pobrać danych zgłoszenia.");
@@ -45,7 +44,6 @@ const ModifyRepairRequest = () => {
     if (id) fetchRepair();
   }, [id]);
 
-  // Pobieranie pokoi i pracowników
   useEffect(() => {
     const fetchRoomsAndEmployees = async () => {
       try {
@@ -89,7 +87,7 @@ const ModifyRepairRequest = () => {
       await api.put(`/maintenance-requests/${id}`, {
         room,
         assignee: employee,
-        requester: employee, // Możesz podmienić na aktualnie zalogowanego użytkownika
+        requester: employee,
         requestDate: `${formData.requestDate}T00:00:00`,
         description: formData.repairDescription,
         status: formData.status.toUpperCase(),

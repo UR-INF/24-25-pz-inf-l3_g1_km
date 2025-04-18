@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
 
+const ITEMS_PER_PAGE = 8;
+
 const CleaningTable = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchCleaningTasks = async () => {
     try {
@@ -36,6 +40,16 @@ const CleaningTable = () => {
     fetchCleaningTasks();
   }, []);
 
+  const filteredTasks = tasks.filter((task) =>
+    task.description.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
+  const currentData = filteredTasks.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   const formatDate = (dateStr?: string) => {
     return dateStr ? new Date(dateStr).toLocaleDateString() : "-";
   };
@@ -45,7 +59,39 @@ const CleaningTable = () => {
   return (
     <div className="card">
       <div className="card-header">
-        <h3 className="card-title">Zlecenia sprzątania</h3>
+        <h3 className="card-title">Zgłoszenia sprzątania</h3>
+      </div>
+
+      <div className="card-body border-bottom py-3">
+        <div className="d-flex">
+          <div className="text-secondary">
+            Pokaż
+            <div className="mx-2 d-inline-block">
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                value={ITEMS_PER_PAGE}
+                size={3}
+                disabled
+              />
+            </div>
+            wyników
+          </div>
+          <div className="ms-auto text-secondary">
+            Wyszukaj:
+            <div className="ms-2 d-inline-block">
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="table-responsive">
@@ -65,7 +111,7 @@ const CleaningTable = () => {
           </thead>
 
           <tbody>
-            {tasks.map((task: any) => (
+            {currentData.map((task: any) => (
               <tr key={task.id}>
                 <td>{task.id}</td>
                 <td>{formatDate(task.requestDate)}</td>
@@ -81,10 +127,7 @@ const CleaningTable = () => {
                 </td>
                 <td>{formatDate(task.completionDate)}</td>
                 <td className="text-end">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleShowDetails(task.id)}
-                  >
+                  <button className="btn btn-primary" onClick={() => handleShowDetails(task.id)}>
                     Zobacz
                   </button>
                 </td>
@@ -98,11 +141,45 @@ const CleaningTable = () => {
           </tbody>
         </table>
       </div>
+
+      <div className="card-footer d-flex align-items-center">
+        <p className="m-0 text-secondary">
+          Wyświetlono <span>{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> do{" "}
+          <span>{Math.min(currentPage * ITEMS_PER_PAGE, filteredTasks.length)}</span> z{" "}
+          <span>{filteredTasks.length}</span> wyników
+        </p>
+        <ul className="pagination m-0 ms-auto">
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => setCurrentPage((p) => p - 1)}
+              disabled={currentPage === 1}
+            >
+              poprzednia
+            </button>
+          </li>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <li className={`page-item ${i + 1 === currentPage ? "active" : ""}`} key={i}>
+              <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
+                {i + 1}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage === totalPages}
+            >
+              następna
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };
 
-// 🔧 Kolory statusów
 const getStatusColor = (status: string) => {
   switch (status) {
     case "PENDING":
@@ -118,7 +195,6 @@ const getStatusColor = (status: string) => {
   }
 };
 
-// 🔠 Tłumaczenia statusów
 const translateStatus = (status: string) => {
   switch (status) {
     case "PENDING":

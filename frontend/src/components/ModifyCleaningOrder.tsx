@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import { api } from "../services/api";
 
 const ModifyCleaningOrder = () => {
-  const { id } = useParams(); // ID zadania z URL
+  const { id } = useParams();
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState({
     employee: {},
@@ -65,7 +65,7 @@ const ModifyCleaningOrder = () => {
       await api.put(`/housekeeping-tasks/${id}`, payload);
 
       alert("Zlecenie zaktualizowane pomyślnie!");
-      setOriginalData(formData); // Ustaw nowe oryginalne dane
+      setOriginalData(formData);
       setIsEditable(false);
     } catch (error) {
       console.error("Błąd aktualizacji zadania:", error);

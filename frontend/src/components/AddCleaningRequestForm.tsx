@@ -151,9 +151,6 @@ const AddCleaningTaskForm = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">
-              Anuluj
-            </a>
             <button type="submit" className="btn btn-primary btn-2">
               Zatwierdź
             </button>
