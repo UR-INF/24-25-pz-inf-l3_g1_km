@@ -1,8 +1,12 @@
 package com.hoteltaskmanager.controller;
 
 import com.hoteltaskmanager.model.Employee;
+import com.hoteltaskmanager.model.Role;
+import com.hoteltaskmanager.model.RoleName;
 import com.hoteltaskmanager.repository.EmployeeRepository;
+import com.hoteltaskmanager.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +19,7 @@ import java.util.Optional;
  * <p>
  * Dostępne endpointy:
  * <p>
- * GET    /api/employees                        - Pobierz wszystkich pracowników
+ * GET    /api/employees                        - Pobierz wszystkich pracowników (z opcją filtrowania po roli)
  * GET    /api/employees/{id}                   - Pobierz pracownika po ID
  * POST   /api/employees                        - Dodaj nowego pracownika
  * PUT    /api/employees/{id}                   - Zaktualizuj dane pracownika
@@ -31,13 +35,30 @@ public class EmployeeController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     /**
      * GET /api/employees
-     * Pobierz listę wszystkich pracowników
+     * Pobiera listę wszystkich pracowników. Jeśli zostanie podany parametr `roleName`,
+     * zwraca tylko pracowników przypisanych do tej roli.
+     *
+     * @param roleName (opcjonalny) Nazwa roli według enuma {@link RoleName}, np. MANAGER, HOUSEKEEPER
+     * @return Lista pracowników odpowiadających zapytaniu; 404 jeśli rola nie istnieje
      */
     @GetMapping
-    public List<Employee> getAll() {
-        return employeeRepository.findAll();
+    public ResponseEntity<List<Employee>> getAll(@RequestParam(required = false) RoleName roleName) {
+        if (roleName == null) {
+            return ResponseEntity.ok(employeeRepository.findAll());
+        }
+
+        Optional<Role> roleOptional = roleRepository.findByName(roleName);
+        if (roleOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        List<Employee> filteredEmployees = employeeRepository.findAllByRole(roleOptional.get());
+        return ResponseEntity.ok(filteredEmployees);
     }
 
     /**
