@@ -1,4 +1,5 @@
-import { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
+import { createContext, useContext, useReducer, useEffect, ReactNode, useRef } from "react";
+import { useNotification } from "./notification";
 
 /**
  * Reprezentuje użytkownika z adresem email i tokenem JWT.
@@ -85,6 +86,8 @@ const isTokenExpired = (token: string): boolean => {
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const { showNotification } = useNotification();
+  const didRunRef = useRef(false);
 
   const login = (user: User) => {
     localStorage.setItem("token", user.token);
@@ -98,6 +101,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Automatyczne logowanie przy starcie aplikacji
   useEffect(() => {
+    if (didRunRef.current) return;
+    didRunRef.current = true;
+
     const token = localStorage.getItem("token");
     dispatch({ type: "SET_LOADING", payload: true });
 
@@ -105,6 +111,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const payload = JSON.parse(atob(token.split(".")[1]));
       const email = payload.email;
       dispatch({ type: "LOGIN", payload: { email, token } });
+
+      showNotification("success", "Pomyślnie zalogowano do systemu!");
     } else {
       logout();
     }

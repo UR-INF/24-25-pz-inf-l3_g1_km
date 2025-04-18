@@ -9,6 +9,7 @@ const DashboardLayout = () => {
         <Titlebar />
         <HeaderNav />
       </div>
+
       <div className="flex-grow-1 overflow-auto">
         <Outlet />
       </div>

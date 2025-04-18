@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/auth";
 import { useNavigate, Link, useLocation } from "react-router";
 import { getNavItemClass } from "../../utils/navigationUtils";
 import UserDropdown from "./UserDropdown";
+import { useNotification } from "../../contexts/notification";
 
 import ReceptionistMenu from "./Menu/ReceptionistMenu";
 import ManagerMenu from "./Menu/ManagerMenu";
@@ -14,10 +15,13 @@ const HeaderNav = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { showNotification } = useNotification();
 
   const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
+
+    showNotification("info", "Pomyślnie wylogowano z systemu!");
   };
 
   const renderMenuForRole = () => {

@@ -5,6 +5,7 @@ import { api } from "../services/api";
 import { AxiosError } from "axios";
 import { useUser } from "../contexts/user";
 import Titlebar from "../components/Titlebar";
+import { useNotification } from "../contexts/notification";
 
 const LoginView = () => {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ const LoginView = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { fetchUser } = useUser();
+  const { showNotification } = useNotification();
 
   const loginUser = async () => {
     try {
@@ -33,6 +35,7 @@ const LoginView = () => {
         fetchUser();
 
         navigate("/");
+        showNotification("success", "Pomyślnie zalogowano do systemu!");
       } else {
         setAlertMessage({
           title: "Błąd logowania",
