@@ -49,13 +49,12 @@ const AddRepairRequestForm = () => {
     }
 
     try {
-      // Zmieniamy status pokoju
       const updatedRoom = { ...selectedRoom, status: "OUT_OF_SERVICE" };
       await api.put(`/rooms/${selectedRoom.id}`, updatedRoom);
 
       const payload = {
         room: selectedRoom,
-        requester: selectedEmployee, // lub aktualnie zalogowany
+        requester: selectedEmployee,
         assignee: selectedEmployee,
         requestDate: `${formData.requestDate}T${new Date().toTimeString().split(" ")[0]}`,
         completionDate: null,
@@ -154,9 +153,6 @@ const AddRepairRequestForm = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">
-              Anuluj
-            </a>
             <button type="submit" className="btn btn-primary btn-2">
               Zatwierdź
             </button>

@@ -15,7 +15,7 @@ const RepairsOrders = () => {
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">
-              <div className="page-pretitle">Zgłoszenia sprzątania</div>
+              <div className="page-pretitle">Zgłoszenia napraw</div>
               <h1 className="page-title">Podsumowanie</h1>
             </div>
 

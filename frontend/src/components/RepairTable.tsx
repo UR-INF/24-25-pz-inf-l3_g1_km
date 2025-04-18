@@ -2,10 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
 
+const ITEMS_PER_PAGE = 8;
+
 const RepairTable = () => {
   const navigate = useNavigate();
   const [repairs, setRepairs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchRepairs = async () => {
     try {
@@ -18,11 +22,11 @@ const RepairTable = () => {
     }
   };
 
-  const handleShowRepairDetails = (id: number) => {
+  const handleShowRepairDetails = (id) => {
     navigate(`/RecepcionistDashboard/RepairOrders/RepairsOrderDetails/${id}`);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id) => {
     try {
       await api.delete(`/maintenance-requests/${id}`);
       setRepairs((prev) => prev.filter((task) => task.id !== id));
@@ -36,9 +40,18 @@ const RepairTable = () => {
     fetchRepairs();
   }, []);
 
-  const formatDate = (dateStr?: string) => {
-    return dateStr ? new Date(dateStr).toLocaleDateString() : "-";
-  };
+  const filteredRepairs = repairs.filter((r) =>
+    r.description.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredRepairs.length / ITEMS_PER_PAGE);
+  const currentData = filteredRepairs.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const formatDate = (dateStr) =>
+    dateStr ? new Date(dateStr).toLocaleDateString() : "-";
 
   if (loading) return <div>Ładowanie danych...</div>;
 
@@ -46,6 +59,38 @@ const RepairTable = () => {
     <div className="card">
       <div className="card-header">
         <h3 className="card-title">Zgłoszenia serwisowe</h3>
+      </div>
+
+      <div className="card-body border-bottom py-3">
+        <div className="d-flex">
+          <div className="text-secondary">
+            Pokaż
+            <div className="mx-2 d-inline-block">
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                value={ITEMS_PER_PAGE}
+                size={3}
+                disabled
+              />
+            </div>
+            wyników
+          </div>
+          <div className="ms-auto text-secondary">
+            Wyszukaj:
+            <div className="ms-2 d-inline-block">
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1); // reset page after search
+                }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="table-responsive">
@@ -63,9 +108,8 @@ const RepairTable = () => {
               <th></th>
             </tr>
           </thead>
-
           <tbody>
-            {repairs.map((req: any) => (
+            {currentData.map((req) => (
               <tr key={req.id}>
                 <td>{req.id}</td>
                 <td>{formatDate(req.requestDate)}</td>
@@ -83,10 +127,7 @@ const RepairTable = () => {
                 </td>
                 <td>{formatDate(req.completionDate)}</td>
                 <td className="text-end">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleShowRepairDetails(req.id)}
-                  >
+                  <button className="btn btn-primary" onClick={() => handleShowRepairDetails(req.id)}>
                     Zobacz
                   </button>
                 </td>
@@ -100,11 +141,38 @@ const RepairTable = () => {
           </tbody>
         </table>
       </div>
+
+      <div className="card-footer d-flex align-items-center">
+        <p className="m-0 text-secondary">
+          Wyświetlono <span>{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> do{" "}
+          <span>{Math.min(currentPage * ITEMS_PER_PAGE, filteredRepairs.length)}</span> z{" "}
+          <span>{filteredRepairs.length}</span> wyników
+        </p>
+        <ul className="pagination m-0 ms-auto">
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+            <button className="page-link" onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
+              poprzednia
+            </button>
+          </li>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <li className={`page-item ${i + 1 === currentPage ? "active" : ""}`} key={i}>
+              <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
+                {i + 1}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+            <button className="page-link" onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
+              następna
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status) => {
   switch (status) {
     case "PENDING":
       return "secondary";
@@ -117,7 +185,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const translateStatus = (status: string) => {
+const translateStatus = (status) => {
   switch (status) {
     case "PENDING":
       return "Do wykonania";
