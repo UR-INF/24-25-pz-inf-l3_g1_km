@@ -41,17 +41,16 @@ const RepairTable = () => {
   }, []);
 
   const filteredRepairs = repairs.filter((r) =>
-    r.description.toLowerCase().includes(search.toLowerCase())
+    r.description.toLowerCase().includes(search.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredRepairs.length / ITEMS_PER_PAGE);
   const currentData = filteredRepairs.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    currentPage * ITEMS_PER_PAGE,
   );
 
-  const formatDate = (dateStr) =>
-    dateStr ? new Date(dateStr).toLocaleDateString() : "-";
+  const formatDate = (dateStr) => (dateStr ? new Date(dateStr).toLocaleDateString() : "-");
 
   if (loading) return <div>Ładowanie danych...</div>;
 
@@ -127,7 +126,10 @@ const RepairTable = () => {
                 </td>
                 <td>{formatDate(req.completionDate)}</td>
                 <td className="text-end">
-                  <button className="btn btn-primary" onClick={() => handleShowRepairDetails(req.id)}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleShowRepairDetails(req.id)}
+                  >
                     Zobacz
                   </button>
                 </td>
@@ -150,7 +152,11 @@ const RepairTable = () => {
         </p>
         <ul className="pagination m-0 ms-auto">
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
+            <button
+              className="page-link"
+              onClick={() => setCurrentPage((p) => p - 1)}
+              disabled={currentPage === 1}
+            >
               poprzednia
             </button>
           </li>
@@ -162,7 +168,11 @@ const RepairTable = () => {
             </li>
           ))}
           <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-            <button className="page-link" onClick={() => setCurrentPage((p) => p + 1)} disabled={currentPage === totalPages}>
+            <button
+              className="page-link"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage === totalPages}
+            >
               następna
             </button>
           </li>

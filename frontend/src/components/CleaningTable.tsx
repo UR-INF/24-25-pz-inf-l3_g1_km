@@ -41,13 +41,13 @@ const CleaningTable = () => {
   }, []);
 
   const filteredTasks = tasks.filter((task) =>
-    task.description.toLowerCase().includes(search.toLowerCase())
+    task.description.toLowerCase().includes(search.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
   const currentData = filteredTasks.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
+    currentPage * ITEMS_PER_PAGE,
   );
 
   const formatDate = (dateStr?: string) => {

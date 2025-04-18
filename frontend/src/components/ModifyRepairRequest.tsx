@@ -49,7 +49,7 @@ const ModifyRepairRequest = () => {
       try {
         const [roomsResponse, employeesResponse] = await Promise.all([
           api.get("/rooms"),
-          api.get("/employees"),
+          api.get("/employees?roleName=MAINTENANCE"),
         ]);
         setRooms(roomsResponse.data);
         setEmployees(employeesResponse.data);
@@ -218,7 +218,11 @@ const ModifyRepairRequest = () => {
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
             {!isEditable ? (
-              <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsEditable(true)}
+              >
                 Edytuj
               </button>
             ) : (

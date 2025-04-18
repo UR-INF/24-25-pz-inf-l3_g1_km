@@ -10,7 +10,7 @@ const CleaningCard = () => {
         const response = await api.get("/housekeeping-tasks");
 
         const notCompletedTasks = response.data.filter(
-          (task: any) => task.status !== "COMPLETED" && task.status !== "DECLINED"
+          (task: any) => task.status !== "COMPLETED" && task.status !== "DECLINED",
         );
 
         setActiveTasksCount(notCompletedTasks.length);
@@ -30,9 +30,7 @@ const CleaningCard = () => {
           <div className="d-flex align-items-center">
             <div className="subheader">Otwarte zgłoszenia sprzątania</div>
           </div>
-          <div className="h1 mb-3">
-            {activeTasksCount !== null ? activeTasksCount : "..."}
-          </div>
+          <div className="h1 mb-3">{activeTasksCount !== null ? activeTasksCount : "..."}</div>
           <div className="d-flex mb-2">
             <div>
               <a href="/RecepcionistDashboard/Orders/Cleaning" className="btn btn-primary">

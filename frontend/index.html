@@ -1,45 +1,52 @@
 <!doctype html>
 <html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotel Task Manager</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hotel Task Manager</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+      rel="stylesheet"
+    />
 
-  <link href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet" />
+    <style>
+      @import url("https://rsms.me/inter/inter.css");
 
-  <style>
-    @import url("https://rsms.me/inter/inter.css");
+      .alert-success {
+        background-color: var(--tblr-success-bg-subtle);
+        color: var(--tblr-success-text-emphasis);
+      }
 
-    .alert-success {
-      background-color: var(--tblr-success-bg-subtle);
-      color: var(--tblr-success-text-emphasis);
-    }
+      .alert-info {
+        background-color: var(--tblr-info-bg-subtle);
+        color: var(--tblr-info-text-emphasis);
+      }
 
-    .alert-info {
-      background-color: var(--tblr-info-bg-subtle);
-      color: var(--tblr-info-text-emphasis);
-    }
+      .alert-warning {
+        background-color: var(--tblr-warning-bg-subtle);
+        color: var(--tblr-warning-text-emphasis);
+      }
 
-    .alert-warning {
-      background-color: var(--tblr-warning-bg-subtle);
-      color: var(--tblr-warning-text-emphasis);
-    }
+      .alert-danger {
+        background-color: var(--tblr-danger-bg-subtle);
+        color: var(--tblr-danger-text-emphasis);
+      }
+    </style>
+  </head>
 
-    .alert-danger {
-      background-color: var(--tblr-danger-bg-subtle);
-      color: var(--tblr-danger-text-emphasis);
-    }
-  </style>
-</head>
+  <body>
+    <div id="root"></div>
 
-<body>
-  <div id="root"></div>
-
-  <script type="module" src="/src/main.tsx"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js" defer></script>
-</body>
-
+    <script type="module" src="/src/main.tsx"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"
+      defer
+    ></script>
+  </body>
 </html>

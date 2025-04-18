@@ -84,10 +84,7 @@ const App = () => {
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
         />
 
-        <Route
-          path="/Settings"
-          element={state.loggedIn ? <SettingsView /> : <LoginView />}
-        />
+        <Route path="/Settings" element={state.loggedIn ? <SettingsView /> : <LoginView />} />
       </Route>
 
       {/* Trasa logowania: jeśli użytkownik jest już zalogowany, zostanie przekierowany na stronę główną */}

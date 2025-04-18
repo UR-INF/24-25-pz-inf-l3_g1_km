@@ -165,7 +165,11 @@ const ModifyCleaningOrder = () => {
         <div className="card-footer bg-transparent mt-4">
           <div className="btn-list justify-content-end">
             {!isEditable ? (
-              <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsEditable(true)}
+              >
                 Edytuj
               </button>
             ) : (
@@ -194,7 +198,7 @@ const translateStatus = (status) => {
     case "COMPLETED":
       return "Zakończone";
     case "DECLINED":
-      return "Odrzucone";
+      return "Odrzucone (gość nie życzy sobie sprzątania)";
     default:
       return status;
   }
