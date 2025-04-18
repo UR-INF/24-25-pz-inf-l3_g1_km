@@ -5,17 +5,22 @@ const RepairsCard = () => {
   const [pendingCount, setPendingCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchPendingRepairs = async () => {
+    const fetchOpenRepairs = async () => {
       try {
-        const response = await api.get("/housekeeping-tasks/status/PENDING");
-        setPendingCount(response.data.length);
+        const [pendingRes, inProgressRes] = await Promise.all([
+          api.get("/maintenance-requests/status/PENDING"),
+          api.get("/maintenance-requests/status/IN_PROGRESS"),
+        ]);
+
+        const totalOpen = pendingRes.data.length + inProgressRes.data.length;
+        setPendingCount(totalOpen);
       } catch (error: any) {
         console.error("Błąd podczas pobierania otwartych serwisów:", error);
         setPendingCount(0); // fallback
       }
     };
 
-    fetchPendingRepairs();
+    fetchOpenRepairs();
   }, []);
 
   return (

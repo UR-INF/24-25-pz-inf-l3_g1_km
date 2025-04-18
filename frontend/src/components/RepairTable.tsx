@@ -9,10 +9,10 @@ const RepairTable = () => {
 
   const fetchRepairs = async () => {
     try {
-      const response = await api.get("/housekeeping-tasks");
+      const response = await api.get("/maintenance-requests");
       setRepairs(response.data);
     } catch (err) {
-      console.error("Błąd podczas pobierania zgłoszeń:", err);
+      console.error("Błąd podczas pobierania zgłoszeń serwisowych:", err);
     } finally {
       setLoading(false);
     }
@@ -24,7 +24,7 @@ const RepairTable = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/housekeeping-tasks/${id}`);
+      await api.delete(`/maintenance-requests/${id}`);
       setRepairs((prev) => prev.filter((task) => task.id !== id));
     } catch (err) {
       console.error("Błąd podczas usuwania zgłoszenia:", err);
@@ -45,51 +45,53 @@ const RepairTable = () => {
   return (
     <div className="card">
       <div className="card-header">
-        <h3 className="card-title">Serwisy</h3>
+        <h3 className="card-title">Zgłoszenia serwisowe</h3>
       </div>
 
       <div className="table-responsive">
         <table className="table table-selectable card-table table-vcenter text-nowrap datatable">
           <thead>
             <tr>
-              <th>ID Zgłoszenia</th>
-              <th>Data Zgłoszenia</th>
+              <th>ID</th>
+              <th>Data zgłoszenia</th>
               <th>Opis</th>
               <th>Pokój</th>
-              <th>Osoba Przypisana</th>
+              <th>Przypisany pracownik</th>
               <th>Status</th>
-              <th>Data Zakończenia</th>
+              <th>Data zakończenia</th>
               <th></th>
               <th></th>
             </tr>
           </thead>
 
           <tbody>
-            {repairs.map((task: any) => (
-              <tr key={task.id}>
-                <td>{task.id}</td>
-                <td>{formatDate(task.requestDate)}</td>
-                <td>{task.description}</td>
-                <td>{task.room?.roomNumber ?? "-"}</td>
+            {repairs.map((req: any) => (
+              <tr key={req.id}>
+                <td>{req.id}</td>
+                <td>{formatDate(req.requestDate)}</td>
+                <td>{req.description}</td>
+                <td>{req.room?.roomNumber ?? "-"}</td>
                 <td>
-                  {task.employee?.firstName} {task.employee?.lastName}
+                  {req.assignee
+                    ? `${req.assignee.firstName} ${req.assignee.lastName}`
+                    : "Nieprzypisany"}
                 </td>
                 <td>
-                  <span className={`badge me-1 bg-${getStatusColor(task.status)} text-white`}>
-                    {translateStatus(task.status)}
+                  <span className={`badge me-1 bg-${getStatusColor(req.status)} text-white`}>
+                    {translateStatus(req.status)}
                   </span>
                 </td>
-                <td>{formatDate(task.completionDate)}</td>
+                <td>{formatDate(req.completionDate)}</td>
                 <td className="text-end">
                   <button
                     className="btn btn-primary"
-                    onClick={() => handleShowRepairDetails(task.id)}
+                    onClick={() => handleShowRepairDetails(req.id)}
                   >
                     Zobacz
                   </button>
                 </td>
                 <td>
-                  <button className="btn btn-danger" onClick={() => handleDelete(task.id)}>
+                  <button className="btn btn-danger" onClick={() => handleDelete(req.id)}>
                     Usuń
                   </button>
                 </td>
@@ -110,8 +112,6 @@ const getStatusColor = (status: string) => {
       return "warning";
     case "COMPLETED":
       return "success";
-    case "DECLINED":
-      return "danger";
     default:
       return "light";
   }
@@ -125,8 +125,6 @@ const translateStatus = (status: string) => {
       return "W trakcie";
     case "COMPLETED":
       return "Ukończono";
-    case "DECLINED":
-      return "Odrzucono";
     default:
       return status;
   }

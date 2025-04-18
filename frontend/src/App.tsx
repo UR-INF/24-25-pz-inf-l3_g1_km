@@ -70,6 +70,11 @@ const App = () => {
         />
 
         <Route
+          path="/RecepcionistDashboard/Orders/CleaningOrderDetails/:id"
+          element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
+        />
+
+        <Route
           path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
         />

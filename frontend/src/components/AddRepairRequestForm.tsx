@@ -3,10 +3,9 @@ import { api } from "../services/api";
 
 const AddRepairRequestForm = () => {
   const [formData, setFormData] = useState({
-    repairType: "",
-    repairDescription: "",
-    status: "pending",
-    responsiblePerson: "",
+    roomId: "",
+    description: "",
+    assigneeId: "",
     requestDate: new Date().toISOString().split("T")[0],
   });
 
@@ -16,15 +15,15 @@ const AddRepairRequestForm = () => {
   useEffect(() => {
     const fetchRoomsAndEmployees = async () => {
       try {
-        const [roomsResponse, employeesResponse] = await Promise.all([
+        const [roomsRes, employeesRes] = await Promise.all([
           api.get("/rooms"),
-          api.get("/employees"),
+          api.get("/employees?roleName=MAINTENANCE"),
         ]);
-        setRooms(roomsResponse.data);
-        setEmployees(employeesResponse.data);
+        setRooms(roomsRes.data);
+        setEmployees(employeesRes.data);
       } catch (error: any) {
         console.error("Błąd API:", error.response?.status, error.response?.data);
-        alert("Nie udało się pobrać danych. Upewnij się, że jesteś zalogowany.");
+        alert("Nie udało się pobrać danych.");
       }
     };
 
@@ -32,61 +31,52 @@ const AddRepairRequestForm = () => {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const selectedRoom = rooms.find((room) => room.id.toString() === formData.roomId);
+    const selectedEmployee = employees.find((emp) => emp.id.toString() === formData.assigneeId);
+
+    if (!selectedRoom || !selectedEmployee || !formData.description) {
+      alert("Uzupełnij wszystkie pola.");
+      return;
+    }
+
     try {
-      const selectedRoom = rooms.find((room) => room.id.toString() === formData.repairType);
-      const selectedEmployee = employees.find(
-        (emp) => emp.id.toString() === formData.responsiblePerson,
-      );
-
-      if (!selectedRoom) {
-        alert("Wybrany pokój nie istnieje.");
-        return;
-      }
-
-      if (!selectedEmployee) {
-        alert("Wybrany pracownik nie istnieje.");
-        return;
-      }
-
+      // Zmieniamy status pokoju
       const updatedRoom = { ...selectedRoom, status: "OUT_OF_SERVICE" };
       await api.put(`/rooms/${selectedRoom.id}`, updatedRoom);
 
-      const requestPayload = {
-        employee: selectedEmployee,
+      const payload = {
         room: selectedRoom,
+        requester: selectedEmployee, // lub aktualnie zalogowany
+        assignee: selectedEmployee,
         requestDate: `${formData.requestDate}T${new Date().toTimeString().split(" ")[0]}`,
         completionDate: null,
-        status: formData.status.toUpperCase(),
-        description: formData.repairDescription,
+        status: "PENDING",
+        description: formData.description,
+        serviceSummary: null,
       };
 
-      const response = await api.post("/housekeeping-tasks", requestPayload);
-
-      console.log("Zlecenie dodane:", response.data);
-      alert("Zlecenie naprawy dodane pomyślnie! Pokój oznaczony jako niedostępny.");
+      const response = await api.post("/maintenance-requests", payload);
+      console.log("Zgłoszenie serwisowe dodane:", response.data);
+      alert("Zlecenie serwisowe dodane pomyślnie!");
 
       setFormData({
-        repairType: "",
-        repairDescription: "",
-        status: "pending",
-        responsiblePerson: "",
+        roomId: "",
+        description: "",
+        assigneeId: "",
         requestDate: new Date().toISOString().split("T")[0],
       });
     } catch (error: any) {
-      console.error(error);
-      alert("Wystąpił błąd podczas przetwarzania zgłoszenia.");
+      console.error("Błąd podczas dodawania zgłoszenia:", error);
+      alert("Wystąpił błąd podczas zapisu zgłoszenia.");
     }
   };
 
@@ -95,15 +85,15 @@ const AddRepairRequestForm = () => {
       <h2 className="mb-4">Dodaj nowe zlecenie naprawy</h2>
 
       <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły zlecenia</h3>
+        <h3 className="card-title">Szczegóły zlecenia naprawy</h3>
 
         <div className="row g-3">
           <div className="col-md">
             <div className="form-label">Pokój</div>
             <select
               className="form-control"
-              name="repairType"
-              value={formData.repairType}
+              name="roomId"
+              value={formData.roomId}
               onChange={handleChange}
               required
             >
@@ -115,25 +105,13 @@ const AddRepairRequestForm = () => {
               ))}
             </select>
           </div>
-          <div className="col-md">
-            <div className="form-label">Opis naprawy</div>
-            <textarea
-              className="form-control"
-              name="repairDescription"
-              value={formData.repairDescription}
-              onChange={handleChange}
-              required
-            ></textarea>
-          </div>
-        </div>
 
-        <div className="row g-3 mt-3">
           <div className="col-md">
-            <div className="form-label">Osoba odpowiedzialna</div>
+            <div className="form-label">Pracownik odpowiedzialny</div>
             <select
               className="form-control"
-              name="responsiblePerson"
-              value={formData.responsiblePerson}
+              name="assigneeId"
+              value={formData.assigneeId}
               onChange={handleChange}
               required
             >
@@ -145,7 +123,22 @@ const AddRepairRequestForm = () => {
               ))}
             </select>
           </div>
+        </div>
 
+        <div className="row g-3 mt-3">
+          <div className="col-md">
+            <div className="form-label">Opis naprawy</div>
+            <textarea
+              className="form-control"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="row g-3 mt-3">
           <div className="col-md">
             <div className="form-label">Data zgłoszenia</div>
             <input

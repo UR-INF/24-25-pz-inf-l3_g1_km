@@ -1,58 +1,76 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
+import { api } from "../services/api";
 
 const ModifyCleaningOrder = () => {
+  const { id } = useParams(); // ID zadania z URL
+  const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState({
-    employeeId: "",
-    roomId: "",
-    requestDate: new Date().toISOString().split("T")[0], // Automatycznie ustawiona dzisiejsza data
+    employee: {},
+    room: {},
+    requestDate: "",
     completionDate: "",
-    status: "pending",
+    status: "PENDING",
     description: "",
   });
+  const [originalData, setOriginalData] = useState(null);
 
-  const [isEditable, setIsEditable] = useState(false); // Zmienna kontrolująca tryb edycji
-
-  // Symulacja pobierania danych o zleceniu sprzątania z API
   useEffect(() => {
-    setFormData({
-      employeeId: "123",
-      roomId: "101",
-      requestDate: "2023-03-01",
-      completionDate: "2023-03-02",
-      status: "pending",
-      description: "Sprzątanie po remoncie",
-    });
-  }, []);
+    const fetchTask = async () => {
+      try {
+        const response = await api.get(`/housekeeping-tasks/${id}`);
+        const task = response.data;
+
+        const mappedForm = {
+          employee: task.employee,
+          room: task.room,
+          requestDate: task.requestDate?.split("T")[0] || "",
+          completionDate: task.completionDate?.split("T")[0] || "",
+          status: task.status,
+          description: task.description,
+        };
+
+        setFormData(mappedForm);
+        setOriginalData(mappedForm);
+      } catch (error) {
+        console.error("Błąd pobierania danych zadania:", error);
+        alert("Nie udało się pobrać szczegółów zadania.");
+      }
+    };
+
+    if (id) fetchTask();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleEditClick = () => {
-    setIsEditable(true); // Umożliwiamy edytowanie formularza
-  };
-
-  const handleSaveClick = (e) => {
-    e.preventDefault();
-    console.log("Updated Form Data:", formData);
-    setIsEditable(false); // Po zapisaniu, formularz staje się tylko do odczytu
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCancelClick = () => {
-    setIsEditable(false); // Anulowanie edycji przywraca stan formularza do pierwotnego
-    // Resetowanie formularza do pierwotnych danych (opcjonalnie)
-    setFormData({
-      employeeId: "123",
-      roomId: "101",
-      requestDate: "2023-03-01",
-      completionDate: "2023-03-02",
-      status: "pending",
-      description: "Sprzątanie po remoncie",
-    });
+    if (originalData) {
+      setFormData(originalData);
+      setIsEditable(false);
+    }
+  };
+
+  const handleSaveClick = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        ...formData,
+        requestDate: `${formData.requestDate}T00:00:00`,
+        completionDate: formData.completionDate ? `${formData.completionDate}T00:00:00` : null,
+      };
+
+      await api.put(`/housekeeping-tasks/${id}`, payload);
+
+      alert("Zlecenie zaktualizowane pomyślnie!");
+      setOriginalData(formData); // Ustaw nowe oryginalne dane
+      setIsEditable(false);
+    } catch (error) {
+      console.error("Błąd aktualizacji zadania:", error);
+      alert("Wystąpił błąd podczas zapisu zmian.");
+    }
   };
 
   return (
@@ -62,25 +80,34 @@ const ModifyCleaningOrder = () => {
       <form onSubmit={handleSaveClick}>
         <h3 className="card-title">Szczegóły zlecenia sprzątania</h3>
 
-        {/* Numer Pokoju */}
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Numer Pokoju</div>
+            <div className="form-label">Numer pokoju</div>
             <input
               type="text"
               className="form-control"
-              name="roomId"
-              value={formData.roomId}
-              onChange={handleChange}
-              disabled={!isEditable}
+              value={formData.room?.roomNumber ?? ""}
+              disabled
+            />
+          </div>
+          <div className="col-md">
+            <div className="form-label">Pracownik</div>
+            <input
+              type="text"
+              className="form-control"
+              value={
+                formData.employee?.firstName && formData.employee?.lastName
+                  ? `${formData.employee.firstName} ${formData.employee.lastName}`
+                  : ""
+              }
+              disabled
             />
           </div>
         </div>
 
-        {/* Data Zgłoszenia */}
-        <h3 className="card-title mt-4">Data Zgłoszenia</h3>
-        <div className="row g-3">
+        <div className="row g-3 mt-3">
           <div className="col-md">
+            <label className="form-label">Data zgłoszenia</label>
             <input
               type="date"
               className="form-control"
@@ -90,26 +117,9 @@ const ModifyCleaningOrder = () => {
               disabled
             />
           </div>
-        </div>
 
-        {/* Opis Zlecenia */}
-        <h3 className="card-title mt-4">Opis Zlecenia</h3>
-        <div className="row g-3">
           <div className="col-md">
-            <textarea
-              className="form-control"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              disabled={!isEditable}
-            ></textarea>
-          </div>
-        </div>
-
-        {/* Data Zakończenia */}
-        <h3 className="card-title mt-4">Data Zakończenia</h3>
-        <div className="row g-3">
-          <div className="col-md">
+            <label className="form-label">Data zakończenia</label>
             <input
               type="date"
               className="form-control"
@@ -121,65 +131,73 @@ const ModifyCleaningOrder = () => {
           </div>
         </div>
 
-        {/* Status Zlecenia */}
-        <h3 className="card-title mt-4">Status</h3>
-        <div className="form-check">
-          <input
-            type="radio"
-            className="form-check-input"
-            name="status"
-            value="pending"
-            checked={formData.status === "pending"}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-          <label className="form-check-label">Oczekujące</label>
-        </div>
-        <div className="form-check">
-          <input
-            type="radio"
-            className="form-check-input"
-            name="status"
-            value="in_progress"
-            checked={formData.status === "in_progress"}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-          <label className="form-check-label">W trakcie</label>
-        </div>
-        <div className="form-check">
-          <input
-            type="radio"
-            className="form-check-input"
-            name="status"
-            value="completed"
-            checked={formData.status === "completed"}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-          <label className="form-check-label">Zakończone</label>
+        <div className="row g-3 mt-3">
+          <div className="col-md">
+            <label className="form-label">Opis</label>
+            <textarea
+              className="form-control"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              disabled={!isEditable}
+            />
+          </div>
         </div>
 
-        {/* Przyciski */}
-        <div className="card-footer bg-transparent mt-auto">
+        <div className="mt-4">
+          <label className="form-label">Status</label>
+          {["PENDING", "IN_PROGRESS", "COMPLETED", "DECLINED"].map((status) => (
+            <div className="form-check" key={status}>
+              <input
+                className="form-check-input"
+                type="radio"
+                name="status"
+                value={status}
+                checked={formData.status === status}
+                onChange={handleChange}
+                disabled={!isEditable}
+              />
+              <label className="form-check-label">{translateStatus(status)}</label>
+            </div>
+          ))}
+        </div>
+
+        <div className="card-footer bg-transparent mt-4">
           <div className="btn-list justify-content-end">
-            <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
-              Anuluj
-            </button>
-            {isEditable ? (
-              <button type="submit" className="btn btn-primary btn-2">
-                Zatwierdź
-              </button>
-            ) : (
-              <button type="button" className="btn btn-primary btn-2" onClick={handleEditClick}>
+            {!isEditable ? (
+              <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
                 Edytuj
               </button>
+            ) : (
+              <>
+                <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
+                  Anuluj
+                </button>
+                <button type="submit" className="btn btn-primary btn-2">
+                  Zatwierdź
+                </button>
+              </>
             )}
           </div>
         </div>
       </form>
     </div>
   );
+};
+
+const translateStatus = (status) => {
+  switch (status) {
+    case "PENDING":
+      return "Oczekujące";
+    case "IN_PROGRESS":
+      return "W trakcie";
+    case "COMPLETED":
+      return "Zakończone";
+    case "DECLINED":
+      return "Odrzucone";
+    default:
+      return status;
+  }
 };
 
 export default ModifyCleaningOrder;

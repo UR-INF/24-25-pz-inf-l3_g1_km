@@ -15,6 +15,7 @@ const ModifyRepairRequest = () => {
     requestDate: "",
   });
 
+  const [originalData, setOriginalData] = useState(null);
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
 
@@ -22,23 +23,26 @@ const ModifyRepairRequest = () => {
   useEffect(() => {
     const fetchRepair = async () => {
       try {
-        const response = await api.get(`/housekeeping-tasks/${id}`);
+        const response = await api.get(`/maintenance-requests/${id}`);
         const task = response.data;
 
-        setFormData({
-          repairType: task.room.id.toString(),
+        const mappedForm = {
+          repairType: task.room?.id?.toString() ?? "",
           repairDescription: task.description,
           status: task.status.toLowerCase(),
-          responsiblePerson: task.employee.id.toString(),
+          responsiblePerson: task.assignee?.id?.toString() ?? "",
           requestDate: task.requestDate.split("T")[0],
-        });
+        };
+
+        setFormData(mappedForm);
+        setOriginalData(mappedForm); // Zachowaj do anulowania edycji
       } catch (err) {
         console.error("Błąd pobierania zgłoszenia:", err);
         alert("Nie udało się pobrać danych zgłoszenia.");
       }
     };
 
-    fetchRepair();
+    if (id) fetchRepair();
   }, [id]);
 
   // Pobieranie pokoi i pracowników
@@ -67,6 +71,13 @@ const ModifyRepairRequest = () => {
     }));
   };
 
+  const handleCancelClick = () => {
+    if (originalData) {
+      setFormData(originalData);
+      setIsEditable(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditable(false);
@@ -75,13 +86,15 @@ const ModifyRepairRequest = () => {
       const room = { id: parseInt(formData.repairType) };
       const employee = { id: parseInt(formData.responsiblePerson) };
 
-      await api.put(`/housekeeping-tasks/${id}`, {
+      await api.put(`/maintenance-requests/${id}`, {
         room,
-        employee,
+        assignee: employee,
+        requester: employee, // Możesz podmienić na aktualnie zalogowanego użytkownika
         requestDate: `${formData.requestDate}T00:00:00`,
         description: formData.repairDescription,
         status: formData.status.toUpperCase(),
         completionDate: null,
+        serviceSummary: "",
       });
 
       alert("Zlecenie zostało zaktualizowane.");
@@ -206,15 +219,19 @@ const ModifyRepairRequest = () => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            {!isEditable && (
+            {!isEditable ? (
               <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
                 Edytuj
               </button>
-            )}
-            {isEditable && (
-              <button type="submit" className="btn btn-primary btn-2">
-                Zatwierdź
-              </button>
+            ) : (
+              <>
+                <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
+                  Anuluj
+                </button>
+                <button type="submit" className="btn btn-primary btn-2">
+                  Zatwierdź
+                </button>
+              </>
             )}
           </div>
         </div>
