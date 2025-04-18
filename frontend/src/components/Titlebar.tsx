@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
 import { useNavigationHistory } from "../hooks/useNavigationHistory";
 
 const Titlebar = () => {

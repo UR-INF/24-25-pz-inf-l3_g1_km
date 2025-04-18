@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { api } from "../services/api";
 
 const CleaningCard = () => {
@@ -33,9 +34,9 @@ const CleaningCard = () => {
           <div className="h1 mb-3">{activeTasksCount !== null ? activeTasksCount : "..."}</div>
           <div className="d-flex mb-2">
             <div>
-              <a href="/RecepcionistDashboard/Orders/Cleaning" className="btn btn-primary">
+              <Link to="/RecepcionistDashboard/Orders/Cleaning" className="btn btn-primary">
                 Zobacz
-              </a>
+              </Link>
             </div>
             <div className="ms-auto"></div>
           </div>

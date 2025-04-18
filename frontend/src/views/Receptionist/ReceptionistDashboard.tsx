@@ -5,6 +5,7 @@ import CleaningCard from "../../components/CleaningCard";
 import CleaningPlot from "../../components/ReservationsPlot";
 import RepairTable from "../../components/RepairTable";
 import CleaningTable from "../../components/CleaningTable";
+import { Link } from "react-router";
 
 const ReceptionistDashboard = () => {
   return (
@@ -18,10 +19,12 @@ const ReceptionistDashboard = () => {
             </div>
 
             <div className="col-auto ms-auto d-print-none">
-              <button type="button" className="btn btn-primary">
-                <i className="ti ti-plus fs-2 me-2"></i>
-                Stwórz nową rezerwację
-              </button>
+              <Link to="/RecepcionistDashboard/Reservations/NewReservation">
+                <button type="button" className="btn btn-primary">
+                  <i className="ti ti-plus fs-2 me-2"></i>
+                  Stwórz nową rezerwację
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -37,12 +40,12 @@ const ReceptionistDashboard = () => {
             <div className="col-lg-12">
               <CleaningPlot />
             </div>
-            <div className="col-lg-12">
+            {/* <div className="col-lg-12">
               <RepairTable />
             </div>
             <div className="col-lg-12">
               <CleaningTable />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

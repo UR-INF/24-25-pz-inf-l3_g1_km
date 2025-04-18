@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { api } from "../services/api";
 
 const RepairsCard = () => {
@@ -28,9 +29,9 @@ const RepairsCard = () => {
           <div className="h1 mb-3">{pendingCount !== null ? pendingCount : "..."}</div>
           <div className="d-flex mb-2">
             <div>
-              <a href="/RecepcionistDashboard/Orders/Repairs" className="btn btn-primary">
+              <Link to="/RecepcionistDashboard/Orders/Repairs" className="btn btn-primary">
                 Zobacz
-              </a>
+              </Link>
             </div>
             <div className="ms-auto"></div>
           </div>
