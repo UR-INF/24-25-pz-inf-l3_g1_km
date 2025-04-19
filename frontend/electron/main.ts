@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, shell, BrowserWindow, ipcMain } from "electron";
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -62,6 +62,10 @@ function createWindow() {
 
   ipcMain.on("window:devtools", () => {
     win?.webContents.openDevTools({ mode: "detach" });
+  });
+
+  ipcMain.on("open-external", (_, url: string) => {
+    shell.openExternal(url);
   });
 
   if (VITE_DEV_SERVER_URL) {

@@ -6,6 +6,7 @@ import { AxiosError } from "axios";
 import { useUser } from "../contexts/user";
 import Titlebar from "../components/Titlebar";
 import { useNotification } from "../contexts/notification";
+import Footer from "../components/Footer";
 
 const LoginView = () => {
   const [email, setEmail] = useState("");
@@ -138,7 +139,7 @@ const LoginView = () => {
         <Titlebar />
       </div>
 
-      <div className="page page-center">
+      <div className="page page-center" style={{ paddingBottom: "4.5rem" }}>
         <div className="container container-tight p-6">
           <h2 className="h2 text-center mb-4">Zaloguj się</h2>
           <form id="loginForm" onSubmit={handleSubmit} autoComplete="off">
@@ -228,6 +229,8 @@ const LoginView = () => {
           </form>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 };

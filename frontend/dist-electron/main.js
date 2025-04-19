@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -37,6 +37,9 @@ function createWindow() {
   ipcMain.on("window:close", () => win == null ? void 0 : win.close());
   ipcMain.on("window:devtools", () => {
     win == null ? void 0 : win.webContents.openDevTools({ mode: "detach" });
+  });
+  ipcMain.on("open-external", (_, url) => {
+    shell.openExternal(url);
   });
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);

@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Wyłączenie CSRF (zalecane dla API z JWT)
+            // Wyłączenie CSRF
             .csrf(csrf -> csrf.disable())
 
             // Konfiguracja żądań - które endpointy są dostępne bez autoryzacji
