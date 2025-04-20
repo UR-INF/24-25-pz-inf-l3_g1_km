@@ -146,11 +146,15 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 ###### Opis bazy danych
 Szczegółowy opis struktury bazy danych, zawierający informacje na temat tabel, relacji między nimi oraz atrybutów, znajduje się w pliku 📄 [Opis bazy danych](uml/Opis_bazy_danych.pdf).
 
-## Wykorzystane technologie 
-- Język Java 17
-  - JavaFX
-  - ...
-- Baza danych MySQL
-- Inne z opisem
+## Wykorzystane technologie
+- **Java 22** – główny język backendu
+- **Spring Boot** – framework do tworzenia REST API
+- **MariaDB** – relacyjna baza danych
+- **React + TypeScript** – interfejs użytkownika (frontend)
+- **Vite** – szybkie środowisko budowania i dev-server dla React
+- **Tabler UI** – gotowe komponenty i stylowanie interfejsu
+- **Electron** – uruchomienie aplikacji jako natywny program desktopowy
+- **Axios** – komunikacja między frontendem a backendem
+- **ApexCharts** – wizualizacja danych na wykresach
 
 ## Pliki instalacyjne wraz z opisem instalacji i konfiguracji wraz pierwszego uruchomienia
