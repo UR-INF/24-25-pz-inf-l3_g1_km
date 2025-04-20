@@ -29,6 +29,7 @@ interface UserContextType {
   error: string | null;
   fetchUser: () => void;
 
+  userId: number;
   userFirstName: string;
   userLastName: string;
   userEmail: string;
@@ -71,6 +72,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  const userId = user?.id ?? 0;
   const userFirstName = user?.firstName ?? "";
   const userLastName = user?.lastName ?? "";
   const userEmail = user?.email ?? "";
@@ -100,6 +102,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         loading,
         error,
         fetchUser,
+        userId,
         userFirstName,
         userLastName,
         userEmail,
