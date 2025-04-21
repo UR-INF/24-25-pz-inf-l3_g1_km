@@ -5,14 +5,22 @@ import com.hoteltaskmanager.model.Role;
 import com.hoteltaskmanager.model.RoleName;
 import com.hoteltaskmanager.repository.EmployeeRepository;
 import com.hoteltaskmanager.repository.RoleRepository;
+import com.hoteltaskmanager.security.PasswordHasher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * REST API dla zarządzania pracownikami.
@@ -143,4 +151,133 @@ public class EmployeeController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    /**
+     * PUT /api/employee/{id}/password
+     * Zmodyfikuj hasło pracownika
+     */
+    @PutMapping("/{id}/password")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String newPassword = body.get("password");
+
+        if (newPassword == null || newPassword.length() < 6) {
+            return ResponseEntity.badRequest().body("Hasło musi zawierać co najmniej 6 znaków.");
+        }
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie istnieje.");
+        }
+
+        PasswordHasher hasher = new PasswordHasher();
+
+        Employee employee = optionalEmployee.get();
+        employee.setPassword(hasher.hashPassword(newPassword)); // tutaj można dodać szyfrowanie, np. encoder.encode()
+        employeeRepository.save(employee);
+
+        return ResponseEntity.ok("Hasło zostało pomyślnie zmienione.");
+    }
+
+    /**
+     * PUT /api/employee/{id}/email
+     * Zmodyfikuj e-mail pracownika
+     */
+    @PutMapping("/{id}/email")
+    public ResponseEntity<?> changeEmail(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String newEmail = body.get("email");
+
+        if (newEmail == null || !newEmail.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            return ResponseEntity.badRequest().body("Podaj poprawny adres e-mail.");
+        }
+
+        Optional<Employee> existingByEmail = employeeRepository.findByEmail(newEmail);
+        if (existingByEmail.isPresent() && !existingByEmail.get().getId().equals(id)) {
+            return ResponseEntity.badRequest().body("Ten adres e-mail jest już zajęty.");
+        }
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie istnieje.");
+        }
+
+        Employee employee = optionalEmployee.get();
+        employee.setEmail(newEmail);
+        employeeRepository.save(employee);
+
+        return ResponseEntity.ok("Adres e-mail został zaktualizowany.");
+    }
+
+    @PostMapping("/{id}/avatar")
+    public ResponseEntity<?> uploadAvatar(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        Optional<Employee> optional = employeeRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie istnieje.");
+        }
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Plik jest pusty.");
+        }
+
+        try {
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+            }
+
+            String uniqueFilename = UUID.randomUUID().toString() + extension;
+
+            Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
+
+            Files.createDirectories(uploadDir);
+
+            Employee employee = optional.get();
+            if (employee.getAvatarFilename() != null) {
+                Path oldFile = uploadDir.resolve(employee.getAvatarFilename());
+                Files.deleteIfExists(oldFile);
+            }
+
+            Path targetPath = uploadDir.resolve(uniqueFilename);
+            file.transferTo(targetPath.toFile());
+
+            employee.setAvatarFilename(uniqueFilename);
+            employeeRepository.save(employee);
+
+            return ResponseEntity.ok("Avatar został zapisany.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Błąd zapisu pliku.");
+        }
+    }
+
+    @DeleteMapping("/{id}/avatar")
+    public ResponseEntity<?> deleteAvatar(@PathVariable Long id) {
+        Optional<Employee> optional = employeeRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie istnieje.");
+        }
+
+        Employee employee = optional.get();
+
+        if (employee.getAvatarFilename() != null) {
+            Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
+            Path avatarPath = uploadDir.resolve(employee.getAvatarFilename());
+            try {
+                Files.deleteIfExists(avatarPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            employee.setAvatarFilename(null);
+            employeeRepository.save(employee);
+        }
+
+        return ResponseEntity.ok("Avatar został usunięty.");
+    }
+
+
+
+
 }

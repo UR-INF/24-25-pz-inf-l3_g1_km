@@ -62,6 +62,23 @@ public class Employee {
     private Role role;
 
     /**
+     * Awatar pracownika.
+     */
+    @Column(name = "avatar_filename")
+    private String avatarFilename;
+
+    @Transient
+    public String getAvatarUrl() {
+        String baseUrl = "http://localhost:8080/avatars/";
+        if (this.avatarFilename != null && !this.avatarFilename.isEmpty()) {
+            return baseUrl + this.avatarFilename;
+        } else {
+            return baseUrl + "default.png";
+        }
+    }
+
+
+    /**
      * Token wykorzystywany do resetowania hasła.
      * Generowany losowo i przypisany tymczasowo do użytkownika.
      */

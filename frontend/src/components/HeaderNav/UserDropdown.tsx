@@ -8,9 +8,9 @@ interface UserDropdownProps {
 }
 
 const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
-  const { userFirstName, userLastName, userRoleName } = useUser();
-  const avatarUrl =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpAklFXnBaXsEsy_Y08157gUwnacNh7gQgLQ&s";
+  const { user, userFirstName, userLastName, userRoleName, userAvatarFilename } = useUser();
+  
+  const avatarUrl = user?.avatarUrl;
 
   const location = useLocation();
 
