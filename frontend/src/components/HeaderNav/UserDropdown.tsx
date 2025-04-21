@@ -8,10 +8,7 @@ interface UserDropdownProps {
 }
 
 const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
-  const { user, userFirstName, userLastName, userRoleName, userAvatarFilename } = useUser();
-  
-  const avatarUrl = user?.avatarUrl;
-
+  const { userFirstName, userLastName, userRoleName, userAvatarUrl } = useUser();
   const location = useLocation();
 
   return (
@@ -20,12 +17,12 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
         href="#"
         className="nav-link d-flex lh-1 p-0 px-2"
         data-bs-toggle="dropdown"
-        aria-label="Open user menu"
+        aria-label="Otwórz menu użytkownika"
       >
         <span
           className="avatar avatar-sm"
           style={{
-            backgroundImage: `url(${avatarUrl})`,
+            backgroundImage: `url(${userAvatarUrl})`,
           }}
         ></span>
 

@@ -39,6 +39,7 @@ interface UserContextType {
   userRole: Role;
   userRoleName: RoleName;
   userAvatarFilename?: string;
+  userAvatarUrl: string;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -83,6 +84,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const userRole = user?.role ?? { id: 0, name: RoleName.RECEPTIONIST };
   const userRoleName = user?.role?.name ?? RoleName.RECEPTIONIST;
   const userAvatarFilename = user?.avatarFilename ?? "";
+  const userAvatarUrl = user?.avatarUrl ?? "";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -114,6 +116,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         userRole,
         userRoleName,
         userAvatarFilename,
+        userAvatarUrl,
       }}
     >
       {children}

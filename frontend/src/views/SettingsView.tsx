@@ -2,10 +2,11 @@ import { useUser } from "../contexts/user";
 import { getRoleNameInPolish } from "../utils/roleUtils";
 import { api } from "../services/api";
 import { useState } from "react";
+import { useNotification } from "../contexts/notification";
+import { validateEmailFormat } from "../utils/regexUtils";
 
 const SettingsView = () => {
   const {
-    user,
     userId,
     userFirstName,
     userLastName,
@@ -13,6 +14,7 @@ const SettingsView = () => {
     userEmail,
     fetchUser,
     userAvatarFilename,
+    userAvatarUrl,
   } = useUser();
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -20,17 +22,17 @@ const SettingsView = () => {
   const [email, setEmail] = useState(userEmail);
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const { showNotification } = useNotification();
 
-  const avatarUrl = avatarPreview ?? user?.avatarUrl;
+  const avatarUrl = avatarPreview ?? userAvatarUrl;
 
   const handleChangePassword = async () => {
     if (newPassword.length < 6) {
-      setMessage("Hasło musi zawierać co najmniej 6 znaków.");
+      showNotification("error", "Hasło musi zawierać co najmniej 6 znaków.");
       return;
     }
     if (newPassword !== repeatPassword) {
-      setMessage("Hasła nie są identyczne.");
+      showNotification("error", "Hasła nie są identyczne.");
       return;
     }
 
@@ -38,24 +40,24 @@ const SettingsView = () => {
       await api.put(`/employees/${userId}/password`, {
         password: newPassword,
       });
+      showNotification("success", "Hasło zostało pomyślnie zmienione.");
 
-      setMessage("Hasło zostało pomyślnie zmienione.");
       setNewPassword("");
       setRepeatPassword("");
     } catch (err) {
       console.error("Błąd podczas zmiany hasła:", err);
-      setMessage("Wystąpił błąd podczas zmiany hasła.");
+      showNotification("error", "Wystąpił błąd podczas zmiany hasła.");
     }
-  };
-
-  const validateEmailFormat = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
   };
 
   const handleChangeEmail = async () => {
     if (!validateEmailFormat(email)) {
-      setMessage("Podaj poprawny adres e-mail.");
+      showNotification("error", "Podaj poprawny adres e-mail.");
+      return;
+    }
+
+    if (email.toLowerCase() === userEmail.toLowerCase()) {
+      showNotification("error", "Podany adres e-mail jest taki sam jak aktualny.");
       return;
     }
 
@@ -64,14 +66,14 @@ const SettingsView = () => {
         email: email,
       });
 
-      setMessage("E-mail został pomyślnie zaktualizowany.");
+      showNotification("success", "E-mail został pomyślnie zaktualizowany.");
     } catch (err: any) {
       console.error("Błąd podczas zmiany e-maila:", err);
 
       if (err.response?.status === 400) {
-        setMessage(err.response.data || "Nieprawidłowy adres e-mail.");
+        showNotification("error", err.response.data || "Nieprawidłowy adres e-mail.");
       } else {
-        setMessage("Wystąpił błąd podczas zmiany e-maila.");
+        showNotification("error", "Wystąpił błąd podczas zmiany e-maila.");
       }
     }
   };
@@ -81,6 +83,12 @@ const SettingsView = () => {
     if (file) {
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
+
+      showNotification(
+        "info",
+        "Wybrane zdjęcie profilowe zostało załadowane. Zatwierdź zmiany przyciskając 'Zapisz nowe zdjęcie profilowe'.",
+        5000,
+      );
     }
   };
 
@@ -93,11 +101,11 @@ const SettingsView = () => {
     try {
       await api.post(`/employees/${userId}/avatar`, formData);
 
-      setMessage("Avatar został zaktualizowany.");
+      showNotification("success", "Zdjęcie profilowe zostało zaktualizowane.");
       fetchUser();
     } catch (err) {
-      console.error("Błąd podczas aktualizacji avatara:", err);
-      setMessage("Wystąpił błąd podczas aktualizacji avatara.");
+      console.error("Błąd podczas aktualizacji zdjęcia profilowego:", err);
+      showNotification("error", "Wystąpił błąd podczas aktualizacji zdjęcia profilowego.");
     }
   };
 
@@ -106,11 +114,11 @@ const SettingsView = () => {
       await api.delete(`/employees/${userId}/avatar`);
       setAvatarPreview(null);
       setAvatarFile(null);
-      setMessage("Avatar został usunięty.");
+      showNotification("success", "Zdjęcie profilowe zostało usunięte.");
       fetchUser(); // odśwież dane
     } catch (err) {
-      console.error("Błąd podczas usuwania avatara:", err);
-      setMessage("Wystąpił błąd podczas usuwania avatara.");
+      console.error("Błąd podczas usuwania zdjęcia profilowego:", err);
+      showNotification("error", "Wystąpił błąd podczas usuwania zdjęcia profilowego.");
     }
   };
 
@@ -120,7 +128,6 @@ const SettingsView = () => {
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">
-              {message && <div className="alert alert-info mt-3">{message}</div>}
               <h1 className="page-title">Ustawienia</h1>
             </div>
           </div>
@@ -134,7 +141,11 @@ const SettingsView = () => {
               <h3 className="card-title">Szczegóły konta</h3>
               <div className="row align-items-center">
                 <div className="col-auto">
-                  <img src={avatarUrl} alt="Avatar" className="avatar avatar-xl rounded" />
+                  <img
+                    src={avatarUrl}
+                    alt="Zdjęcie profilowe"
+                    className="avatar avatar-xl rounded"
+                  />
                 </div>
                 <div className="col-auto">
                   <input
@@ -146,7 +157,7 @@ const SettingsView = () => {
                 </div>
                 <div className="col-auto">
                   <button className="btn btn-1" onClick={handleUploadAvatar}>
-                    Zapisz nowy avatar
+                    Zapisz nowe zdjęcie profilowe
                   </button>
                 </div>
                 <div className="col-auto">

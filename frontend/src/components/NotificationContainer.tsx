@@ -45,7 +45,7 @@ const NotificationContainer = ({ notifications }: { notifications: Notification[
   return (
     <div
       className="position-fixed start-50 translate-middle-x z-3 d-flex flex-column align-items-center gap-1"
-      style={{ top: isLoggedIn ? "130px" : "80px" }}
+      style={{ top: isLoggedIn ? "120px" : "80px" }}
     >
       {notifications.map(({ id, type, message }) => {
         const typeClass = type === "error" ? "danger" : type;
