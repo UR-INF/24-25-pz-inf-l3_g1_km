@@ -41,10 +41,10 @@ public class EmployeeSeeder {
 
             String defaultPassword = "admin123";
 
-            addEmployee("Krzysztof", "Motas", "motas.krzysztof@gmail.com", defaultPassword, RoleName.MANAGER, "123456789");
-            addEmployee("Dawid", "Wójcik", "dawid@hotel.pl", defaultPassword, RoleName.RECEPTIONIST, "987654321");
-            addEmployee("Anna", "Zielińska", "anna@hotel.pl", defaultPassword, RoleName.HOUSEKEEPER, "111222333");
-            addEmployee("Robert", "Kowalski", "robert@hotel.pl", defaultPassword, RoleName.MAINTENANCE, "444555666");
+            addEmployee("Krzysztof", "Motas", "motas.krzysztof@gmail.com", defaultPassword, RoleName.MANAGER, "123456789", "example1.png");
+            addEmployee("Dawid", "Wójcik", "dawid@hotel.pl", defaultPassword, RoleName.RECEPTIONIST, "987654321", "example2.png");
+            addEmployee("Anna", "Zielińska", "anna@hotel.pl", defaultPassword, RoleName.HOUSEKEEPER, "111222333", null);
+            addEmployee("Robert", "Kowalski", "robert@hotel.pl", defaultPassword, RoleName.MAINTENANCE, "444555666", null);
 
             System.out.println("✅ Dodano wszystkich przykładowych pracowników.");
         }
@@ -62,7 +62,7 @@ public class EmployeeSeeder {
      * @param encoder       obiekt do haszowania haseł
      */
     private void addEmployee(String firstName, String lastName, String email, String rawPassword,
-                             RoleName roleName, String phoneNumber) {
+                             RoleName roleName, String phoneNumber, String avatarFilename) {
 
         Role role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new IllegalStateException("Rola " + roleName + " nie została znaleziona"));
@@ -74,6 +74,7 @@ public class EmployeeSeeder {
         employee.setPassword(passwordHasher.hashPassword(rawPassword));
         employee.setPhoneNumber(phoneNumber);
         employee.setRole(role);
+        employee.setAvatarFilename(avatarFilename);
 
         employeeRepository.save(employee);
         System.out.println("👤 Dodano pracownika: " + email + " z rolą " + roleName);
