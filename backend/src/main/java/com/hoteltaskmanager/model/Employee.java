@@ -67,6 +67,11 @@ public class Employee {
     @Column(name = "avatar_filename")
     private String avatarFilename;
 
+    /**
+     * Zwraca pełny URL do avatara pracownika.
+     * Jeśli pracownik ma przypisany plik (avatarFilename), zwracany jest jego link.
+     * W przeciwnym razie zwracany jest link do domyślnego avatara.
+     */
     @Transient
     public String getAvatarUrl() {
         String baseUrl = "http://localhost:8080/avatars/";

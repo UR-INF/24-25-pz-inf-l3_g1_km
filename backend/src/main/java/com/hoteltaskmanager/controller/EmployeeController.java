@@ -34,6 +34,8 @@ import java.util.UUID;
  * DELETE /api/employees/{id}                   - Usuń pracownika po ID
  * GET    /api/employees/search?email={email}   - Znajdź pracownika po e-mailu
  * GET    /api/employees/me                     - Pobierz dane aktualnie zalogowanego pracownika
+ * POST   /api/employee/{id}/avatar             - Dodaj awatar pracownika
+ * DELETE /api/employee/{id}/avatar             - Usuń pracownika pracownika
  */
 
 @RestController
@@ -207,6 +209,10 @@ public class EmployeeController {
         return ResponseEntity.ok("Adres e-mail został zaktualizowany.");
     }
 
+    /**
+     * POST /api/employee/{id}/avatar
+     * Dodaj awatar pracownika
+     */
     @PostMapping("/{id}/avatar")
     public ResponseEntity<?> uploadAvatar(
             @PathVariable Long id,
@@ -253,6 +259,10 @@ public class EmployeeController {
         }
     }
 
+    /**
+     * DELETE /api/employee/{id}/avatar
+     * Usuń awatar pracownika
+     */
     @DeleteMapping("/{id}/avatar")
     public ResponseEntity<?> deleteAvatar(@PathVariable Long id) {
         Optional<Employee> optional = employeeRepository.findById(id);
