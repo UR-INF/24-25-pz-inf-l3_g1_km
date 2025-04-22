@@ -231,19 +231,21 @@ public class EmployeeController {
             String originalFilename = file.getOriginalFilename();
             String extension = "";
 
-            if (originalFilename != null && originalFilename.contains(".")) {
+            if (originalFilename.contains(".")) {
                 extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
             }
 
-            String uniqueFilename = UUID.randomUUID().toString() + extension;
+            String uniqueFilename = UUID.randomUUID() + extension;
 
             Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
 
             Files.createDirectories(uploadDir);
 
             Employee employee = optional.get();
-            if (employee.getAvatarFilename() != null) {
-                Path oldFile = uploadDir.resolve(employee.getAvatarFilename());
+            String oldAvatarFilename = employee.getAvatarFilename();
+
+            if (oldAvatarFilename != null && !oldAvatarFilename.contains("example")) {
+                Path oldFile = uploadDir.resolve(oldAvatarFilename);
                 Files.deleteIfExists(oldFile);
             }
 
@@ -253,7 +255,7 @@ public class EmployeeController {
             employee.setAvatarFilename(uniqueFilename);
             employeeRepository.save(employee);
 
-            return ResponseEntity.ok("Avatar został zapisany.");
+            return ResponseEntity.ok("Zdjęcie profilowe zostało zapisane.");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Błąd zapisu pliku.");
         }
@@ -271,23 +273,24 @@ public class EmployeeController {
         }
 
         Employee employee = optional.get();
+        String oldAvatarFilename = employee.getAvatarFilename();
 
-        if (employee.getAvatarFilename() != null) {
-            Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
-            Path avatarPath = uploadDir.resolve(employee.getAvatarFilename());
-            try {
-                Files.deleteIfExists(avatarPath);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (oldAvatarFilename != null) {
+            if (!oldAvatarFilename.contains("example")) {
+                Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
+                Path avatarPath = uploadDir.resolve(oldAvatarFilename);
+
+                try {
+                    Files.deleteIfExists(avatarPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
             employee.setAvatarFilename(null);
             employeeRepository.save(employee);
         }
 
-        return ResponseEntity.ok("Avatar został usunięty.");
+        return ResponseEntity.ok("Zdjęcie profilowe zostało usunięte.");
     }
-
-
-
-
 }

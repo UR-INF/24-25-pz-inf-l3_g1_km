@@ -2,12 +2,14 @@ package com.hoteltaskmanager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Główna klasa uruchamiająca aplikację Hotel Task Manager.
  * Odpowiada za start całej aplikacji Spring Boot.
  */
 @SpringBootApplication
+@EnableScheduling
 public class HotelTaskManagerApplication {
 
     /**

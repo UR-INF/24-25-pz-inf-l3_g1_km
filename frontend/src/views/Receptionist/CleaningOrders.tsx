@@ -36,7 +36,6 @@ const CleaningOrders = () => {
       <div className="page-body">
         <div className="container-xl">
           <div className="row row-deck row-cards">
-            <CleaningCard />
             <div className="col-lg-12">
               <CleaningTable />
             </div>

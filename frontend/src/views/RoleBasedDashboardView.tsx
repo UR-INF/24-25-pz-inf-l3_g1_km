@@ -1,3 +1,4 @@
+import DashboardAlert from "../components/DashboardAlert.tsx";
 import { useUser, RoleName } from "../contexts/user";
 import ReceptionistDashboard from "./Receptionist/ReceptionistDashboard.tsx";
 // import ManagerDashboard from "./ManagerDashboard.tsx";
@@ -23,7 +24,7 @@ const RoleBasedDashboardView = () => {
   }
 
   if (error) {
-    return <div>Błąd: {error}</div>;
+    return <DashboardAlert heading="Błąd aplikacji" description={error} />;
   }
 
   // Renderowanie odpowiedniego dashboardu w zależności od roli
@@ -37,7 +38,12 @@ const RoleBasedDashboardView = () => {
     // case RoleName.MAINTENANCE:
     //   return <MaintenanceDashboard />;
     default:
-      return <div>Brak dostępu do dashboardu dla tej roli.</div>;
+      return (
+        <DashboardAlert
+          heading="Brak dostępu"
+          description="Twoja rola nie została jeszcze zaimplementowana lub nie istnieje w systemie."
+        />
+      );
   }
 };
 

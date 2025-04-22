@@ -28,7 +28,9 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 ## Integracja z bazą danych
 
 - System powinien być oparty na bazie danych, która pozwala na **szybki dostęp do informacji** o użytkownikach, zadaniach, zgłoszeniach i raportach.
-- Powinien umożliwiać **przechowywanie historii zmian** w zadaniach i zgłoszeniach.
+- Domyślnie aplikacja współpracuje z **MariaDB** jako główną relacyjną bazą danych.
+- Struktura bazy danych tworzona jest automatycznie przy pierwszym uruchomieniu dzięki mechanizmowi JPA/Hibernate.
+- **Przykładowe dane** mogą być opcjonalnie załadowane do bazy – zależnie od konfiguracji użytkownika (np. `app.db.seed=true` w `application.properties`).
 
 ## Bezpieczeństwo i dostęp użytkowników
 

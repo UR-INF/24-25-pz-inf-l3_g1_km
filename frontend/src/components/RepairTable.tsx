@@ -40,9 +40,9 @@ const RepairTable = () => {
     fetchRepairs();
   }, []);
 
-  const filteredRepairs = repairs.filter((r) =>
-    r.description.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredRepairs = repairs
+    .filter((r) => r.description.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
 
   const totalPages = Math.ceil(filteredRepairs.length / ITEMS_PER_PAGE);
   const currentData = filteredRepairs.slice(

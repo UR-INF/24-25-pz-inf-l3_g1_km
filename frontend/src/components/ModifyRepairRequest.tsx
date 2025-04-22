@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { api } from "../services/api";
+import { useNotification } from "../contexts/notification";
 
 const ModifyRepairRequest = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState({
@@ -13,6 +15,8 @@ const ModifyRepairRequest = () => {
     status: "pending",
     responsiblePerson: "",
     requestDate: "",
+    completionDate: "",
+    serviceSummary: "",
   });
 
   const [originalData, setOriginalData] = useState(null);
@@ -31,18 +35,20 @@ const ModifyRepairRequest = () => {
           status: task.status.toLowerCase(),
           responsiblePerson: task.assignee?.id?.toString() ?? "",
           requestDate: task.requestDate.split("T")[0],
+          completionDate: task.completionDate?.split("T")[0] || "",
+          serviceSummary: task.serviceSummary || "",
         };
 
         setFormData(mappedForm);
         setOriginalData(mappedForm);
       } catch (err) {
         console.error("Błąd pobierania zgłoszenia:", err);
-        alert("Nie udało się pobrać danych zgłoszenia.");
+        showNotification("error", "Nie udało się pobrać danych zgłoszenia.");
       }
     };
 
     if (id) fetchRepair();
-  }, [id]);
+  }, [id, showNotification]);
 
   useEffect(() => {
     const fetchRoomsAndEmployees = async () => {
@@ -55,11 +61,12 @@ const ModifyRepairRequest = () => {
         setEmployees(employeesResponse.data);
       } catch (err) {
         console.error("Błąd ładowania pokoi lub pracowników:", err);
+        showNotification("error", "Nie udało się załadować danych pomocniczych.");
       }
     };
 
     fetchRoomsAndEmployees();
-  }, []);
+  }, [showNotification]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -78,7 +85,6 @@ const ModifyRepairRequest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditable(false);
 
     try {
       const room = { id: parseInt(formData.repairType) };
@@ -89,17 +95,17 @@ const ModifyRepairRequest = () => {
         assignee: employee,
         requester: employee,
         requestDate: `${formData.requestDate}T00:00:00`,
+        completionDate: formData.completionDate ? `${formData.completionDate}T00:00:00` : null,
         description: formData.repairDescription,
         status: formData.status.toUpperCase(),
-        completionDate: null,
-        serviceSummary: "",
+        serviceSummary: formData.serviceSummary,
       });
 
-      alert("Zlecenie zostało zaktualizowane.");
+      showNotification("success", "Zgłoszenie zostało zaktualizowane.");
       navigate("/RecepcionistDashboard/Orders/Repairs");
     } catch (err) {
       console.error("Błąd aktualizacji zgłoszenia:", err);
-      alert("Nie udało się zapisać zmian.");
+      showNotification("error", "Nie udało się zapisać zmian.");
     }
   };
 
@@ -112,7 +118,7 @@ const ModifyRepairRequest = () => {
 
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Pokój</div>
+            <label className="form-label">Pokój</label>
             <select
               className="form-control"
               name="repairType"
@@ -131,21 +137,7 @@ const ModifyRepairRequest = () => {
           </div>
 
           <div className="col-md">
-            <div className="form-label">Opis naprawy</div>
-            <textarea
-              className="form-control"
-              name="repairDescription"
-              value={formData.repairDescription}
-              onChange={handleChange}
-              disabled={!isEditable}
-              required
-            ></textarea>
-          </div>
-        </div>
-
-        <div className="row g-3 mt-3">
-          <div className="col-md">
-            <div className="form-label">Pracownik</div>
+            <label className="form-label">Pracownik</label>
             <select
               className="form-control"
               name="responsiblePerson"
@@ -162,9 +154,11 @@ const ModifyRepairRequest = () => {
               ))}
             </select>
           </div>
+        </div>
 
+        <div className="row g-3 mt-3">
           <div className="col-md">
-            <div className="form-label">Data zgłoszenia</div>
+            <label className="form-label">Data zgłoszenia</label>
             <input
               type="date"
               className="form-control"
@@ -175,47 +169,71 @@ const ModifyRepairRequest = () => {
               required
             />
           </div>
+
+          <div className="col-md">
+            <label className="form-label">Data zakończenia</label>
+            <input
+              type="date"
+              className="form-control"
+              name="completionDate"
+              value={formData.completionDate}
+              onChange={handleChange}
+              disabled={!isEditable}
+            />
+          </div>
         </div>
 
-        <h3 className="card-title mt-4">Status</h3>
-        <div className="form-check">
-          <input
-            type="radio"
-            className="form-check-input"
-            name="status"
-            value="pending"
-            checked={formData.status === "pending"}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-          <label className="form-check-label">Oczekujące</label>
-        </div>
-        <div className="form-check">
-          <input
-            type="radio"
-            className="form-check-input"
-            name="status"
-            value="in_progress"
-            checked={formData.status === "in_progress"}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-          <label className="form-check-label">W trakcie</label>
-        </div>
-        <div className="form-check">
-          <input
-            type="radio"
-            className="form-check-input"
-            name="status"
-            value="completed"
-            checked={formData.status === "completed"}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-          <label className="form-check-label">Zakończone</label>
+        <div className="row g-3 mt-3">
+          <div className="col-md">
+            <label className="form-label">Opis naprawy</label>
+            <textarea
+              className="form-control"
+              name="repairDescription"
+              value={formData.repairDescription}
+              onChange={handleChange}
+              disabled={!isEditable}
+              required
+            />
+          </div>
         </div>
 
-        <div className="card-footer bg-transparent mt-auto">
+        <div className="row g-3 mt-3">
+          <div className="col-md">
+            <label className="form-label">Podsumowanie serwisu</label>
+            <textarea
+              className="form-control"
+              name="serviceSummary"
+              value={formData.serviceSummary}
+              onChange={handleChange}
+              disabled={!isEditable || formData.status !== "completed"}
+              placeholder={
+                formData.status !== "completed"
+                  ? "Zadanie musi być zakończone"
+                  : "Opisz co zostało zrobione w ramach serwisu"
+              }
+            />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="form-label">Status</label>
+          {["pending", "in_progress", "completed"].map((status) => (
+            <div className="form-check" key={status}>
+              <input
+                className="form-check-input"
+                type="radio"
+                name="status"
+                value={status}
+                checked={formData.status === status}
+                onChange={handleChange}
+                disabled={!isEditable}
+              />
+              <label className="form-check-label">{translateStatus(status)}</label>
+            </div>
+          ))}
+        </div>
+
+        <div className="card-footer bg-transparent mt-4">
           <div className="btn-list justify-content-end">
             {!isEditable ? (
               <button
@@ -240,6 +258,19 @@ const ModifyRepairRequest = () => {
       </form>
     </div>
   );
+};
+
+const translateStatus = (status: string) => {
+  switch (status) {
+    case "pending":
+      return "Oczekujące";
+    case "in_progress":
+      return "W trakcie";
+    case "completed":
+      return "Zakończone";
+    default:
+      return status;
+  }
 };
 
 export default ModifyRepairRequest;
