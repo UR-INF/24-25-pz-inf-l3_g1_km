@@ -1,7 +1,7 @@
 import { useUser } from "../contexts/user";
 import { getRoleNameInPolish } from "../utils/roleUtils";
 import { api } from "../services/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNotification } from "../contexts/notification";
 import { validateEmailFormat } from "../utils/regexUtils";
 import useTheme from "../hooks/useTheme";
@@ -26,6 +26,52 @@ const SettingsView = () => {
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const { showNotification } = useNotification();
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
+  useEffect(() => {
+    // fetch aktualnej wartości preferencji powiadomień
+    const fetchNotificationStatus = async () => {
+      try {
+        const response = await api.get("/employees/me");
+        setNotificationsEnabled(response.data.notificationsEnabled);
+      } catch (err) {
+        console.error("Błąd podczas pobierania ustawień powiadomień:", err);
+      }
+    };
+
+    fetchNotificationStatus();
+  }, []);
+
+  const handleToggleNotifications = async () => {
+    if (!("Notification" in window)) {
+      showNotification("error", "Twój system nie obsługuje powiadomień.");
+      return;
+    }
+
+    let granted = Notification.permission === "granted";
+    if (!granted) {
+      const permission = await Notification.requestPermission();
+      granted = permission === "granted";
+      if (!granted) {
+        showNotification("error", "Nie udzielono zgody na powiadomienia.");
+        return;
+      }
+    }
+
+    try {
+      const updated = !notificationsEnabled;
+      await api.put("/employees/me/notifications", {
+        notificationsEnabled: updated,
+      });
+      setNotificationsEnabled(updated);
+      showNotification("success", updated ? "Powiadomienia włączone." : "Powiadomienia wyłączone.");
+      await fetchUser();
+    } catch (err) {
+      console.error("Błąd podczas zapisu ustawień powiadomień:", err);
+      showNotification("error", "Wystąpił błąd podczas zapisu ustawień.");
+    }
+  };
 
   const avatarUrl = avatarPreview ?? userAvatarUrl;
 
@@ -122,6 +168,20 @@ const SettingsView = () => {
     } catch (err) {
       console.error("Błąd podczas usuwania zdjęcia profilowego:", err);
       showNotification("error", "Wystąpił błąd podczas usuwania zdjęcia profilowego.");
+    }
+  };
+
+  const handleEnableNotifications = async () => {
+    if (!("Notification" in window)) {
+      showNotification("error", "Twoja przeglądarka nie obsługuje powiadomień.");
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      showNotification("success", "Powiadomienia zostały włączone.");
+    } else {
+      showNotification("error", "Nie udzielono zgody na powiadomienia.");
     }
   };
 
@@ -252,7 +312,7 @@ const SettingsView = () => {
               </div>
               <div>
                 <div className="theme-settings mt-4">
-                  <h3 card-title mt-4>
+                  <h3 className="card-title mt-4">
                     Motyw
                   </h3>
                   <div className="row g-2">
@@ -304,6 +364,15 @@ const SettingsView = () => {
                   Użyj ustawień systemowych
                 </label>
               </div>
+
+              <h3 className="card-title mt-4">Powiadomienia</h3>
+              <button
+                className={`btn ${notificationsEnabled ? "btn-danger" : "btn-success"}`}
+                onClick={handleToggleNotifications}
+              >
+                {notificationsEnabled ? "Wyłącz powiadomienia" : "Włącz powiadomienia"}
+              </button>
+
             </div>
           </div>
         </div>

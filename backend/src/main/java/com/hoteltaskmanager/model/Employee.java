@@ -96,4 +96,11 @@ public class Employee {
      */
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
+
+    /**
+     * Kolumna do obslugiwania powiadomień na pulpicie.
+     */
+    @Column(name = "notifications_enabled")
+    private Boolean notificationsEnabled = false;
+
 }

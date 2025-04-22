@@ -1,5 +1,6 @@
 {
   "name": "hotel-task-manager",
+  "productName": "Hotel Task Manager",
   "private": true,
   "version": "1.0.0",
   "type": "module",

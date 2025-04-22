@@ -36,6 +36,7 @@ import java.util.UUID;
  * GET    /api/employees/me                     - Pobierz dane aktualnie zalogowanego pracownika
  * POST   /api/employee/{id}/avatar             - Dodaj awatar pracownika
  * DELETE /api/employee/{id}/avatar             - Usuń pracownika pracownika
+ * PUT    /api/employees/me/notifications       - Aktualizuje preferencje powiadomień zalogowanego użytkownika.
  */
 
 @RestController
@@ -293,4 +294,33 @@ public class EmployeeController {
 
         return ResponseEntity.ok("Zdjęcie profilowe zostało usunięte.");
     }
+
+    /**
+     * PUT /api/employees/me/notifications
+     * Aktualizuje preferencje powiadomień zalogowanego użytkownika.
+     *
+     * @param body Mapa zawierająca klucz "notificationsEnabled" z wartością boolean.
+     * @return Odpowiedź z aktualizowanym obiektem Employee lub odpowiedni kod błędu.
+     */
+    @PutMapping("/me/notifications")
+    public ResponseEntity<?> updateNotificationPreference(@RequestBody Map<String, Boolean> body) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Optional<Employee> optionalEmployee = employeeRepository.findByEmail(email);
+        if (optionalEmployee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie istnieje.");
+        }
+
+        Employee employee = optionalEmployee.get();
+        Boolean notificationsEnabled = body.get("notificationsEnabled");
+        if (notificationsEnabled == null) {
+            return ResponseEntity.badRequest().body("Brak wartości dla 'notificationsEnabled'.");
+        }
+
+        employee.setNotificationsEnabled(notificationsEnabled);
+        employeeRepository.save(employee);
+
+        return ResponseEntity.ok(employee);
+    }
+
 }

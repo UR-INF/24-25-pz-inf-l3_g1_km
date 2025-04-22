@@ -23,6 +23,7 @@ interface User {
   role: Role;
   avatarFilename?: string;
   avatarUrl: string;
+  notificationsEnabled: boolean;
 }
 
 interface UserContextType {
@@ -40,6 +41,7 @@ interface UserContextType {
   userRoleName: RoleName;
   userAvatarFilename?: string;
   userAvatarUrl: string;
+  userNotificationsEnabled: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -85,6 +87,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const userRoleName = user?.role?.name ?? RoleName.RECEPTIONIST;
   const userAvatarFilename = user?.avatarFilename ?? "";
   const userAvatarUrl = user?.avatarUrl ?? "";
+  const userNotificationsEnabled = user?.notificationsEnabled ?? false;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -117,6 +120,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         userRoleName,
         userAvatarFilename,
         userAvatarUrl,
+        userNotificationsEnabled,
       }}
     >
       {children}

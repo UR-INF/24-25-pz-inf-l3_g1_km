@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api } from "../../services/api";
 import { useUser } from "../../contexts/user";
 import CleaningCard from "../../components/CleaningCard";
@@ -11,11 +11,50 @@ const HousekeeperCleaningTasks = () => {
   const { showNotification } = useNotification();
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
+  const knownTaskIdsRef = useRef<Set<number>>(new Set());
 
   const fetchTasks = async () => {
     try {
       const response = await api.get(`/housekeeping-tasks?employeeId=${userId}`);
-      setTasks(response.data);
+      const current = response.data;
+
+      const newTasks = current.filter(
+        (task) =>
+          !knownTaskIdsRef.current.has(task.id) &&
+          task.employee?.id === userId // tylko przypisane do aktualnego użytkownika
+      );
+
+      setTasks(current);
+
+      // powiadomienie tylko jeśli mamy wcześniejsze dane i pojawiły się nowe
+      if (
+        knownTaskIdsRef.current.size > 0 &&
+        newTasks.length > 0 &&
+        Notification.permission === "granted"
+      ) {
+        const firstNew = newTasks[0];
+        const room = firstNew.room?.roomNumber ?? "Nieznany pokój";
+        const taskType = firstNew.cleaningType ?? "Brak typu";
+        const date = new Date(firstNew.assignedAt ?? firstNew.createdAt).toLocaleDateString();
+
+        const statusMap = {
+          PENDING: "Do wykonania",
+          IN_PROGRESS: "W trakcie",
+          COMPLETED: "Ukończono",
+        };
+        const status = statusMap[firstNew.status] ?? firstNew.status;
+
+        const notif = new Notification("Nowe zadanie sprzątania", {
+          body: `Pokój: ${room}\nTyp: ${taskType}\nStatus: ${status}\nData: ${date}`,
+        });
+
+        notif.onclick = () => {
+          window.focus();
+          window.location.href = "/HousekeeperDashboard";
+        };
+      }
+
+      newTasks.forEach((task) => knownTaskIdsRef.current.add(task.id));
     } catch (error) {
       console.error("Błąd ładowania zadań:", error);
       showNotification("error", "Nie udało się pobrać zadań sprzątania.");
@@ -23,7 +62,9 @@ const HousekeeperCleaningTasks = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
+    fetchTasks(); // pierwszy fetch
+    const interval = setInterval(fetchTasks, 10000); // odświeżanie co 10s
+    return () => clearInterval(interval);
   }, [userId]);
 
   return (
