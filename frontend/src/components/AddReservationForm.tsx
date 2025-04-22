@@ -192,7 +192,7 @@ const AddReservationForm = () => {
 
         <div className="form-group mb-3">
           <label className="form-label">Liczba łóżek</label>
-          <select className="form-control" value={bedFilter} onChange={handleBedFilterChange}>
+          <select className="form-select" value={bedFilter} onChange={handleBedFilterChange}>
             <option value="all">Wszystkie</option>
             <option value="1">1 łóżko</option>
             <option value="2">2 łóżka</option>

@@ -96,7 +96,7 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             <div className="col-md">
               <div className="form-label">Pokój</div>
               <select
-                className="form-control"
+                className="form-select"
                 name="roomId"
                 value={formData.roomId}
                 onChange={handleChange}
@@ -114,7 +114,7 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             <div className="col-md">
               <div className="form-label">Pracownik</div>
               <select
-                className="form-control"
+                className="form-select"
                 name="employeeId"
                 value={formData.employeeId}
                 onChange={handleChange}

@@ -120,7 +120,7 @@ const ModifyRepairRequest = () => {
           <div className="col-md">
             <label className="form-label">Pokój</label>
             <select
-              className="form-control"
+              className="form-select"
               name="repairType"
               value={formData.repairType}
               onChange={handleChange}
@@ -139,7 +139,7 @@ const ModifyRepairRequest = () => {
           <div className="col-md">
             <label className="form-label">Pracownik</label>
             <select
-              className="form-control"
+              className="form-select"
               name="responsiblePerson"
               value={formData.responsiblePerson}
               onChange={handleChange}

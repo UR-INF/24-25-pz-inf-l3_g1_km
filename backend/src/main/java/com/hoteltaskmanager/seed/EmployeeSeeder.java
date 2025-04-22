@@ -43,8 +43,8 @@ public class EmployeeSeeder {
 
             addEmployee("Krzysztof", "Motas", "motas.krzysztof@gmail.com", defaultPassword, RoleName.MANAGER, "123456789", "example1.png");
             addEmployee("Dawid", "Wójcik", "dawid@hotel.pl", defaultPassword, RoleName.RECEPTIONIST, "987654321", "example2.png");
-            addEmployee("Anna", "Zielińska", "anna@hotel.pl", defaultPassword, RoleName.HOUSEKEEPER, "111222333", null);
-            addEmployee("Robert", "Kowalski", "robert@hotel.pl", defaultPassword, RoleName.MAINTENANCE, "444555666", null);
+            addEmployee("Anna", "Zielińska", "anna@hotel.pl", defaultPassword, RoleName.HOUSEKEEPER, "111222333", "example3.png");
+            addEmployee("Robert", "Kowalski", "robert@hotel.pl", defaultPassword, RoleName.MAINTENANCE, "444555666", "example4.png");
 
             System.out.println("✅ Dodano wszystkich przykładowych pracowników.");
         }

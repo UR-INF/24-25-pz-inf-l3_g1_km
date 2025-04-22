@@ -5,5 +5,5 @@ avatars/*.jpeg
 
 # do not ignore default grahpic files in uploads/avatars/:
 !avatars/default.png
-!avatars/example1.png
-!avatars/example2.png
+!avatars/example[0-9]*.png
+

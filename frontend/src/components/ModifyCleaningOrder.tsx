@@ -120,7 +120,7 @@ const ModifyCleaningOrder = () => {
               />
             ) : (
               <select
-                className="form-control"
+                className="form-select"
                 name="employeeId"
                 value={formData.employee?.id || ""}
                 onChange={handleChange}

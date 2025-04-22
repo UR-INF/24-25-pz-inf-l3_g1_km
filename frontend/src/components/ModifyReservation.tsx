@@ -315,7 +315,7 @@ const ModifyReservation = ({ reservationId }) => {
         <div className="form-group mb-3">
           <label className="form-label">Liczba łóżek</label>
           <select
-            className="form-control"
+            className="form-select"
             value={bedFilter}
             onChange={handleBedFilterChange}
             disabled={!isEditable}

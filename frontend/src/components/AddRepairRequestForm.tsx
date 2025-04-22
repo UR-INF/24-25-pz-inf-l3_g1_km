@@ -94,7 +94,7 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             <div className="col-md">
               <div className="form-label">Pokój</div>
               <select
-                className="form-control"
+                className="form-select"
                 name="roomId"
                 value={formData.roomId}
                 onChange={handleChange}
@@ -112,7 +112,7 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             <div className="col-md">
               <div className="form-label">Pracownik odpowiedzialny</div>
               <select
-                className="form-control"
+                className="form-select"
                 name="assigneeId"
                 value={formData.assigneeId}
                 onChange={handleChange}

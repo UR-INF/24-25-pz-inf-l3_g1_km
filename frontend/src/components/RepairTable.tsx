@@ -120,7 +120,7 @@ const RepairTable = () => {
                 <td>
                   <div className="d-flex py-1 align-items-center">
                     <span
-                      className="avatar avatar-sm me-1"
+                      className="avatar avatar-sm me-2"
                       style={{
                         backgroundImage: `url(${req.assignee.avatarUrl})`,
                       }}
