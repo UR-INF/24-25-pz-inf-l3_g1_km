@@ -151,13 +151,14 @@ const AddCleaningTaskForm = () => {
           </div>
         </div>
 
-        <div className="card-footer bg-transparent mt-auto">
-          <div className="btn-list justify-content-end">
+        <div className="row g-3 mt-4">
+          <div className="col-md d-flex justify-content-end">
             <button type="submit" className="btn btn-primary btn-2">
               Zatwierdź
             </button>
           </div>
         </div>
+
       </form>
     </div>
   );
