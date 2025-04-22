@@ -29,9 +29,11 @@ const CleaningTable = () => {
   };
 
   const handleDelete = async (id: number) => {
+
     try {
       await api.delete(`/housekeeping-tasks/${id}`);
       setTasks((prev) => prev.filter((task) => task.id !== id));
+      showNotification("success", "Zlecenie zostało usunięte.");
     } catch (err) {
       console.error("Błąd podczas usuwania zadania:", err);
       showNotification("error", "Nie udało się usunąć zadania.");
@@ -124,7 +126,7 @@ const CleaningTable = () => {
                     <span
                       className="avatar avatar-sm me-1"
                       style={{
-                        backgroundImage: `url(${task.employee?.avatarUrl})`, 
+                        backgroundImage: `url(${task.employee?.avatarUrl})`,
                       }}
                     ></span>
                     <div className="flex-fill">

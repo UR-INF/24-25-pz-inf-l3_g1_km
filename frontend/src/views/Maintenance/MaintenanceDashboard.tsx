@@ -1,56 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { useUser } from "../../contexts/user";
-import CleaningCard from "../../components/CleaningCard";
-import CleaningTable from "../../components/CleaningTable";
+import RepairsCard from "../../components/RepairsCard";
+import RepairTable from "../../components/RepairTable";
 import { useNotification } from "../../contexts/notification";
 import { useNavigate } from "react-router";
 
-const HousekeeperCleaningTasks = () => {
+const MaintenanceDashboard = () => {
   const { userId } = useUser();
   const { showNotification } = useNotification();
-  const [tasks, setTasks] = useState([]);
+  const [requests, setRequests] = useState([]);
   const navigate = useNavigate();
 
-  const fetchTasks = async () => {
+  const fetchRequests = async () => {
     try {
-      const response = await api.get(`/housekeeping-tasks?employeeId=${userId}`);
-      setTasks(response.data);
+      const response = await api.get(`/maintenance-requests?employeeId=${userId}`);
+      setRequests(response.data);
     } catch (error) {
-      console.error("Błąd ładowania zadań:", error);
-      showNotification("error", "Nie udało się pobrać zadań sprzątania.");
+      console.error("Błąd ładowania zgłoszeń:", error);
+      showNotification("error", "Nie udało się pobrać zgłoszeń napraw.");
     }
   };
 
   useEffect(() => {
-    fetchTasks();
+    fetchRequests();
   }, [userId]);
 
   return (
     <div className="page-body">
       <div className="container-xl">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="page-title m-0">Pokojówka</h2>
+          <h2 className="page-title m-0">Konserwator</h2>
           <button
             className="btn btn-primary"
-            onClick={() => navigate("/HousekeeperDashboard/Orders/NewCleaningOrder")}
+            onClick={() => navigate("/MaintenanceDashboard/Orders/NewRepair")}
           >
-            Stwórz nowe zlecenie sprzątania
+            Stwórz nowe zlecenie naprawy
           </button>
         </div>
 
-        {tasks.length === 0 ? (
+        {requests.length === 0 ? (
           <div className="card">
             <div className="card-body">
-              <p>Brak przypisanych zadań.</p>
+              <p>Brak przypisanych zgłoszeń.</p>
             </div>
           </div>
         ) : (
           <>
-            <CleaningCard task={tasks[0]} />
-
+            <RepairsCard task={requests[0]} />
             <div className="mt-4">
-              <CleaningTable tasks={tasks} />
+              <RepairTable tasks={requests} />
             </div>
           </>
         )}
@@ -59,4 +58,4 @@ const HousekeeperCleaningTasks = () => {
   );
 };
 
-export default HousekeeperCleaningTasks;
+export default MaintenanceDashboard;

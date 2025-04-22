@@ -14,6 +14,8 @@ import AddCleaningOrder from "./views/Receptionist/AddCleaningOrder";
 import ReservationsDetails from "./views/Receptionist/ReservationDetails";
 import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
+//import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
+
 
 const App = () => {
   const { state } = useAuth();
@@ -82,6 +84,19 @@ const App = () => {
         <Route
           path="/RecepcionistDashboard/Orders/RepairsOrderDetails/:id"
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+        />
+
+
+        {/* Trasy dla sprzątaczki */}
+        <Route
+          path="/HousekeeperDashboard/Orders/NewCleaningOrder"
+          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
+        />
+
+        {/* Trasy dla konserwatorów */}
+        <Route
+          path="/MaintenanceDashboard/Orders/NewRepair"
+          element={state.loggedIn ? <AddRepair /> : <LoginView />}
         />
 
         <Route path="/Settings" element={state.loggedIn ? <SettingsView /> : <LoginView />} />

@@ -29,9 +29,11 @@ const RepairTable = () => {
   };
 
   const handleDelete = async (id) => {
+
     try {
       await api.delete(`/maintenance-requests/${id}`);
       setRepairs((prev) => prev.filter((task) => task.id !== id));
+      showNotification("success", "Zlecenie zostało usunięte.");
     } catch (err) {
       console.error("Błąd podczas usuwania zgłoszenia:", err);
       showNotification("error", "Nie udało się usunąć zgłoszenia.");
@@ -121,7 +123,7 @@ const RepairTable = () => {
                     <span
                       className="avatar avatar-sm me-1"
                       style={{
-                        backgroundImage: `url(${req.assignee.avatarUrl})`, 
+                        backgroundImage: `url(${req.assignee.avatarUrl})`,
                       }}
                     ></span>
                     <div className="flex-fill">

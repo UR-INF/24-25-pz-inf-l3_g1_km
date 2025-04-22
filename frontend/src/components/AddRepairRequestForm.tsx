@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 
-const AddRepairRequestForm = () => {
+const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [formData, setFormData] = useState({
     roomId: "",
     description: "",
@@ -65,8 +65,7 @@ const AddRepairRequestForm = () => {
         serviceSummary: null,
       };
 
-      const response = await api.post("/maintenance-requests", payload);
-      console.log("Zgłoszenie serwisowe dodane:", response.data);
+      await api.post("/maintenance-requests", payload);
       showNotification("success", "Zlecenie serwisowe dodane pomyślnie!");
 
       setFormData({
@@ -75,6 +74,8 @@ const AddRepairRequestForm = () => {
         assigneeId: "",
         requestDate: new Date().toISOString().split("T")[0],
       });
+
+      onSuccess?.();
     } catch (error: any) {
       console.error("Błąd podczas dodawania zgłoszenia:", error);
       showNotification("error", "Wystąpił błąd podczas zapisu zgłoszenia.");
@@ -82,85 +83,87 @@ const AddRepairRequestForm = () => {
   };
 
   return (
-    <div className="card-body">
-      <h2 className="mb-4">Dodaj nowe zlecenie naprawy</h2>
+    <div className="card">
+      <div className="card-body">
+        <h2 className="mb-4">Dodaj nowe zlecenie naprawy</h2>
 
-      <form onSubmit={handleSubmit}>
-        <h3 className="card-title">Szczegóły zlecenia naprawy</h3>
+        <form onSubmit={handleSubmit}>
+          <h3 className="card-title">Szczegóły zlecenia naprawy</h3>
 
-        <div className="row g-3">
-          <div className="col-md">
-            <div className="form-label">Pokój</div>
-            <select
-              className="form-control"
-              name="roomId"
-              value={formData.roomId}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Wybierz pokój</option>
-              {rooms.map((room) => (
-                <option key={room.id} value={room.id}>
-                  {room.roomNumber} (Piętro: {room.floor})
-                </option>
-              ))}
-            </select>
+          <div className="row g-3">
+            <div className="col-md">
+              <div className="form-label">Pokój</div>
+              <select
+                className="form-control"
+                name="roomId"
+                value={formData.roomId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Wybierz pokój</option>
+                {rooms.map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.roomNumber} (Piętro: {room.floor})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-md">
+              <div className="form-label">Pracownik odpowiedzialny</div>
+              <select
+                className="form-control"
+                name="assigneeId"
+                value={formData.assigneeId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Wybierz pracownika</option>
+                {employees.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.firstName} {emp.lastName} ({emp.email})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="col-md">
-            <div className="form-label">Pracownik odpowiedzialny</div>
-            <select
-              className="form-control"
-              name="assigneeId"
-              value={formData.assigneeId}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Wybierz pracownika</option>
-              {employees.map((emp) => (
-                <option key={emp.id} value={emp.id}>
-                  {emp.firstName} {emp.lastName} ({emp.email})
-                </option>
-              ))}
-            </select>
+          <div className="row g-3 mt-3">
+            <div className="col-md">
+              <div className="form-label">Opis naprawy</div>
+              <textarea
+                className="form-control"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="row g-3 mt-3">
-          <div className="col-md">
-            <div className="form-label">Opis naprawy</div>
-            <textarea
-              className="form-control"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
+          <div className="row g-3 mt-3">
+            <div className="col-md">
+              <div className="form-label">Data zgłoszenia</div>
+              <input
+                type="date"
+                className="form-control"
+                name="requestDate"
+                value={formData.requestDate}
+                onChange={handleChange}
+                disabled
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="row g-3 mt-3">
-          <div className="col-md">
-            <div className="form-label">Data zgłoszenia</div>
-            <input
-              type="date"
-              className="form-control"
-              name="requestDate"
-              value={formData.requestDate}
-              onChange={handleChange}
-              disabled
-            />
+          <div className="row g-3 mt-4">
+            <div className="col-md d-flex justify-content-end">
+              <button type="submit" className="btn btn-primary btn-2">
+                Zatwierdź
+              </button>
+            </div>
           </div>
-        </div>
-
-        <div className="card-footer bg-transparent mt-auto">
-          <div className="btn-list justify-content-end">
-            <button type="submit" className="btn btn-primary btn-2">
-              Zatwierdź
-            </button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

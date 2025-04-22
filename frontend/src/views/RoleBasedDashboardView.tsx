@@ -3,7 +3,7 @@ import { useUser, RoleName } from "../contexts/user";
 import ReceptionistDashboard from "./Receptionist/ReceptionistDashboard.tsx";
 // import ManagerDashboard from "./ManagerDashboard.tsx";
 import HousekeeperDashboard from "./Housekeeper/HousekeeperDashboard.tsx";
-// import MaintenanceDashboard from "./MaintenanceDashboard.tsx";
+import MaintenanceDashboard from "./Maintenance/MaintenanceDashboard.tsx";
 
 const RoleBasedDashboardView = () => {
   const { loading, error, userRoleName } = useUser();
@@ -35,8 +35,8 @@ const RoleBasedDashboardView = () => {
       return <ReceptionistDashboard />;
     case RoleName.HOUSEKEEPER:
       return <HousekeeperDashboard />;
-    // case RoleName.MAINTENANCE:
-    //   return <MaintenanceDashboard />;
+    case RoleName.MAINTENANCE:
+      return <MaintenanceDashboard />;
     default:
       return (
         <DashboardAlert
