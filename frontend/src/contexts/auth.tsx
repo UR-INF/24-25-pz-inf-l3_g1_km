@@ -108,6 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     if (token && !isTokenExpired(token)) {
+      console.log("token: ", token);
       const payload = JSON.parse(atob(token.split(".")[1]));
       const email = payload.email;
       dispatch({ type: "LOGIN", payload: { email, token } });

@@ -16,6 +16,7 @@ const SettingsView = () => {
     fetchUser,
     userAvatarFilename,
     userAvatarUrl,
+    userNotificationsEnabled,
   } = useUser();
 
   const { theme, toggleTheme, toggleSystemPreference, isSystemPreferred } = useTheme();
@@ -26,22 +27,6 @@ const SettingsView = () => {
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const { showNotification } = useNotification();
-
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
-  useEffect(() => {
-    // fetch aktualnej wartości preferencji powiadomień
-    const fetchNotificationStatus = async () => {
-      try {
-        const response = await api.get("/employees/me");
-        setNotificationsEnabled(response.data.notificationsEnabled);
-      } catch (err) {
-        console.error("Błąd podczas pobierania ustawień powiadomień:", err);
-      }
-    };
-
-    fetchNotificationStatus();
-  }, []);
 
   const handleToggleNotifications = async () => {
     if (!("Notification" in window)) {
@@ -60,11 +45,10 @@ const SettingsView = () => {
     }
 
     try {
-      const updated = !notificationsEnabled;
+      const updated = !userNotificationsEnabled;
       await api.put("/employees/me/notifications", {
         notificationsEnabled: updated,
       });
-      setNotificationsEnabled(updated);
       showNotification("success", updated ? "Powiadomienia włączone." : "Powiadomienia wyłączone.");
       await fetchUser();
     } catch (err) {
@@ -364,12 +348,19 @@ const SettingsView = () => {
               </div>
 
               <h3 className="card-title mt-4">Powiadomienia</h3>
-              <button
-                className={`btn ${notificationsEnabled ? "btn-danger" : "btn-success"}`}
-                onClick={handleToggleNotifications}
-              >
-                {notificationsEnabled ? "Wyłącz powiadomienia" : "Włącz powiadomienia"}
-              </button>
+              <div className="form-check form-switch">
+                <input
+                  className={`form-check-input ${userNotificationsEnabled ? "bg-success" : "bg-secondary"}`}
+                  type="checkbox"
+                  id="notificationSwitch"
+                  checked={userNotificationsEnabled}
+                  onChange={handleToggleNotifications}
+                />
+                <label className="form-check-label" htmlFor="notificationSwitch">
+                  {userNotificationsEnabled ? "Włączone" : "Wyłączone"}
+                </label>
+
+              </div>
             </div>
           </div>
         </div>
