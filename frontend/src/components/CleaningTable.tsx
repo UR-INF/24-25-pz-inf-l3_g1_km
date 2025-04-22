@@ -40,9 +40,9 @@ const CleaningTable = () => {
     fetchCleaningTasks();
   }, []);
 
-  const filteredTasks = tasks.filter((task) =>
-    task.description.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredTasks = tasks
+    .filter((task) => task.description.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
 
   const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
   const currentData = filteredTasks.slice(
