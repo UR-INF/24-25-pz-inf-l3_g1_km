@@ -1,4 +1,4 @@
-import { useUser } from "../contexts/user";
+import { RoleName, useUser } from "../contexts/user";
 import { getRoleNameInPolish } from "../utils/roleUtils";
 import { api } from "../services/api";
 import { useState, useEffect } from "react";
@@ -152,20 +152,6 @@ const SettingsView = () => {
     } catch (err) {
       console.error("Błąd podczas usuwania zdjęcia profilowego:", err);
       showNotification("error", "Wystąpił błąd podczas usuwania zdjęcia profilowego.");
-    }
-  };
-
-  const handleEnableNotifications = async () => {
-    if (!("Notification" in window)) {
-      showNotification("error", "Twoja przeglądarka nie obsługuje powiadomień.");
-      return;
-    }
-
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      showNotification("success", "Powiadomienia zostały włączone.");
-    } else {
-      showNotification("error", "Nie udzielono zgody na powiadomienia.");
     }
   };
 
@@ -347,20 +333,28 @@ const SettingsView = () => {
                 </label>
               </div>
 
-              <h3 className="card-title mt-4">Powiadomienia</h3>
-              <div className="form-check form-switch">
-                <input
-                  className={`form-check-input ${userNotificationsEnabled ? "bg-success" : "bg-secondary"}`}
-                  type="checkbox"
-                  id="notificationSwitch"
-                  checked={userNotificationsEnabled}
-                  onChange={handleToggleNotifications}
-                />
-                <label className="form-check-label" htmlFor="notificationSwitch">
-                  {userNotificationsEnabled ? "Włączone" : "Wyłączone"}
-                </label>
+              {(userRoleName === RoleName.HOUSEKEEPER || userRoleName === RoleName.MAINTENANCE) && (
+                <>
+                  <h3 className="card-title mt-4">Powiadomienia systemowe</h3>
+                  <p className="text-muted">
+                    Włączenie tej opcji pozwoli na otrzymywanie powiadomień systemowych, gdy
+                    zostanie dodane nowe zadanie dla konserwatora lub pokojówki. Powiadomienia te
+                    pojawiają się na Twoim urządzeniu, np. w systemie Windows w formie komunikatu
+                    nad zegarkiem.
+                  </p>
 
-              </div>
+                  <div className="form-check form-switch d-flex align-items-center gap-2">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="notificationSwitch"
+                      checked={userNotificationsEnabled}
+                      onChange={handleToggleNotifications}
+                    />
+                    <span>{userNotificationsEnabled ? "Włączone" : "Wyłączone"}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

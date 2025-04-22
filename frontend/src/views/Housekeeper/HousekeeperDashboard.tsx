@@ -69,7 +69,10 @@ const HousekeeperCleaningTasks = () => {
     <div className="page-body">
       <div className="container-xl">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="page-title m-0">Pokojówka</h2>
+          <div className="col">
+            <div className="page-pretitle">Zgłoszenia sprzątania</div>
+            <h1 className="page-title">Podsumowanie</h1>
+          </div>
           <button
             className="btn btn-primary"
             onClick={() => navigate("/HousekeeperDashboard/Orders/NewCleaningOrder")}
@@ -86,7 +89,7 @@ const HousekeeperCleaningTasks = () => {
           </div>
         ) : (
           <>
-            <CleaningCard task={tasks[0]} />
+            {/* <CleaningCard task={tasks[0]} /> */}
 
             <div className="mt-4">
               <CleaningTable tasks={tasks} />

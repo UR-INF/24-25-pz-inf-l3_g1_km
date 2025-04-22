@@ -68,7 +68,11 @@ const MaintenanceDashboard = () => {
     <div className="page-body">
       <div className="container-xl">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="page-title m-0">Konserwator</h2>
+          <div className="col">
+            <div className="page-pretitle">Zgłoszenia napraw</div>
+            <h1 className="page-title">Podsumowanie</h1>
+          </div>
+
           <button
             className="btn btn-primary"
             onClick={() => navigate("/MaintenanceDashboard/Orders/NewRepair")}
@@ -85,7 +89,7 @@ const MaintenanceDashboard = () => {
           </div>
         ) : (
           <>
-            <RepairsCard task={requests} />
+            {/* <RepairsCard task={requests} /> */}
             <div className="mt-4">
               <RepairTable tasks={requests} />
             </div>
