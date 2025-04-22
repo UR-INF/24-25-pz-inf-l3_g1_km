@@ -25,7 +25,10 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         setEmployees(employeesRes.data);
       } catch (error: any) {
         console.error("Błąd API:", error.response?.status, error.response?.data);
-        showNotification("error", "Nie udało się pobrać danych. Upewnij się, że jesteś zalogowany.");
+        showNotification(
+          "error",
+          "Nie udało się pobrać danych. Upewnij się, że jesteś zalogowany.",
+        );
       }
     };
 

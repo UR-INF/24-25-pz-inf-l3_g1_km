@@ -16,7 +16,6 @@ import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
-
 const App = () => {
   const { state } = useAuth();
 
@@ -85,7 +84,6 @@ const App = () => {
           path="/RecepcionistDashboard/Orders/RepairsOrderDetails/:id"
           element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
         />
-
 
         {/* Trasy dla sprzątaczki */}
         <Route

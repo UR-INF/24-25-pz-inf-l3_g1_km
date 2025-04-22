@@ -105,21 +105,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     didRunRef.current = true;
 
     const token = localStorage.getItem("token");
-    //console.log("%c🔑 JWT Token z localStorage:", "color: limegreen; font-weight: bold;", token); // 💡 DEBUG
-
     dispatch({ type: "SET_LOADING", payload: true });
 
     if (token && !isTokenExpired(token)) {
       const payload = JSON.parse(atob(token.split(".")[1]));
       const email = payload.email;
-      //dispatch({ type: "LOGIN", payload: { email, token } });
-      //console.log("%c👤 Payload tokenu:", "color: deepskyblue; font-weight: bold;", payload); // 💡 DEBUG
-
-      // umożliwia dostęp do tokenu z globalnej konsoli DevTools
-      (window as any).__debugToken = token;
-      (window as any).__debugPayload = payload;
-
       dispatch({ type: "LOGIN", payload: { email, token } });
+
       showNotification("success", "Pomyślnie zalogowano do systemu!");
     } else {
       logout();

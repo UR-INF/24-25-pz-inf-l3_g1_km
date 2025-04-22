@@ -29,7 +29,6 @@ const RepairTable = () => {
   };
 
   const handleDelete = async (id) => {
-
     try {
       await api.delete(`/maintenance-requests/${id}`);
       setRepairs((prev) => prev.filter((task) => task.id !== id));
@@ -127,7 +126,9 @@ const RepairTable = () => {
                       }}
                     ></span>
                     <div className="flex-fill">
-                      <div className="font-weight-medium">{req.assignee.firstName} {req.assignee.lastName}</div>
+                      <div className="font-weight-medium">
+                        {req.assignee.firstName} {req.assignee.lastName}
+                      </div>
                     </div>
                   </div>
                 </td>

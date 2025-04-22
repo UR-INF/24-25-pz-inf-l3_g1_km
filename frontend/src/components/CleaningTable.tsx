@@ -29,7 +29,6 @@ const CleaningTable = () => {
   };
 
   const handleDelete = async (id: number) => {
-
     try {
       await api.delete(`/housekeeping-tasks/${id}`);
       setTasks((prev) => prev.filter((task) => task.id !== id));
@@ -130,7 +129,9 @@ const CleaningTable = () => {
                       }}
                     ></span>
                     <div className="flex-fill">
-                      <div className="font-weight-medium">{task.employee?.firstName} {task.employee?.lastName}</div>
+                      <div className="font-weight-medium">
+                        {task.employee?.firstName} {task.employee?.lastName}
+                      </div>
                     </div>
                   </div>
                 </td>

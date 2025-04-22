@@ -4,10 +4,7 @@ import { getNavItemClass } from "../../../utils/navigationUtils";
 const HousekeeperMenu = () => {
   const location = useLocation();
 
-  return (
-    <>
-    </>
-  );
+  return <></>;
 };
 
 export default HousekeeperMenu;

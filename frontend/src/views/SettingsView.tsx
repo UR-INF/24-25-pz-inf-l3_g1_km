@@ -312,9 +312,7 @@ const SettingsView = () => {
               </div>
               <div>
                 <div className="theme-settings mt-4">
-                  <h3 className="card-title mt-4">
-                    Motyw
-                  </h3>
+                  <h3 className="card-title mt-4">Motyw</h3>
                   <div className="row g-2">
                     <div className="col-auto">
                       <div className="form-check">
@@ -372,7 +370,6 @@ const SettingsView = () => {
               >
                 {notificationsEnabled ? "Wyłącz powiadomienia" : "Włącz powiadomienia"}
               </button>
-
             </div>
           </div>
         </div>

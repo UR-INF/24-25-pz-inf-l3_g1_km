@@ -19,9 +19,7 @@ const HousekeeperCleaningTasks = () => {
       const current = response.data;
 
       const newTasks = current.filter(
-        (task) =>
-          !knownTaskIdsRef.current.has(task.id) &&
-          task.employee?.id === userId // tylko przypisane do aktualnego użytkownika
+        (task) => !knownTaskIdsRef.current.has(task.id) && task.employee?.id === userId, // tylko przypisane do aktualnego użytkownika
       );
 
       setTasks(current);

@@ -4,10 +4,7 @@ import { getNavItemClass } from "../../../utils/navigationUtils";
 const MaintenanceMenu = () => {
   const location = useLocation();
 
-  return (
-    <>
-    </>
-  );
+  return <></>;
 };
 
 export default MaintenanceMenu;

@@ -20,9 +20,7 @@ const MaintenanceDashboard = () => {
         const current = response.data;
 
         const newTasks = current.filter(
-          (task) =>
-            !knownRequestIdsRef.current.has(task.id) &&
-            task.assignee?.id === userId // tylko przypisane do tego użytkownika
+          (task) => !knownRequestIdsRef.current.has(task.id) && task.assignee?.id === userId, // tylko przypisane do tego użytkownika
         );
 
         setRequests(current);
