@@ -32,7 +32,6 @@ const RepairsOrders = () => {
       <div className="page-body">
         <div className="container-xl">
           <div className="row row-deck row-cards">
-            <RepairsCard />
             <div className="col-lg-12">
               <RepairTable />
             </div>
