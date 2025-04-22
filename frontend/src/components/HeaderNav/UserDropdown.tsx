@@ -26,11 +26,16 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
           }}
         ></span>
 
-        <div className="ps-2">
+        <div className="ps-2 ms-1">
           <div>
             {userFirstName} {userLastName}
           </div>
-          <div className="mt-1 small text-secondary">{getRoleNameInPolish(userRoleName)}</div>
+          <div
+            className="mt-1 small badge bg-blue-lt position-relative right-0 top-0"
+            style={{ transform: "none" }}
+          >
+            {getRoleNameInPolish(userRoleName)}
+          </div>
         </div>
       </a>
       <div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">

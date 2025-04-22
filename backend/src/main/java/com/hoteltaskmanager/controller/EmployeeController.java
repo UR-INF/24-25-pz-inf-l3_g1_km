@@ -231,11 +231,11 @@ public class EmployeeController {
             String originalFilename = file.getOriginalFilename();
             String extension = "";
 
-            if (originalFilename != null && originalFilename.contains(".")) {
+            if (originalFilename.contains(".")) {
                 extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
             }
 
-            String uniqueFilename = UUID.randomUUID().toString() + extension;
+            String uniqueFilename = UUID.randomUUID() + extension;
 
             Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
 
