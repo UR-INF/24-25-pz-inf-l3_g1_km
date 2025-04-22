@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
+import { useNotification } from "../contexts/notification";
 
 const AddCleaningTaskForm = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const AddCleaningTaskForm = () => {
 
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     const fetchRoomsAndEmployees = async () => {
@@ -23,12 +25,12 @@ const AddCleaningTaskForm = () => {
         setEmployees(employeesRes.data);
       } catch (error: any) {
         console.error("Błąd API:", error.response?.status, error.response?.data);
-        alert("Nie udało się pobrać danych. Upewnij się, że jesteś zalogowany.");
+        showNotification("error", "Nie udało się pobrać danych. Upewnij się, że jesteś zalogowany.");
       }
     };
 
     fetchRoomsAndEmployees();
-  }, []);
+  }, [showNotification]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
@@ -47,7 +49,7 @@ const AddCleaningTaskForm = () => {
     const selectedEmployee = employees.find((emp) => emp.id.toString() === formData.employeeId);
 
     if (!selectedRoom || !selectedEmployee || !formData.description) {
-      alert("Uzupełnij wszystkie wymagane pola.");
+      showNotification("error", "Uzupełnij wszystkie wymagane pola.");
       return;
     }
 
@@ -63,7 +65,7 @@ const AddCleaningTaskForm = () => {
     try {
       const response = await api.post("/housekeeping-tasks", payload);
       console.log("Zadanie sprzątania dodane:", response.data);
-      alert("Zadanie sprzątania utworzone pomyślnie!");
+      showNotification("success", "Zadanie sprzątania utworzone pomyślnie!");
 
       setFormData({
         roomId: "",
@@ -73,7 +75,7 @@ const AddCleaningTaskForm = () => {
       });
     } catch (error: any) {
       console.error("Błąd tworzenia zadania:", error);
-      alert("Wystąpił błąd podczas tworzenia zadania sprzątania.");
+      showNotification("error", "Wystąpił błąd podczas tworzenia zadania sprzątania.");
     }
   };
 

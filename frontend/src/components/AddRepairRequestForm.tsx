@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
+import { useNotification } from "../contexts/notification";
 
 const AddRepairRequestForm = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const AddRepairRequestForm = () => {
 
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     const fetchRoomsAndEmployees = async () => {
@@ -23,12 +25,12 @@ const AddRepairRequestForm = () => {
         setEmployees(employeesRes.data);
       } catch (error: any) {
         console.error("Błąd API:", error.response?.status, error.response?.data);
-        alert("Nie udało się pobrać danych.");
+        showNotification("error", "Nie udało się pobrać danych.");
       }
     };
 
     fetchRoomsAndEmployees();
-  }, []);
+  }, [showNotification]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>,
@@ -44,7 +46,7 @@ const AddRepairRequestForm = () => {
     const selectedEmployee = employees.find((emp) => emp.id.toString() === formData.assigneeId);
 
     if (!selectedRoom || !selectedEmployee || !formData.description) {
-      alert("Uzupełnij wszystkie pola.");
+      showNotification("error", "Uzupełnij wszystkie pola.");
       return;
     }
 
@@ -65,7 +67,7 @@ const AddRepairRequestForm = () => {
 
       const response = await api.post("/maintenance-requests", payload);
       console.log("Zgłoszenie serwisowe dodane:", response.data);
-      alert("Zlecenie serwisowe dodane pomyślnie!");
+      showNotification("success", "Zlecenie serwisowe dodane pomyślnie!");
 
       setFormData({
         roomId: "",
@@ -75,7 +77,7 @@ const AddRepairRequestForm = () => {
       });
     } catch (error: any) {
       console.error("Błąd podczas dodawania zgłoszenia:", error);
-      alert("Wystąpił błąd podczas zapisu zgłoszenia.");
+      showNotification("error", "Wystąpił błąd podczas zapisu zgłoszenia.");
     }
   };
 

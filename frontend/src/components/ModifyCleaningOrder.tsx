@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { api } from "../services/api";
+import { useNotification } from "../contexts/notification";
 
 const ModifyCleaningOrder = () => {
   const { id } = useParams();
+  const { showNotification } = useNotification();
+
   const [isEditable, setIsEditable] = useState(false);
+  const [employees, setEmployees] = useState([]);
+
   const [formData, setFormData] = useState({
     employee: {},
     room: {},
@@ -16,11 +21,14 @@ const ModifyCleaningOrder = () => {
   const [originalData, setOriginalData] = useState(null);
 
   useEffect(() => {
-    const fetchTask = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get(`/housekeeping-tasks/${id}`);
-        const task = response.data;
+        const [taskRes, empRes] = await Promise.all([
+          api.get(`/housekeeping-tasks/${id}`),
+          api.get("/employees?roleName=HOUSEKEEPER"),
+        ]);
 
+        const task = taskRes.data;
         const mappedForm = {
           employee: task.employee,
           room: task.room,
@@ -30,20 +38,27 @@ const ModifyCleaningOrder = () => {
           description: task.description,
         };
 
+        setEmployees(empRes.data);
         setFormData(mappedForm);
         setOriginalData(mappedForm);
       } catch (error) {
         console.error("Błąd pobierania danych zadania:", error);
-        alert("Nie udało się pobrać szczegółów zadania.");
+        showNotification("error", "Nie udało się pobrać szczegółów zadania.");
       }
     };
 
-    if (id) fetchTask();
-  }, [id]);
+    if (id) fetchData();
+  }, [id, showNotification]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "employeeId") {
+      const selected = employees.find((emp) => emp.id.toString() === value);
+      setFormData((prev) => ({ ...prev, employee: selected || {} }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleCancelClick = () => {
@@ -64,12 +79,12 @@ const ModifyCleaningOrder = () => {
 
       await api.put(`/housekeeping-tasks/${id}`, payload);
 
-      alert("Zlecenie zaktualizowane pomyślnie!");
+      showNotification("success", "Zlecenie zaktualizowane pomyślnie!");
       setOriginalData(formData);
       setIsEditable(false);
     } catch (error) {
       console.error("Błąd aktualizacji zadania:", error);
-      alert("Wystąpił błąd podczas zapisu zmian.");
+      showNotification("error", "Wystąpił błąd podczas zapisu zmian.");
     }
   };
 
@@ -92,16 +107,32 @@ const ModifyCleaningOrder = () => {
           </div>
           <div className="col-md">
             <div className="form-label">Pracownik</div>
-            <input
-              type="text"
-              className="form-control"
-              value={
-                formData.employee?.firstName && formData.employee?.lastName
-                  ? `${formData.employee.firstName} ${formData.employee.lastName}`
-                  : ""
-              }
-              disabled
-            />
+            {!isEditable ? (
+              <input
+                type="text"
+                className="form-control"
+                value={
+                  formData.employee?.firstName && formData.employee?.lastName
+                    ? `${formData.employee.firstName} ${formData.employee.lastName}`
+                    : ""
+                }
+                disabled
+              />
+            ) : (
+              <select
+                className="form-control"
+                name="employeeId"
+                value={formData.employee?.id || ""}
+                onChange={handleChange}
+              >
+                <option value="">Wybierz pracownika</option>
+                {employees.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.firstName} {emp.lastName} ({emp.email})
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
 
