@@ -4,6 +4,7 @@ import { api } from "../services/api";
 import { useState } from "react";
 import { useNotification } from "../contexts/notification";
 import { validateEmailFormat } from "../utils/regexUtils";
+import useTheme from "../hooks/useTheme";
 
 const SettingsView = () => {
   const {
@@ -16,6 +17,8 @@ const SettingsView = () => {
     userAvatarFilename,
     userAvatarUrl,
   } = useUser();
+
+  const { theme, toggleTheme, toggleSystemPreference, isSystemPreferred } = useTheme();
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -246,6 +249,60 @@ const SettingsView = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+              <div>
+                <div className="theme-settings mt-4">
+                  <h3 card-title mt-4>
+                    Motyw
+                  </h3>
+                  <div className="row g-2">
+                    <div className="col-auto">
+                      <div className="form-check">
+                        <input
+                          type="radio"
+                          id="light"
+                          name="theme"
+                          value="light"
+                          checked={theme === "light"}
+                          onChange={toggleTheme}
+                          className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor="light">
+                          Jasny motyw
+                        </label>
+                      </div>
+                    </div>
+                    <div className="col-auto">
+                      <div className="form-check">
+                        <input
+                          type="radio"
+                          id="dark"
+                          name="theme"
+                          value="dark"
+                          checked={theme === "dark"}
+                          onChange={toggleTheme}
+                          className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor="dark">
+                          Ciemny motyw
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="system-theme-toggle">
+                <h3 className="card-title mt-1">Użyj motywu systemowego</h3>
+                <label className="form-check-label">
+                  <input
+                    type="checkbox"
+                    checked={isSystemPreferred}
+                    onChange={toggleSystemPreference}
+                    className="form-check-input me-3"
+                  />
+                  Użyj ustawień systemowych
+                </label>
               </div>
             </div>
           </div>

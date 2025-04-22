@@ -120,7 +120,17 @@ const CleaningTable = () => {
                 <td>{task.description}</td>
                 <td>{task.room?.roomNumber ?? "-"}</td>
                 <td>
-                  {task.employee?.firstName} {task.employee?.lastName}
+                  <div className="d-flex py-1 align-items-center">
+                    <span
+                      className="avatar avatar-sm me-1"
+                      style={{
+                        backgroundImage: `url(${task.employee?.avatarUrl})`, 
+                      }}
+                    ></span>
+                    <div className="flex-fill">
+                      <div className="font-weight-medium">{task.employee?.firstName} {task.employee?.lastName}</div>
+                    </div>
+                  </div>
                 </td>
                 <td>
                   <span className={`badge me-1 bg-${getStatusColor(task.status)} text-white`}>

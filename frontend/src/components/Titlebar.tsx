@@ -1,20 +1,13 @@
 import React, { useState } from "react";
 import { useNavigationHistory } from "../hooks/useNavigationHistory";
+import useTheme from "../hooks/useTheme";
 
 const Titlebar = () => {
   const handleMinimize = () => window.ipcRenderer.send("window:minimize");
   const handleMaximize = () => window.ipcRenderer.send("window:maximize");
   const handleClose = () => window.ipcRenderer.send("window:close");
 
-  const [theme, setTheme] = useState<"light" | "dark">(
-    document.documentElement.dataset.theme === "dark" ? "dark" : "light",
-  );
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-bs-theme", newTheme);
-    setTheme(newTheme);
-  };
+  const { theme, toggleTheme } = useTheme();
 
   const { goBack, goForward, canGoBack, canGoForward } = useNavigationHistory();
 
@@ -96,7 +89,7 @@ const Titlebar = () => {
               <button
                 className="nav-link px-1 btn btn-link"
                 title={`Przełącz na ${theme === "dark" ? "jasny" : "ciemny"} motyw`}
-                onClick={toggleTheme}
+                onClick={toggleTheme} // Używamy toggleTheme z useTheme
               >
                 <i className={`fs-2 ti ti-${theme === "dark" ? "sun" : "moon"}`}></i>
               </button>

@@ -38,8 +38,17 @@ public class HousekeepingTaskController {
      */
     @GetMapping
     public List<HousekeepingTask> getAll() {
-        return taskRepository.findAll();
+        List<HousekeepingTask> tasks = taskRepository.findAll();
+
+        tasks.forEach(task -> {
+            if (task.getEmployee() != null) {
+                task.getEmployee().getAvatarUrl();
+            }
+        });
+
+        return tasks;
     }
+
 
     /**
      * GET /api/housekeeping-tasks/{id}

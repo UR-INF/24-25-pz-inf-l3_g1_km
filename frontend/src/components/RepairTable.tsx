@@ -117,9 +117,17 @@ const RepairTable = () => {
                 <td>{req.description}</td>
                 <td>{req.room?.roomNumber ?? "-"}</td>
                 <td>
-                  {req.assignee
-                    ? `${req.assignee.firstName} ${req.assignee.lastName}`
-                    : "Nieprzypisany"}
+                  <div className="d-flex py-1 align-items-center">
+                    <span
+                      className="avatar avatar-sm me-1"
+                      style={{
+                        backgroundImage: `url(${req.assignee.avatarUrl})`, 
+                      }}
+                    ></span>
+                    <div className="flex-fill">
+                      <div className="font-weight-medium">{req.assignee.firstName} {req.assignee.lastName}</div>
+                    </div>
+                  </div>
                 </td>
                 <td>
                   <span className={`badge me-1 bg-${getStatusColor(req.status)} text-white`}>
