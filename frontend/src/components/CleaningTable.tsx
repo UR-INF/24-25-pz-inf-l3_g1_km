@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
+import { useNotification } from "../contexts/notification";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -10,6 +11,7 @@ const CleaningTable = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { showNotification } = useNotification();
 
   const fetchCleaningTasks = async () => {
     try {
@@ -32,7 +34,7 @@ const CleaningTable = () => {
       setTasks((prev) => prev.filter((task) => task.id !== id));
     } catch (err) {
       console.error("Błąd podczas usuwania zadania:", err);
-      alert("Nie udało się usunąć zadania.");
+      showNotification("error", "Nie udało się usunąć zadania.");
     }
   };
 
