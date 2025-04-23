@@ -77,6 +77,7 @@ const MaintenanceDashboard = () => {
             className="btn btn-primary"
             onClick={() => navigate("/MaintenanceDashboard/Orders/NewRepair")}
           >
+            <i className="ti ti-plus fs-2 me-2"></i>
             Stwórz nowe zlecenie naprawy
           </button>
         </div>

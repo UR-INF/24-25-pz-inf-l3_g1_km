@@ -2,55 +2,103 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
-
-const ITEMS_PER_PAGE = 8;
+import DeleteConfirmationModal from "../views/Receptionist/DeleteConfirmationModal";
 
 const RepairTable = () => {
   const navigate = useNavigate();
   const [repairs, setRepairs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => localStorage.getItem("repairsSearch") || "");
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const saved = localStorage.getItem("repairsItemsPerPage");
+    return saved ? Number(saved) : 8;
+  });
+
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterAssignee, setFilterAssignee] = useState("ALL");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedRepairId, setSelectedRepairId] = useState(null);
+
   const { showNotification } = useNotification();
 
-  const fetchRepairs = async () => {
-    try {
-      const response = await api.get("/maintenance-requests");
-      setRepairs(response.data);
-    } catch (err) {
-      console.error("Błąd podczas pobierania zgłoszeń serwisowych:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchRepairs = async () => {
+      try {
+        const response = await api.get("/maintenance-requests");
+        setRepairs(response.data);
+      } catch (err) {
+        console.error("Błąd podczas pobierania zgłoszeń serwisowych:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRepairs();
+  }, []);
 
   const handleShowRepairDetails = (id) => {
     navigate(`/RecepcionistDashboard/Orders/RepairsOrderDetails/${id}`);
   };
 
-  const handleDelete = async (id) => {
+  const handleDeleteClick = (id) => {
+    setSelectedRepairId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      await api.delete(`/maintenance-requests/${id}`);
-      setRepairs((prev) => prev.filter((task) => task.id !== id));
-      showNotification("success", "Zlecenie zostało usunięte.");
+      await api.delete(`/maintenance-requests/${selectedRepairId}`);
+      setRepairs((prev) => prev.filter((task) => task.id !== selectedRepairId));
+      showNotification('success', 'Zlecenie zostało usunięte.');
     } catch (err) {
-      console.error("Błąd podczas usuwania zgłoszenia:", err);
-      showNotification("error", "Nie udało się usunąć zgłoszenia.");
+      console.error('Błąd podczas usuwania zgłoszenia:', err);
+      showNotification('error', 'Nie udało się usunąć zgłoszenia.');
+    } finally {
+      setShowDeleteModal(false);
+      setSelectedRepairId(null);
     }
   };
 
-  useEffect(() => {
-    fetchRepairs();
-  }, []);
+  const handleResetFilters = () => {
+    setSearch("");
+    setItemsPerPage(8);
+    setFilterStatus("ALL");
+    setFilterAssignee("ALL");
+    setCurrentPage(1);
+    localStorage.removeItem("repairsItemsPerPage");
+    localStorage.removeItem("repairsSearch");
+  };
+
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    setCurrentPage(1);
+    localStorage.setItem("repairsSearch", value);
+  };
+
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+    localStorage.setItem("repairsItemsPerPage", value.toString());
+  };
+
+  const assigneeOptions = Array.from(
+    new Set(repairs.map((r) => r.assignee?.id + "|" + r.assignee?.firstName + " " + r.assignee?.lastName))
+  ).filter(Boolean);
 
   const filteredRepairs = repairs
     .filter((r) => r.description.toLowerCase().includes(search.toLowerCase()))
+    .filter((r) => filterStatus === "ALL" || r.status === filterStatus)
+    .filter((r) => {
+      if (filterAssignee === "ALL") return true;
+      return String(r.assignee?.id) === filterAssignee;
+    })
     .sort((a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
 
-  const totalPages = Math.ceil(filteredRepairs.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredRepairs.length / itemsPerPage);
   const currentData = filteredRepairs.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const formatDate = (dateStr) => (dateStr ? new Date(dateStr).toLocaleDateString() : "-");
@@ -64,33 +112,64 @@ const RepairTable = () => {
       </div>
 
       <div className="card-body border-bottom py-3">
-        <div className="d-flex">
-          <div className="text-secondary">
-            Pokaż
-            <div className="mx-2 d-inline-block">
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                value={ITEMS_PER_PAGE}
-                size={3}
-                disabled
-              />
-            </div>
-            wyników
+        <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+          <div className="d-flex align-items-center gap-2 text-secondary">
+            <span>Pokaż</span>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "80px" }}
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+            >
+              {[5, 8, 10, 20, 50].map((count) => (
+                <option key={count} value={count}>{count}</option>
+              ))}
+            </select>
+            <span>wyników</span>
           </div>
-          <div className="ms-auto text-secondary">
-            Wyszukaj:
-            <div className="ms-2 d-inline-block">
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setCurrentPage(1); // reset page after search
-                }}
-              />
-            </div>
+
+          <div className="d-flex flex-wrap gap-2 align-items-center">
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "170px" }}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="ALL">Wszystkie statusy</option>
+              <option value="PENDING">Do wykonania</option>
+              <option value="IN_PROGRESS">W trakcie</option>
+              <option value="COMPLETED">Ukończono</option>
+            </select>
+
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "170px" }}
+              value={filterAssignee}
+              onChange={(e) => setFilterAssignee(e.target.value)}
+            >
+              <option value="ALL">Wszyscy pracownicy</option>
+              {assigneeOptions.map((opt) => {
+                const [id, name] = opt.split("|");
+                return (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                );
+              })}
+            </select>
+
+            <input
+              type="text"
+              className="form-control form-control-sm"
+              style={{ width: "180px" }}
+              placeholder="Szukaj opisu..."
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+            />
+
+            <button className="btn btn-outline-secondary btn-sm" onClick={handleResetFilters}>
+              Resetuj
+            </button>
           </div>
         </div>
       </div>
@@ -122,12 +201,12 @@ const RepairTable = () => {
                     <span
                       className="avatar avatar-sm me-2"
                       style={{
-                        backgroundImage: `url(${req.assignee.avatarUrl})`,
+                        backgroundImage: `url(${req.assignee?.avatarUrl})`,
                       }}
                     ></span>
                     <div className="flex-fill">
                       <div className="font-weight-medium">
-                        {req.assignee.firstName} {req.assignee.lastName}
+                        {req.assignee?.firstName} {req.assignee?.lastName}
                       </div>
                     </div>
                   </div>
@@ -139,15 +218,12 @@ const RepairTable = () => {
                 </td>
                 <td>{formatDate(req.completionDate)}</td>
                 <td className="text-end">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleShowRepairDetails(req.id)}
-                  >
+                  <button className="btn btn-primary" onClick={() => handleShowRepairDetails(req.id)}>
                     Zobacz
                   </button>
                 </td>
                 <td>
-                  <button className="btn btn-danger" onClick={() => handleDelete(req.id)}>
+                  <button className="btn btn-danger" onClick={() => handleDeleteClick(req.id)}>
                     Usuń
                   </button>
                 </td>
@@ -159,8 +235,8 @@ const RepairTable = () => {
 
       <div className="card-footer d-flex align-items-center">
         <p className="m-0 text-secondary">
-          Wyświetlono <span>{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> do{" "}
-          <span>{Math.min(currentPage * ITEMS_PER_PAGE, filteredRepairs.length)}</span> z{" "}
+          Wyświetlono <span>{(currentPage - 1) * itemsPerPage + 1}</span> do{" "}
+          <span>{Math.min(currentPage * itemsPerPage, filteredRepairs.length)}</span> z{" "}
           <span>{filteredRepairs.length}</span> wyników
         </p>
         <ul className="pagination m-0 ms-auto">
@@ -191,6 +267,13 @@ const RepairTable = () => {
           </li>
         </ul>
       </div>
+
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        handleConfirm={handleConfirmDelete}
+        message="Czy na pewno chcesz usunąć to zlecenie?"
+      />
     </div>
   );
 };
