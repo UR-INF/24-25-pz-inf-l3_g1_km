@@ -119,7 +119,7 @@ const ModifyReservation = ({ reservationId }) => {
       }));
       setRoomGuests((prevGuests) => ({
         ...prevGuests,
-        [roomId]: checked ? 1 : undefined, // domyślnie 1 osoba, jeśli pokój jest zaznaczony
+        [roomId]: checked ? 1 : undefined,
       }));
     } else {
       let newValue = type === "checkbox" ? checked : value;
@@ -292,14 +292,11 @@ const ModifyReservation = ({ reservationId }) => {
     if (!invoiceData) return;
     formData.invoiceId = "";
     try {
-      // Najpierw zaktualizuj rezerwację – ustaw invoiceId na null
       await api.put(`/reservations/${reservationId}`, formData);
     } catch (error) {
       console.error("Błąd podczas aktualizacji id faktury:", error);
     }
     try {
-
-      // Potem dopiero usuń fakturę
       await api.delete(`/invoices/${invoiceData}`);
   
       setInvoiceData(null);
@@ -347,7 +344,7 @@ const ModifyReservation = ({ reservationId }) => {
       total += roomPrice;
     });
     if (originalKwota === 0) {
-      setOriginalKwota(total); // Ustawiamy oryginalną kwotę tylko raz
+      setOriginalKwota(total);
     }
     setKwota(total.toFixed(2));
   };
@@ -462,7 +459,6 @@ const ModifyReservation = ({ reservationId }) => {
 
         <h3 className="card-title mt-4">Wybór pokoi</h3>
 
-        {/* Search bar */}
         <div className="form-group mb-3">
           <input
             type="text"
@@ -474,7 +470,6 @@ const ModifyReservation = ({ reservationId }) => {
           />
         </div>
 
-        {/* Bed Filter Dropdown */}
         <div className="form-group mb-3">
           <label className="form-label">Liczba łóżek</label>
           <select
@@ -490,7 +485,6 @@ const ModifyReservation = ({ reservationId }) => {
           </select>
         </div>
 
-        {/* Scrollable room list */}
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredRooms.length > 0 ? (
             filteredRooms.map((room) => {
