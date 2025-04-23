@@ -77,6 +77,7 @@ const HousekeeperCleaningTasks = () => {
             className="btn btn-primary"
             onClick={() => navigate("/HousekeeperDashboard/Orders/NewCleaningOrder")}
           >
+            <i className="ti ti-plus fs-2 me-2"></i>
             Stwórz nowe zlecenie sprzątania
           </button>
         </div>

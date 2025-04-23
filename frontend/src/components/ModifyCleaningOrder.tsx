@@ -56,6 +56,16 @@ const ModifyCleaningOrder = () => {
     if (name === "employeeId") {
       const selected = employees.find((emp) => emp.id.toString() === value);
       setFormData((prev) => ({ ...prev, employee: selected || {} }));
+    } else if (name === "status") {
+      const autoCompletionDate = ["COMPLETED", "DECLINED"].includes(value) && !formData.completionDate
+        ? new Date().toISOString().split("T")[0]
+        : formData.completionDate;
+
+      setFormData((prev) => ({
+        ...prev,
+        status: value,
+        completionDate: autoCompletionDate,
+      }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }

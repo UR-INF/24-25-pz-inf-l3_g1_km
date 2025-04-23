@@ -2,60 +2,116 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
-
-const ITEMS_PER_PAGE = 8;
+import DeleteConfirmationModal from "../views/Receptionist/DeleteConfirmationModal";
 
 const CleaningTable = () => {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const { showNotification } = useNotification();
 
-  const fetchCleaningTasks = async () => {
-    try {
-      const response = await api.get("/housekeeping-tasks");
-      setTasks(response.data);
-    } catch (err) {
-      console.error("Błąd podczas pobierania zadań sprzątania:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState(() => localStorage.getItem("cleaningSearch") || "");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const saved = localStorage.getItem("cleaningItemsPerPage");
+    return saved ? Number(saved) : 8;
+  });
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterEmployee, setFilterEmployee] = useState("ALL");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
 
-  const handleShowDetails = (id: number) => {
+  useEffect(() => {
+    const fetchCleaningTasks = async () => {
+      try {
+        const response = await api.get("/housekeeping-tasks");
+        setTasks(response.data);
+      } catch (err) {
+        console.error("Błąd podczas pobierania zadań sprzątania:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCleaningTasks();
+  }, []);
+
+  // const fetchCleaningTasks = async () => {
+  //   try {
+  //     const response = await api.get("/housekeeping-tasks");
+  //     setTasks(response.data);
+  //   } catch (err) {
+  //     console.error("Błąd podczas pobierania zadań sprzątania:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleShowDetails = (id) => {
     navigate(`/RecepcionistDashboard/Orders/CleaningOrderDetails/${id}`);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDeleteClick = (id) => {
+    setSelectedTaskId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      await api.delete(`/housekeeping-tasks/${id}`);
-      setTasks((prev) => prev.filter((task) => task.id !== id));
+      await api.delete(`/housekeeping-tasks/${selectedTaskId}`);
+      setTasks((prev) => prev.filter((task) => task.id !== selectedTaskId));
       showNotification("success", "Zlecenie zostało usunięte.");
     } catch (err) {
       console.error("Błąd podczas usuwania zadania:", err);
       showNotification("error", "Nie udało się usunąć zadania.");
+    } finally {
+      setShowDeleteModal(false);
+      setSelectedTaskId(null);
     }
   };
 
-  useEffect(() => {
-    fetchCleaningTasks();
-  }, []);
+  const handleResetFilters = () => {
+    setSearch("");
+    setItemsPerPage(8);
+    setFilterStatus("ALL");
+    setFilterEmployee("ALL");
+    setCurrentPage(1);
+    localStorage.removeItem("cleaningItemsPerPage");
+    localStorage.removeItem("cleaningSearch");
+  };
+
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    setCurrentPage(1);
+    localStorage.setItem("cleaningSearch", value);
+  };
+
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(value);
+    setCurrentPage(1);
+    localStorage.setItem("cleaningItemsPerPage", value.toString());
+  };
+
+  const employeeOptions = Array.from(
+    new Set(tasks.map((t) => t.employee?.id + "|" + t.employee?.firstName + " " + t.employee?.lastName))
+  ).filter(Boolean);
 
   const filteredTasks = tasks
-    .filter((task) => task.description.toLowerCase().includes(search.toLowerCase()))
+    .filter((t) => t.description.toLowerCase().includes(search.toLowerCase()))
+    .filter((t) => filterStatus === "ALL" || t.status === filterStatus)
+    .filter((t) => {
+      if (filterEmployee === "ALL") return true;
+      return String(t.employee?.id) === filterEmployee;
+    })
     .sort((a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
 
-  const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
   const currentData = filteredTasks.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
-  const formatDate = (dateStr?: string) => {
-    return dateStr ? new Date(dateStr).toLocaleDateString() : "-";
-  };
+  const formatDate = (dateStr) => (dateStr ? new Date(dateStr).toLocaleDateString() : "-");
 
   if (loading) return <div>Ładowanie danych...</div>;
 
@@ -66,33 +122,65 @@ const CleaningTable = () => {
       </div>
 
       <div className="card-body border-bottom py-3">
-        <div className="d-flex">
-          <div className="text-secondary">
-            Pokaż
-            <div className="mx-2 d-inline-block">
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                value={ITEMS_PER_PAGE}
-                size={3}
-                disabled
-              />
-            </div>
-            wyników
+        <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+          <div className="d-flex align-items-center gap-2 text-secondary">
+            <span>Pokaż</span>
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "80px" }}
+              value={itemsPerPage}
+              onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+            >
+              {[5, 8, 10, 20, 50].map((count) => (
+                <option key={count} value={count}>{count}</option>
+              ))}
+            </select>
+            <span>wyników</span>
           </div>
-          <div className="ms-auto text-secondary">
-            Wyszukaj:
-            <div className="ms-2 d-inline-block">
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-            </div>
+
+          <div className="d-flex flex-wrap gap-2 align-items-center">
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "170px" }}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="ALL">Wszystkie statusy</option>
+              <option value="PENDING">Do wykonania</option>
+              <option value="IN_PROGRESS">W trakcie</option>
+              <option value="COMPLETED">Ukończono</option>
+              <option value="DECLINED">Odrzucono</option>
+            </select>
+
+            <select
+              className="form-select form-select-sm"
+              style={{ width: "170px" }}
+              value={filterEmployee}
+              onChange={(e) => setFilterEmployee(e.target.value)}
+            >
+              <option value="ALL">Wszyscy pracownicy</option>
+              {employeeOptions.map((opt) => {
+                const [id, name] = opt.split("|");
+                return (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                );
+              })}
+            </select>
+
+            <input
+              type="text"
+              className="form-control form-control-sm"
+              style={{ width: "180px" }}
+              placeholder="Szukaj opisu..."
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+            />
+
+            <button className="btn btn-outline-secondary btn-sm" onClick={handleResetFilters}>
+              Resetuj
+            </button>
           </div>
         </div>
       </div>
@@ -102,19 +190,18 @@ const CleaningTable = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Data Zgłoszenia</th>
+              <th>Data zgłoszenia</th>
               <th>Opis</th>
               <th>Pokój</th>
               <th>Pracownik</th>
               <th>Status</th>
-              <th>Data Zakończenia</th>
+              <th>Data zakończenia</th>
               <th></th>
               <th></th>
             </tr>
           </thead>
-
           <tbody>
-            {currentData.map((task: any) => (
+            {currentData.map((task) => (
               <tr key={task.id}>
                 <td>{task.id}</td>
                 <td>{formatDate(task.requestDate)}</td>
@@ -147,7 +234,7 @@ const CleaningTable = () => {
                   </button>
                 </td>
                 <td>
-                  <button className="btn btn-danger" onClick={() => handleDelete(task.id)}>
+                  <button className="btn btn-danger" onClick={() => handleDeleteClick(task.id)}>
                     Usuń
                   </button>
                 </td>
@@ -159,8 +246,8 @@ const CleaningTable = () => {
 
       <div className="card-footer d-flex align-items-center">
         <p className="m-0 text-secondary">
-          Wyświetlono <span>{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> do{" "}
-          <span>{Math.min(currentPage * ITEMS_PER_PAGE, filteredTasks.length)}</span> z{" "}
+          Wyświetlono <span>{(currentPage - 1) * itemsPerPage + 1}</span> do{" "}
+          <span>{Math.min(currentPage * itemsPerPage, filteredTasks.length)}</span> z{" "}
           <span>{filteredTasks.length}</span> wyników
         </p>
         <ul className="pagination m-0 ms-auto">
@@ -191,9 +278,17 @@ const CleaningTable = () => {
           </li>
         </ul>
       </div>
+
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        handleConfirm={handleConfirmDelete}
+        message="Czy na pewno chcesz usunąć to zlecenie?"
+      />
     </div>
   );
 };
+
 
 const getStatusColor = (status: string) => {
   switch (status) {

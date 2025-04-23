@@ -70,10 +70,21 @@ const ModifyRepairRequest = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const newValue = type === "checkbox" ? checked : value;
+
+    setFormData((prevData) => {
+      const updated = {
+        ...prevData,
+        [name]: newValue,
+      };
+
+      if (name === "status" && newValue === "completed" && !prevData.completionDate) {
+        const today = new Date().toISOString().split("T")[0];
+        updated.completionDate = today;
+      }
+
+      return updated;
+    });
   };
 
   const handleCancelClick = () => {
