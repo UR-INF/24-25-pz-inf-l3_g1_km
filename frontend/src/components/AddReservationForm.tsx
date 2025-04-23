@@ -16,11 +16,13 @@ const AddReservationForm = () => {
     guestPesel: "",
     guestPhone: "",
     invoiceId: "",
-    counterPolple: 1,
     rooms: [],
     reservationRooms: [],
   });
   const [rooms, setRooms] = useState([]);
+  const [roomGuests, setRoomGuests] = useState({});
+  const [kwota, setKwota] = useState(0);
+
   const navigate = useNavigate();
 
   const handleClickNewReservation = () => {
@@ -67,21 +69,25 @@ const AddReservationForm = () => {
         ...prevData,
         reservationRooms: checked
           ? [
-              ...prevData.reservationRooms,
-              {
-                room: selectedRoom,
-                guestCount: 1,
-              },
-            ]
+            ...prevData.reservationRooms,
+            {
+              room: selectedRoom,
+              guestCount: 1,
+            },
+          ]
           : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
+      }));
+      setRoomGuests((prevGuests) => ({
+        ...prevGuests,
+        [roomId]: checked ? 1 : undefined, // domyślnie 1 osoba, jeśli pokój jest zaznaczony
       }));
     } else {
       let newValue = type === "checkbox" ? checked : value;
-  
+
       if (name === "counterPolple") {
         newValue = Math.max(1, parseInt(value) || 1);
       }
-  
+
       setFormData((prevData) => ({
         ...prevData,
         [name]: newValue,
@@ -104,26 +110,26 @@ const AddReservationForm = () => {
   const validateForm = () => {
     const today = new Date().toISOString().split("T")[0];
     const { startDate, endDate, guestPesel, guestPhone } = formData;
-  
+
     if (startDate < today) {
       return "Data rozpoczęcia nie może być wcześniejsza niż dzisiaj.";
     }
-  
+
     if (endDate && endDate < startDate) {
       return "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.";
     }
-  
+
     if (!/^\d{11}$/.test(guestPesel)) {
       return "PESEL musi zawierać dokładnie 11 cyfr.";
     }
-  
+
     if (!/^\d{9}$/.test(guestPhone)) {
       return "Numer telefonu musi zawierać dokładnie 9 cyfr.";
     }
-  
-    return null; 
+
+    return null;
   };
-  
+
 
   const addReservation = async () => {
     try {
@@ -135,6 +141,48 @@ const AddReservationForm = () => {
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
   };
+
+  const handleGuestCountChange = (roomId, e) => {
+    const { value } = e.target;
+    const newGuestCount = Math.max(1, Math.min(value, rooms.find((room) => room.id === roomId).bedCount)); // 
+
+    setRoomGuests((prevGuests) => ({
+      ...prevGuests,
+      [roomId]: newGuestCount,
+    }));
+
+    setFormData((prevData) => ({
+      ...prevData,
+      reservationRooms: prevData.reservationRooms.map((room) =>
+        room.room.id === roomId
+          ? { ...room, guestCount: newGuestCount }
+          : room
+      ),
+    }));
+  };
+  
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [formData.startDate, formData.endDate, formData.reservationRooms]);
+
+  const calculateTotalPrice = () => {
+    const { startDate, endDate, reservationRooms } = formData;
+    if (!startDate || !endDate) return;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+
+    let total = 0;
+    reservationRooms.forEach(({ room, guestCount }) => {
+      const { bedCount, pricePerNight } = room;
+      const roomPrice = ((guestCount / bedCount) * pricePerNight) * days;
+      total += roomPrice;
+    });
+
+    setKwota(total.toFixed(2));
+  };
+
 
   return (
     <div className="card-body">
@@ -229,7 +277,7 @@ const AddReservationForm = () => {
           />
         </div>
 
-        <div className="form-group mb-3">
+        {/* <div className="form-group mb-3">
             <div className="form-label">Ilość osób</div>
             <input
               type="number"
@@ -240,7 +288,7 @@ const AddReservationForm = () => {
               min={1}
               required
             />
-          </div>
+          </div> */}
 
         <div className="form-group mb-3">
           <label className="form-label">Liczba łóżek</label>
@@ -267,6 +315,20 @@ const AddReservationForm = () => {
                 <label className="form-check-label" htmlFor={`room${room.id}`}>
                   Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
                 </label>
+                {roomGuests[room.id] !== undefined && (
+                  <div>
+                    <label>Liczba osób w pokoju:</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      style={{ maxWidth: "150px" }}
+                      value={roomGuests[room.id]}
+                      onChange={(e) => handleGuestCountChange(room.id, e)}
+                      min={1}
+                      max={room.bedCount}
+                    />
+                  </div>
+                )}
               </div>
             ))
           ) : (
@@ -285,7 +347,7 @@ const AddReservationForm = () => {
               onChange={handleChange}
             ></textarea>
           </div>
-          <div className="col-md">
+          {/* <div className="col-md">
             <div className="form-label">ID Faktury (Opcjonalne)</div>
             <input
               type="text"
@@ -294,7 +356,7 @@ const AddReservationForm = () => {
               value={formData.invoiceId}
               onChange={handleChange}
             />
-          </div>
+          </div> */}
         </div>
 
         <h3 className="card-title mt-4">Catering</h3>
@@ -356,7 +418,8 @@ const AddReservationForm = () => {
           />
           <label className="form-check-label">Zakończona</label>
         </div>
-
+        <h3 className="card-title mt-4">Do zapłaty</h3>
+        <h3 className="card-title mt-4">{kwota} PLN</h3>
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
             <a href="#" className="btn btn-1">

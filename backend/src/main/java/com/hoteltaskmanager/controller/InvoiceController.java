@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * REST API dla zarządzania fakturami.
@@ -20,6 +21,7 @@ import java.util.List;
  * GET    /api/invoices/{id}/pdf                 - Pobierz plik PDF faktury
  * POST   /api/invoices/reservation/{id}         - Wygeneruj fakturę dla rezerwacji
  * DELETE /api/invoices/{id}                     - Usuń fakturę po ID
+ * PUT    /api/invoices/{id}                     - Modyfikuje fakturę w systemie
  */
 @RestController
 @RequestMapping("/api/invoices")
@@ -106,4 +108,18 @@ public class InvoiceController {
         boolean deleted = invoiceService.deleteInvoice(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
+
+    /**
+     * PUT /api/invoices/{id}
+     * Modyfikuje fakturę w systemie
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody Invoice updatedInvoice) {
+        Optional<Invoice> updated = invoiceService.updateInvoice(id, updatedInvoice);
+
+        return updated
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }

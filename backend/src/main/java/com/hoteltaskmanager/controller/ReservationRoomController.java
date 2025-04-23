@@ -55,18 +55,21 @@ public class ReservationRoomController {
      */
     @PostMapping
     public ResponseEntity<ReservationRoom> addRoom(@PathVariable Long reservationId,
-                                                   @RequestBody ReservationRoom reservationRoom) {
+                                                   @RequestBody ReservationRoom requestReservationRoom) {
+        // Sprawdzamy, czy rezerwacja istnieje
         Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
         if (reservationOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        reservationRoom.setReservation(reservationOpt.get());
-        ReservationRoom saved = reservationRoomRepository.save(reservationRoom);
-        roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy
+        Reservation reservation = reservationOpt.get();
+        requestReservationRoom.setReservation(reservation);
+        ReservationRoom savedReservationRoom = reservationRoomRepository.save(requestReservationRoom);
+        roomStatusManagerService.refreshRoomStatuses();
 
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(savedReservationRoom);
     }
+
 
     /**
      * PUT /api/reservations/{reservationId}/rooms/{id}

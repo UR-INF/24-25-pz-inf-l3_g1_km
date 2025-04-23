@@ -9,6 +9,10 @@ const ModifyReservation = ({ reservationId }) => {
   const [rooms, setRooms] = useState([]);
   const [reservationRoomAssignments, setReservationRoomAssignments] = useState([]);
   const [invoiceData, setInvoiceData] = useState(null);
+  const [roomGuests, setRoomGuests] = useState({});
+  const [kwota, setKwota] = useState(0);
+  const navigate = useNavigate();
+  const [originalKwota, setOriginalKwota] = useState(0);
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
     endDate: "2023-03-07",
@@ -19,12 +23,11 @@ const ModifyReservation = ({ reservationId }) => {
     rooms: ["Pokój 101", "Pokój 102"],
     reservationRooms: [],
     specialRequests: "Brak",
-    invoiceId: "INV123456",
+    invoiceId: "",
     catering: true,
     status: "ACTIVE",
   });
-  const navigate = useNavigate();
-
+  
   const handleClickNewReservation = () => {
     navigate("/RecepcionistDashboard/Reservations");
   };
@@ -97,23 +100,59 @@ const ModifyReservation = ({ reservationId }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    if (name === "rooms") {
+      const roomId = parseInt(value);
+      const selectedRoom = rooms.find((room) => room.id === roomId);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        reservationRooms: checked
+          ? [
+              ...prevData.reservationRooms,
+              {
+                room: selectedRoom,
+                guestCount: 1,
+              },
+            ]
+          : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
+      }));
+      setRoomGuests((prevGuests) => ({
+        ...prevGuests,
+        [roomId]: checked ? 1 : undefined, // domyślnie 1 osoba, jeśli pokój jest zaznaczony
+      }));
+    } else {
+      let newValue = type === "checkbox" ? checked : value;
+  
+      if (name === "counterPolple") {
+        newValue = Math.max(1, parseInt(value) || 1);
+      }
+  
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: newValue,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditable(false);
 
+    const errorMessage = validateForm();
+    if (errorMessage) {
+      alert(errorMessage);
+      return;
+    }
+
     const updatedFormData = {
       ...formData,
       reservationRooms: formData.reservationRooms.map((rr) => ({
         ...rr,
-        guestCount: rr.guestCount,
+        guestCount: Number(roomGuests[rr.room.id] ?? rr.guestCount),
       })),
     };
+    
 
     await modifyReservation(updatedFormData);
     await updateRoomAssignments();
@@ -148,6 +187,17 @@ const ModifyReservation = ({ reservationId }) => {
       const sameAssignment = reservationRoomAssignments.find((a) => a.room.id === rr.room.id);
 
       if (sameAssignment) {
+        if (sameAssignment.guestCount !== rr.guestCount) {
+          try {
+            await api.put(`/reservations/${reservationId}/rooms/${sameAssignment.id}`, {
+              guestCount: rr.guestCount,
+              room: rr.room,
+            });
+            console.log(`Zaktualizowano liczbę osób w pokoju ${rr.room.roomNumber}`);
+          } catch (error) {
+            console.error("Błąd podczas aktualizacji liczby osób:", error);
+          }
+        }
         continue;
       }
       const oldAssignment = reservationRoomAssignments.find(
@@ -221,7 +271,6 @@ const ModifyReservation = ({ reservationId }) => {
   };
 
   const handleGenerateInvoice = (reservationId) => {
-    console.log("mod", reservationId)
     navigate("/RecepcionistDashboard/Reservations/NewInvoice", {
       state: { reservationId: reservationId },
     });
@@ -230,7 +279,6 @@ const ModifyReservation = ({ reservationId }) => {
   const getInvoice = async () => {
     try {
       const response = await api.get(`/invoices/reservation/${reservationId}`);
-      console.log("Faktura",response.data.id)
       setInvoiceData(response.data.id);
     } catch (error) {
       if (error.response?.status === 404) {
@@ -242,16 +290,97 @@ const ModifyReservation = ({ reservationId }) => {
   };
   const handleDeleteInvoice = async () => {
     if (!invoiceData) return;
-  
+    formData.invoiceId = "";
     try {
+      // Najpierw zaktualizuj rezerwację – ustaw invoiceId na null
+      await api.put(`/reservations/${reservationId}`, formData);
+    } catch (error) {
+      console.error("Błąd podczas aktualizacji id faktury:", error);
+    }
+    try {
+
+      // Potem dopiero usuń fakturę
       await api.delete(`/invoices/${invoiceData}`);
-      console.log("Faktura została usunięta.");
+  
       setInvoiceData(null);
     } catch (error) {
       console.error("Błąd podczas usuwania faktury:", error);
     }
   };
 
+  const handleGuestCountChange = (roomId, e) => {
+    const { value } = e.target;
+    const newGuestCount = parseInt(value);
+
+    setRoomGuests((prevGuests) => ({
+      ...prevGuests,
+      [roomId]: newGuestCount,
+    }));
+
+    setFormData((prev) => ({
+    ...prev,
+    reservationRooms: prev.reservationRooms.map((rr) =>
+      rr.room.id === roomId ? { ...rr, guestCount: value } : rr
+    ),
+  }));
+  };
+
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [formData.startDate, formData.endDate, formData.reservationRooms]);
+  
+  const calculateTotalPrice = () => {
+    const { startDate, endDate, reservationRooms } = formData;
+    if (!startDate || !endDate) return;
+  
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+    
+    
+    
+
+    let total = 0;
+    reservationRooms.forEach(({ room, guestCount }) => {
+      const { bedCount, pricePerNight } = room;
+      const roomPrice = ((guestCount / bedCount) * pricePerNight) * days;
+      total += roomPrice;
+    });
+    if (originalKwota === 0) {
+      setOriginalKwota(total); // Ustawiamy oryginalną kwotę tylko raz
+    }
+    setKwota(total.toFixed(2));
+  };
+
+  useEffect(() => {
+    if (formData?.reservationRooms?.length > 0) {
+      const initialGuests = {};
+      formData.reservationRooms.forEach((rr) => {
+        initialGuests[rr.room.id] = rr.guestCount;
+      });
+      setRoomGuests(initialGuests);
+    }
+  }, [formData]);
+  const validateForm = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const { startDate, endDate, guestPesel, guestPhone } = formData;
+  
+   
+  
+    if (endDate && endDate < startDate) {
+      return "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.";
+    }
+  
+    if (!/^\d{11}$/.test(guestPesel)) {
+      return "PESEL musi zawierać dokładnie 11 cyfr.";
+    }
+  
+    if (!/^\d{9}$/.test(guestPhone)) {
+      return "Numer telefonu musi zawierać dokładnie 9 cyfr.";
+    }
+  
+    return null; 
+  };
   return (
     <div className="card-body">
       <h2 className="mb-4">Rezerwacja</h2>
@@ -382,6 +511,21 @@ const ModifyReservation = ({ reservationId }) => {
                   <label className="form-check-label" htmlFor={`room${room.id}`}>
                     Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
                   </label>
+                  {isSelected && (
+          <div className="mt-1 ms-4">
+            <label className="form-label">Liczba osób w pokoju:</label>
+            <input
+              type="number"
+              className="form-control"
+              style={{ maxWidth: "150px" }}
+              value={roomGuests[room.id]}
+              onChange={(e) => handleGuestCountChange(room.id, e)}
+              min={1}
+              max={room.bedCount}
+              disabled={!isEditable}
+            />
+          </div>
+        )}
                 </div>
               );
             })
@@ -436,6 +580,17 @@ const ModifyReservation = ({ reservationId }) => {
             type="radio"
             className="form-check-input"
             name="status"
+            value="UPCOMING"
+            checked={formData.status === "UPCOMING"}
+            onChange={handleChange}
+          />
+          <label className="form-check-label">Nadchodząca</label>
+        </div>
+        <div className="form-check">
+          <input
+            type="radio"
+            className="form-check-input"
+            name="status"
             value="ACTIVE"
             checked={formData.status === "ACTIVE"}
             onChange={handleChange}
@@ -467,11 +622,21 @@ const ModifyReservation = ({ reservationId }) => {
           />
           <label className="form-check-label">Zakończona</label>
         </div>
-
+        <h3 className="card-title mt-4">Kwota bazowa</h3>
+        <h3 className="card-title mt-4">{kwota} PLN</h3>
+        {originalKwota > 0 && originalKwota !== parseFloat(kwota) && (
+          <div>
+            <h4>
+              {parseFloat(kwota) > originalKwota
+                ? `Do dopłaty: ${(parseFloat(kwota) - originalKwota).toFixed(2)} PLN`
+                : `Do zwrotu: ${(originalKwota - parseFloat(kwota)).toFixed(2)} PLN`}
+            </h4>
+          </div>
+        )}
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            {formData.status === "COMPLETED" ? (
-              invoiceData ? (
+            {formData.status === "COMPLETED" && !isEditable ? (
+              invoiceData  ? (
                 <>
                 <button
                   type="button"

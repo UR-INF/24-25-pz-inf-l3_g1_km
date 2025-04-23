@@ -151,4 +151,21 @@ public class InvoiceService {
         invoiceRepository.deleteById(id);
         return true;
     }
+
+    /**
+     * Aktualizuje dane istniejącej faktury.
+     */
+    public Optional<Invoice> updateInvoice(Long id, Invoice updatedInvoice) {
+        return invoiceRepository.findById(id).map(existing -> {
+            existing.setIssueDate(updatedInvoice.getIssueDate());
+            existing.setCompanyNip(updatedInvoice.getCompanyNip());
+            existing.setCompanyName(updatedInvoice.getCompanyName());
+            existing.setCompanyAddress(updatedInvoice.getCompanyAddress());
+            existing.setPdfFile(updatedInvoice.getPdfFile());
+
+            return invoiceRepository.save(existing);
+        });
+    }
+
+
 }

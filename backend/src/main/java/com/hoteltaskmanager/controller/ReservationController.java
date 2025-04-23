@@ -100,6 +100,8 @@ public class ReservationController {
         existing.setGuestPesel(updated.getGuestPesel());
         existing.setGuestPhone(updated.getGuestPhone());
 
+        existing.setInvoice(updated.getInvoice());
+
         Reservation saved = reservationRepository.save(existing);
         roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy pokoi po edycji rezerwacji
         return ResponseEntity.ok(saved);

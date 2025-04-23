@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
 
@@ -8,11 +8,27 @@ const ModifyInvoice = ({ invoiceId }) => {
   const [invoiceData, setInvoiceData] = useState({
     issueDate: "",
     pdfFile: "",
-    nip: "",
+    companyNip: "",
     companyName: "",
     companyAddress: "",
   });
-console.log("Id faktury modyfikacja",invoiceId)
+
+  useEffect(() => {
+    const fetchInvoice = async () => {
+      try {
+        const response = await api.get(`/invoices/${invoiceId}`);
+        if (response.status === 200) {
+          setInvoiceData(response.data);
+        } else {
+          console.error("Nie udało się pobrać faktury");
+        }
+      } catch (error) {
+        console.error("Błąd podczas pobierania faktury", error);
+      }
+    };
+
+    fetchInvoice();
+  }, [invoiceId]);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -20,15 +36,28 @@ console.log("Id faktury modyfikacja",invoiceId)
       ...prevData,
       [name]: value,
     }));
+    console.log(invoiceData)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const response = await api.put(`/invoices/${invoiceId}`, invoiceData);
+      if (response.status === 200) {
+        console.log("Faktura została zaktualizowana!");
+        navigate("/RecepcionistDashboard/Reservations");
+      } else {
+        console.error("Nie udało się zaktualizować faktury");
+      }
+    } catch (error) {
+      console.error("Błąd podczas aktualizacji faktury", error);
+    }
   };
 
   return (
     <div className="card-body">
-      <h2 className="mb-4">Edytuj nową fakturę</h2>
+      <h2 className="mb-4">Edytuj fakturę</h2>
 
       <form onSubmit={handleSubmit}>
         <h3 className="card-title">Szczegóły faktury</h3>
@@ -70,13 +99,12 @@ console.log("Id faktury modyfikacja",invoiceId)
             type="text"
             id="companyNip"
             name="companyNip"
-            value={invoiceData.nip}
+            value={invoiceData.companyNip}
             onChange={handleInputChange}
             className="form-control"
           />
         </div>
 
-        {/* Nazwa firmy */}
         <div className="mb-3">
           <label htmlFor="companyName" className="form-label">
             Nazwa firmy
@@ -92,7 +120,6 @@ console.log("Id faktury modyfikacja",invoiceId)
           />
         </div>
 
-        {/* Adres firmy */}
         <div className="mb-3">
           <label htmlFor="companyAddress" className="form-label">
             Adres firmy
@@ -109,7 +136,7 @@ console.log("Id faktury modyfikacja",invoiceId)
 
         <div className="d-flex justify-content-between">
           <button type="submit" className="btn btn-primary">
-            Dodaj fakturę
+            Zaktualizuj fakturę
           </button>
         </div>
       </form>
