@@ -8,6 +8,7 @@ const ModifyReservation = ({ reservationId }) => {
   const [isEditable, setIsEditable] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [reservationRoomAssignments, setReservationRoomAssignments] = useState([]);
+  const [invoiceData, setInvoiceData] = useState(null);
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
     endDate: "2023-03-07",
@@ -76,6 +77,7 @@ const ModifyReservation = ({ reservationId }) => {
   useEffect(() => {
     getIdRef();
     getReservation();
+    getInvoice();
   }, []);
 
   // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
@@ -216,6 +218,38 @@ const ModifyReservation = ({ reservationId }) => {
         rooms: updatedReservationRooms.map((rr) => rr.room.roomNumber),
       };
     });
+  };
+
+  const handleGenerateInvoice = (reservationId) => {
+    console.log("mod", reservationId)
+    navigate("/RecepcionistDashboard/Reservations/NewInvoice", {
+      state: { reservationId: reservationId },
+    });
+  };
+
+  const getInvoice = async () => {
+    try {
+      const response = await api.get(`/invoices/reservation/${reservationId}`);
+      console.log("Faktura",response.data.id)
+      setInvoiceData(response.data.id);
+    } catch (error) {
+      if (error.response?.status === 404) {
+        setInvoiceData(null);
+      } else {
+        console.error("Błąd podczas pobierania faktury:", error);
+      }
+    }
+  };
+  const handleDeleteInvoice = async () => {
+    if (!invoiceData) return;
+  
+    try {
+      await api.delete(`/invoices/${invoiceData}`);
+      console.log("Faktura została usunięta.");
+      setInvoiceData(null);
+    } catch (error) {
+      console.error("Błąd podczas usuwania faktury:", error);
+    }
   };
 
   return (
@@ -436,13 +470,52 @@ const ModifyReservation = ({ reservationId }) => {
 
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
-              Edytuj
-            </button>
-            {isEditable && (
-              <button type="submit" className="btn btn-primary btn-2">
-                Zatwierdź
+            {formData.status === "COMPLETED" ? (
+              invoiceData ? (
+                <>
+                <button
+                  type="button"
+                  className="btn btn-warning"
+                  onClick={() =>
+                    navigate("/RecepcionistDashboard/Reservations/InvoiceDetails", {
+                      state: { invoice: invoiceData},
+                    })
+                  }
+                >
+                  Edytuj fakturę
+                </button>
+                <button
+                type="button"
+                className="btn btn-danger ms-2"
+                onClick={handleDeleteInvoice}
+              >
+                Usuń fakturę
               </button>
+              </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleGenerateInvoice(reservationId);
+                  }}
+                >
+                  Generuj fakturę
+                </button>
+              )
+            ) : (
+
+              <>
+                <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
+                  Edytuj
+                </button>
+                {isEditable && (
+                  <button type="submit" className="btn btn-primary btn-2">
+                    Zatwierdź
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

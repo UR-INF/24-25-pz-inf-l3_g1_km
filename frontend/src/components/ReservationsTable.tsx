@@ -6,6 +6,10 @@ const ReservationsTable = () => {
   const navigate = useNavigate();
 
   const [reservations, setReservations] = useState([]);
+  const [filteredReservations, setFilteredReservations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [resultsPerPage, setResultsPerPage] = useState(8);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const getReservations = async () => {
     try {
@@ -37,6 +41,29 @@ const ReservationsTable = () => {
       state: { reservationId: id },
     });
   };
+
+  useEffect(() => {
+    const filtered = reservations.filter((res) =>
+      `${res.guestFirstName} ${res.guestLastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+    setFilteredReservations(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, reservations]);
+
+  const totalPages = Math.ceil(filteredReservations.length / resultsPerPage);
+  const paginatedReservations = filteredReservations.slice(
+    (currentPage - 1) * resultsPerPage,
+    currentPage * resultsPerPage
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
   return (
     <div className="card">
       <div className="card">
@@ -49,10 +76,11 @@ const ReservationsTable = () => {
               Pokaż
               <div className="mx-2 d-inline-block">
                 <input
-                  type="text"
+                  type="number"
                   className="form-control form-control-sm"
-                  value="8"
-                  size={3}
+                  value={resultsPerPage}
+                min={1}
+                onChange={(e) => setResultsPerPage(Number(e.target.value))}
                   aria-label="Invoices count"
                 />
               </div>
@@ -65,6 +93,9 @@ const ReservationsTable = () => {
                   type="text"
                   className="form-control form-control-sm"
                   aria-label="Search invoice"
+                  value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Imię lub Nazwisko"
                 />
               </div>
             </div>
@@ -87,7 +118,7 @@ const ReservationsTable = () => {
               </tr>
             </thead>
             <tbody>
-              {reservations.map((res) => (
+              {paginatedReservations.map((res) => (
                 <tr key={res.id}>
                   <td>
                     <span className="text-secondary">{res.id}</span>
@@ -153,11 +184,19 @@ const ReservationsTable = () => {
 
         <div className="card-footer d-flex align-items-center">
           <p className="m-0 text-secondary">
-            Wyświetlono <span>1</span> do <span>8</span> z <span>16</span> wyników
+            Wyświetlono{" "}
+          <span>{(currentPage - 1) * resultsPerPage + 1}</span> do{" "}
+          <span>
+            {Math.min(currentPage * resultsPerPage, filteredReservations.length)}
+          </span>{" "}
+          z <span>{filteredReservations.length}</span> wyników
           </p>
           <ul className="pagination m-0 ms-auto">
-            <li className="page-item disabled">
-              <a className="page-link" href="#" tabIndex={-1} aria-disabled="true">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <a className="page-link" href="#" tabIndex={-1} aria-disabled="true" onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(currentPage - 1);
+              }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -175,33 +214,28 @@ const ReservationsTable = () => {
                 poprzednia
               </a>
             </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                1
+            {[...Array(totalPages)].map((_, idx) => (
+            <li
+              className={`page-item ${currentPage === idx + 1 ? "active" : ""}`}
+              key={idx}
+            >
+              <a
+                className="page-link"
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(idx + 1);
+                }}
+              >
+                {idx + 1}
               </a>
             </li>
-            <li className="page-item active">
-              <a className="page-link" href="#">
-                2
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                3
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                4
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
-                5
-              </a>
-            </li>
-            <li className="page-item">
-              <a className="page-link" href="#">
+          ))}
+            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+              <a className="page-link" href="#" onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(currentPage + 1);
+              }}>
                 następna
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

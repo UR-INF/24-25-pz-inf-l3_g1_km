@@ -7,6 +7,7 @@ import NotFoundView from "./views/NotFoundView";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Reservations from "./views/Receptionist/Reservations";
 import AddReservation from "./views/Receptionist/AddReservation";
+import AddInvoice from "./views/Receptionist/AddInvoice";
 import RepairsOrders from "./views/Receptionist/RepairsOrders";
 import AddRepair from "./views/Receptionist/AddRepair";
 import CleaningOrders from "./views/Receptionist/CleaningOrders";
@@ -14,6 +15,7 @@ import AddCleaningOrder from "./views/Receptionist/AddCleaningOrder";
 import ReservationsDetails from "./views/Receptionist/ReservationDetails";
 import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
+import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 const App = () => {
@@ -37,6 +39,16 @@ const App = () => {
         <Route
           path="/RecepcionistDashboard/Reservations/NewReservation"
           element={state.loggedIn ? <AddReservation /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Reservations/NewInvoice"
+          element={state.loggedIn ? <AddInvoice /> : <LoginView />}
+        />
+
+        <Route
+          path="/RecepcionistDashboard/Reservations/InvoiceDetails"
+          element={state.loggedIn ? <InvoiceDetails /> : <LoginView />}
         />
 
         <Route

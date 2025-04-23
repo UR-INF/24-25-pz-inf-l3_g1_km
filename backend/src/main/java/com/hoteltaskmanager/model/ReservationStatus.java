@@ -5,6 +5,7 @@ package com.hoteltaskmanager.model;
  */
 public enum ReservationStatus {
     ACTIVE,
+    UPCOMING,
     CANCELLED,
     COMPLETED
 }

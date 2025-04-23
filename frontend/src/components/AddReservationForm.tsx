@@ -7,7 +7,7 @@ const AddReservationForm = () => {
   const [formData, setFormData] = useState({
     startDate: new Date().toISOString().split("T")[0],
     endDate: "",
-    status: "ACTIVE",
+    status: "UPCOMING",
     specialRequests: "",
     modifiedAt: "",
     catering: false,
@@ -16,6 +16,7 @@ const AddReservationForm = () => {
     guestPesel: "",
     guestPhone: "",
     invoiceId: "",
+    counterPolple: 1,
     rooms: [],
     reservationRooms: [],
   });
@@ -75,17 +76,54 @@ const AddReservationForm = () => {
           : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
       }));
     } else {
+      let newValue = type === "checkbox" ? checked : value;
+  
+      if (name === "counterPolple") {
+        newValue = Math.max(1, parseInt(value) || 1);
+      }
+  
       setFormData((prevData) => ({
         ...prevData,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: newValue,
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errorMessage = validateForm();
+    if (errorMessage) {
+      alert(errorMessage);
+      return;
+    }
+
     await addReservation();
   };
+
+  const validateForm = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const { startDate, endDate, guestPesel, guestPhone } = formData;
+  
+    if (startDate < today) {
+      return "Data rozpoczęcia nie może być wcześniejsza niż dzisiaj.";
+    }
+  
+    if (endDate && endDate < startDate) {
+      return "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.";
+    }
+  
+    if (!/^\d{11}$/.test(guestPesel)) {
+      return "PESEL musi zawierać dokładnie 11 cyfr.";
+    }
+  
+    if (!/^\d{9}$/.test(guestPhone)) {
+      return "Numer telefonu musi zawierać dokładnie 9 cyfr.";
+    }
+  
+    return null; 
+  };
+  
 
   const addReservation = async () => {
     try {
@@ -93,6 +131,7 @@ const AddReservationForm = () => {
       console.log("Reservation added:", response.data);
       handleClickNewReservation();
     } catch (error) {
+      console.log(formData)
       console.error("Błąd podczas dodawania rezerwacji:", error);
     }
   };
@@ -191,6 +230,19 @@ const AddReservationForm = () => {
         </div>
 
         <div className="form-group mb-3">
+            <div className="form-label">Ilość osób</div>
+            <input
+              type="number"
+              className="form-control"
+              name="counterPolple"
+              value={formData.counterPolple}
+              onChange={handleChange}
+              min={1}
+              required
+            />
+          </div>
+
+        <div className="form-group mb-3">
           <label className="form-label">Liczba łóżek</label>
           <select className="form-select" value={bedFilter} onChange={handleBedFilterChange}>
             <option value="all">Wszystkie</option>
@@ -260,6 +312,17 @@ const AddReservationForm = () => {
         </div>
 
         <h3 className="card-title mt-4">Status</h3>
+        <div className="form-check">
+          <input
+            type="radio"
+            className="form-check-input"
+            name="status"
+            value="UPCOMING"
+            checked={formData.status === "UPCOMING"}
+            onChange={handleChange}
+          />
+          <label className="form-check-label">Nadchodząca</label>
+        </div>
         <div className="form-check">
           <input
             type="radio"
