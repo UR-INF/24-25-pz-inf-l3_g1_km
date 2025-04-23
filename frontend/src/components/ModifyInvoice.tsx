@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
+import { useNotification } from "../contexts/notification";
 
 const ModifyInvoice = ({ invoiceId }) => {
   const navigate = useNavigate();
-
+  const { showNotification } = useNotification();
   const [invoiceData, setInvoiceData] = useState({
     issueDate: "",
     pdfFile: "",
@@ -29,7 +30,7 @@ const ModifyInvoice = ({ invoiceId }) => {
 
     fetchInvoice();
   }, [invoiceId]);
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInvoiceData((prevData) => ({
@@ -45,13 +46,14 @@ const ModifyInvoice = ({ invoiceId }) => {
     try {
       const response = await api.put(`/invoices/${invoiceId}`, invoiceData);
       if (response.status === 200) {
-        console.log("Faktura została zaktualizowana!");
+        showNotification("success", "Faktura została zaktualizowana.");
         navigate("/RecepcionistDashboard/Reservations");
       } else {
         console.error("Nie udało się zaktualizować faktury");
       }
     } catch (error) {
       console.error("Błąd podczas aktualizacji faktury", error);
+      showNotification("error", "Wystąpił błąd podczas aktualizacji faktury.");
     }
   };
 

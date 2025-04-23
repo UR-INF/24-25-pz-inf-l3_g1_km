@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
+import { useNotification } from "../contexts/notification";
 
 const ReservationsTable = () => {
   const navigate = useNavigate();
-
+  const { showNotification } = useNotification();
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +17,7 @@ const ReservationsTable = () => {
       const response = await api.get("/reservations");
       setReservations(response.data);
     } catch (error) {
-      console.error("Błąd podczas dodawania rezerwacji:", error);
+      console.error("Błąd podczas pobierania rezerwacji:", error);
     }
   };
 
@@ -25,9 +26,11 @@ const ReservationsTable = () => {
       try {
         const response = await api.delete(`/reservations/${id}`);
         console.log("Rezerwacja została usunięta:", response.data);
+        showNotification("success", "Rezerwacja została usunięta.");
         getReservations();
       } catch (error) {
         console.error("Błąd podczas usuwania rezerwacji:", error);
+        showNotification("error", "Wystąpił błąd podczas usuwania rezerwacji.");
       }
     }
   };

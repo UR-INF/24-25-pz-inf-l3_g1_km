@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
-
+import { useNotification } from "../contexts/notification";
 const ModifyReservation = ({ reservationId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all");
@@ -13,6 +13,7 @@ const ModifyReservation = ({ reservationId }) => {
   const [kwota, setKwota] = useState(0);
   const navigate = useNavigate();
   const [originalKwota, setOriginalKwota] = useState(0);
+  const { showNotification } = useNotification();
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
     endDate: "2023-03-07",
@@ -27,7 +28,7 @@ const ModifyReservation = ({ reservationId }) => {
     catering: true,
     status: "ACTIVE",
   });
-  
+
   const handleClickNewReservation = () => {
     navigate("/RecepcionistDashboard/Reservations");
   };
@@ -109,12 +110,12 @@ const ModifyReservation = ({ reservationId }) => {
         ...prevData,
         reservationRooms: checked
           ? [
-              ...prevData.reservationRooms,
-              {
-                room: selectedRoom,
-                guestCount: 1,
-              },
-            ]
+            ...prevData.reservationRooms,
+            {
+              room: selectedRoom,
+              guestCount: 1,
+            },
+          ]
           : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
       }));
       setRoomGuests((prevGuests) => ({
@@ -123,11 +124,11 @@ const ModifyReservation = ({ reservationId }) => {
       }));
     } else {
       let newValue = type === "checkbox" ? checked : value;
-  
+
       if (name === "counterPolple") {
         newValue = Math.max(1, parseInt(value) || 1);
       }
-  
+
       setFormData((prevData) => ({
         ...prevData,
         [name]: newValue,
@@ -152,7 +153,7 @@ const ModifyReservation = ({ reservationId }) => {
         guestCount: Number(roomGuests[rr.room.id] ?? rr.guestCount),
       })),
     };
-    
+
 
     await modifyReservation(updatedFormData);
     await updateRoomAssignments();
@@ -163,8 +164,10 @@ const ModifyReservation = ({ reservationId }) => {
     try {
       const response = await api.put(`/reservations/${reservationId}`, updatedFormData);
       console.log("Rezerwacja została zaktualizowana:", response.data);
+      showNotification("success", "Rezerwacja została zaktualizowana.");
     } catch (error) {
       console.error("Błąd podczas aktualizacji rezerwacji:", error);
+      showNotification("error", "Wystąpił błąd podczas aktualizacji rezerwacji.");
     }
   };
 
@@ -298,10 +301,11 @@ const ModifyReservation = ({ reservationId }) => {
     }
     try {
       await api.delete(`/invoices/${invoiceData}`);
-  
+      showNotification("success", "Faktura została usunięta.");
       setInvoiceData(null);
     } catch (error) {
       console.error("Błąd podczas usuwania faktury:", error);
+      showNotification("error", "Wystąpił błąd.");
     }
   };
 
@@ -315,27 +319,27 @@ const ModifyReservation = ({ reservationId }) => {
     }));
 
     setFormData((prev) => ({
-    ...prev,
-    reservationRooms: prev.reservationRooms.map((rr) =>
-      rr.room.id === roomId ? { ...rr, guestCount: value } : rr
-    ),
-  }));
+      ...prev,
+      reservationRooms: prev.reservationRooms.map((rr) =>
+        rr.room.id === roomId ? { ...rr, guestCount: value } : rr
+      ),
+    }));
   };
 
   useEffect(() => {
     calculateTotalPrice();
   }, [formData.startDate, formData.endDate, formData.reservationRooms]);
-  
+
   const calculateTotalPrice = () => {
     const { startDate, endDate, reservationRooms } = formData;
     if (!startDate || !endDate) return;
-  
+
     const start = new Date(startDate);
     const end = new Date(endDate);
     const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
-    
-    
-    
+
+
+
 
     let total = 0;
     reservationRooms.forEach(({ room, guestCount }) => {
@@ -361,22 +365,22 @@ const ModifyReservation = ({ reservationId }) => {
   const validateForm = () => {
     const today = new Date().toISOString().split("T")[0];
     const { startDate, endDate, guestPesel, guestPhone } = formData;
-  
-   
-  
+
+
+
     if (endDate && endDate < startDate) {
       return "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.";
     }
-  
+
     if (!/^\d{11}$/.test(guestPesel)) {
       return "PESEL musi zawierać dokładnie 11 cyfr.";
     }
-  
+
     if (!/^\d{9}$/.test(guestPhone)) {
       return "Numer telefonu musi zawierać dokładnie 9 cyfr.";
     }
-  
-    return null; 
+
+    return null;
   };
   return (
     <div className="card-body">
@@ -506,20 +510,20 @@ const ModifyReservation = ({ reservationId }) => {
                     Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
                   </label>
                   {isSelected && (
-          <div className="mt-1 ms-4">
-            <label className="form-label">Liczba osób w pokoju:</label>
-            <input
-              type="number"
-              className="form-control"
-              style={{ maxWidth: "150px" }}
-              value={roomGuests[room.id]}
-              onChange={(e) => handleGuestCountChange(room.id, e)}
-              min={1}
-              max={room.bedCount}
-              disabled={!isEditable}
-            />
-          </div>
-        )}
+                    <div className="mt-1 ms-4">
+                      <label className="form-label">Liczba osób w pokoju:</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        style={{ maxWidth: "150px" }}
+                        value={roomGuests[room.id]}
+                        onChange={(e) => handleGuestCountChange(room.id, e)}
+                        min={1}
+                        max={room.bedCount}
+                        disabled={!isEditable}
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -630,27 +634,27 @@ const ModifyReservation = ({ reservationId }) => {
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
             {formData.status === "COMPLETED" && !isEditable ? (
-              invoiceData  ? (
+              invoiceData ? (
                 <>
-                <button
-                  type="button"
-                  className="btn btn-warning"
-                  onClick={() =>
-                    navigate("/RecepcionistDashboard/Reservations/InvoiceDetails", {
-                      state: { invoice: invoiceData},
-                    })
-                  }
-                >
-                  Edytuj fakturę
-                </button>
-                <button
-                type="button"
-                className="btn btn-danger ms-2"
-                onClick={handleDeleteInvoice}
-              >
-                Usuń fakturę
-              </button>
-              </>
+                  <button
+                    type="button"
+                    className="btn btn-warning"
+                    onClick={() =>
+                      navigate("/RecepcionistDashboard/Reservations/InvoiceDetails", {
+                        state: { invoice: invoiceData },
+                      })
+                    }
+                  >
+                    Edytuj fakturę
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger ms-2"
+                    onClick={handleDeleteInvoice}
+                  >
+                    Usuń fakturę
+                  </button>
+                </>
               ) : (
                 <button
                   type="button"

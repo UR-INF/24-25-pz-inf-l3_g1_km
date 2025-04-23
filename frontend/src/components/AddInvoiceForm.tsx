@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
+import { useNotification } from "../contexts/notification";
 
 const AddInvoiceForm = ({ reservationId }) => {
   const navigate = useNavigate();
-
+  const { showNotification } = useNotification();
   const [invoiceData, setInvoiceData] = useState({
     issueDate: "",
     pdfFile: "",
-    nip: "",
+    companyNip: "",
     companyName: "",
     companyAddress: "",
   });
@@ -25,12 +26,17 @@ const AddInvoiceForm = ({ reservationId }) => {
     e.preventDefault();
 
     try {
-      const params = new URLSearchParams(invoiceData).toString();
+      const params = new URLSearchParams({
+        ...invoiceData,
+        nip: invoiceData.companyNip,
+      }).toString();
 
       const response = await api.post(`/invoices/reservation/${reservationId}?${params}`);
       navigate("/RecepcionistDashboard/Reservations");
+      showNotification("success", "Faktura została dodana.");
     } catch (error) {
       console.error("Błąd podczas dodawania faktury:", error);
+      showNotification("error", "Wystąpił błąd podczas dodawania faktury.");
     }
   };
 
@@ -78,7 +84,7 @@ const AddInvoiceForm = ({ reservationId }) => {
             type="text"
             id="companyNip"
             name="companyNip"
-            value={invoiceData.nip}
+            value={invoiceData.companyNip}
             onChange={handleInputChange}
             className="form-control"
           />

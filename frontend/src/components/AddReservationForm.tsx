@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
+import { useNotification } from "../contexts/notification";
+
 const AddReservationForm = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all");
+  const { showNotification } = useNotification();
   const [formData, setFormData] = useState({
     startDate: new Date().toISOString().split("T")[0],
     endDate: "",
@@ -135,10 +138,12 @@ const AddReservationForm = () => {
     try {
       const response = await api.post("/reservations", formData);
       console.log("Reservation added:", response.data);
+      showNotification("success", "Rezerwacja została dodana.");
       handleClickNewReservation();
     } catch (error) {
       console.log(formData)
       console.error("Błąd podczas dodawania rezerwacji:", error);
+      showNotification("error", "Wystąpił błąd podczas dodawania rezerwacji.");
     }
   };
 
