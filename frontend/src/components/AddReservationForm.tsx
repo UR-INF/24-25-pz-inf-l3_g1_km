@@ -72,12 +72,12 @@ const AddReservationForm = () => {
         ...prevData,
         reservationRooms: checked
           ? [
-            ...prevData.reservationRooms,
-            {
-              room: selectedRoom,
-              guestCount: 1,
-            },
-          ]
+              ...prevData.reservationRooms,
+              {
+                room: selectedRoom,
+                guestCount: 1,
+              },
+            ]
           : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
       }));
       setRoomGuests((prevGuests) => ({
@@ -96,9 +96,6 @@ const AddReservationForm = () => {
         [name]: newValue,
       }));
     }
-
-    
-
   };
 
   const handleSubmit = async (e) => {
@@ -137,7 +134,6 @@ const AddReservationForm = () => {
     return null;
   };
 
-
   const addReservation = async () => {
     try {
       const response = await api.post("/reservations", formData);
@@ -145,7 +141,7 @@ const AddReservationForm = () => {
       showNotification("success", "Rezerwacja została dodana.");
       handleClickNewReservation();
     } catch (error) {
-      console.log(formData)
+      console.log(formData);
       console.error("Błąd podczas dodawania rezerwacji:", error);
       showNotification("error", "Wystąpił błąd podczas dodawania rezerwacji.");
     }
@@ -153,7 +149,10 @@ const AddReservationForm = () => {
 
   const handleGuestCountChange = (roomId, e) => {
     const { value } = e.target;
-    const newGuestCount = Math.max(1, Math.min(value, rooms.find((room) => room.id === roomId).bedCount)); // 
+    const newGuestCount = Math.max(
+      1,
+      Math.min(value, rooms.find((room) => room.id === roomId).bedCount),
+    ); //
 
     setRoomGuests((prevGuests) => ({
       ...prevGuests,
@@ -163,19 +162,17 @@ const AddReservationForm = () => {
     setFormData((prevData) => ({
       ...prevData,
       reservationRooms: prevData.reservationRooms.map((room) =>
-        room.room.id === roomId
-          ? { ...room, guestCount: newGuestCount }
-          : room
+        room.room.id === roomId ? { ...room, guestCount: newGuestCount } : room,
       ),
     }));
   };
-  
+
   useEffect(() => {
     calculateTotalPrice();
     const today = new Date().toISOString().split("T")[0];
-    if (formData.startDate === today ) {
+    if (formData.startDate === today) {
       setFormData((prev) => ({ ...prev, status: "ACTIVE" }));
-    } else if (formData.startDate > today ) {
+    } else if (formData.startDate > today) {
       setFormData((prev) => ({ ...prev, status: "UPCOMING" }));
     }
   }, [formData.startDate, formData.endDate, formData.reservationRooms, formData.rooms]);
@@ -191,13 +188,12 @@ const AddReservationForm = () => {
     let total = 0;
     reservationRooms.forEach(({ room, guestCount }) => {
       const { bedCount, pricePerNight } = room;
-      const roomPrice = ((guestCount / bedCount) * pricePerNight) * days;
+      const roomPrice = (guestCount / bedCount) * pricePerNight * days;
       total += roomPrice;
     });
 
     setKwota(total.toFixed(2));
   };
-
 
   return (
     <div className="card-body">

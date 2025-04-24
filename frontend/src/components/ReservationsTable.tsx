@@ -31,7 +31,7 @@ const ReservationsTable = () => {
   };
 
   const handleDeleteFull = async (id) => {
-    setShowDeleteModal(false)
+    setShowDeleteModal(false);
     try {
       const response = await api.delete(`/reservations/${id}`);
       console.log("Rezerwacja została usunięta:", response.data);
@@ -41,7 +41,7 @@ const ReservationsTable = () => {
       console.error("Błąd podczas usuwania rezerwacji:", error);
       showNotification("error", "Wystąpił błąd podczas usuwania rezerwacji.");
     }
-};
+  };
 
   useEffect(() => {
     getReservations();
@@ -58,10 +58,10 @@ const ReservationsTable = () => {
       const fullName = `${res.guestFirstName} ${res.guestLastName}`.toLowerCase();
       const matchesSearch = fullName.includes(searchTerm.toLowerCase());
       const matchesStatus = filterStatus === "ALL" || res.status === filterStatus;
-  
+
       return matchesSearch && matchesStatus;
     });
-  
+
     setFilteredReservations(filtered);
     setCurrentPage(1);
   }, [searchTerm, reservations, filterStatus]);
@@ -69,7 +69,7 @@ const ReservationsTable = () => {
   const totalPages = Math.ceil(filteredReservations.length / resultsPerPage);
   const paginatedReservations = filteredReservations.slice(
     (currentPage - 1) * resultsPerPage,
-    currentPage * resultsPerPage
+    currentPage * resultsPerPage,
   );
 
   const handlePageChange = (newPage) => {
@@ -93,8 +93,8 @@ const ReservationsTable = () => {
                   type="number"
                   className="form-control form-control-sm"
                   value={resultsPerPage}
-                min={1}
-                onChange={(e) => setResultsPerPage(Number(e.target.value))}
+                  min={1}
+                  onChange={(e) => setResultsPerPage(Number(e.target.value))}
                   aria-label="Invoices count"
                 />
               </div>
@@ -120,8 +120,8 @@ const ReservationsTable = () => {
                   className="form-control form-control-sm"
                   aria-label="Search invoice"
                   value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Imię lub Nazwisko"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Imię lub Nazwisko"
                 />
               </div>
             </div>
@@ -210,19 +210,22 @@ const ReservationsTable = () => {
 
         <div className="card-footer d-flex align-items-center">
           <p className="m-0 text-secondary">
-            Wyświetlono{" "}
-          <span>{(currentPage - 1) * resultsPerPage + 1}</span> do{" "}
-          <span>
-            {Math.min(currentPage * resultsPerPage, filteredReservations.length)}
-          </span>{" "}
-          z <span>{filteredReservations.length}</span> wyników
+            Wyświetlono <span>{(currentPage - 1) * resultsPerPage + 1}</span> do{" "}
+            <span>{Math.min(currentPage * resultsPerPage, filteredReservations.length)}</span> z{" "}
+            <span>{filteredReservations.length}</span> wyników
           </p>
           <ul className="pagination m-0 ms-auto">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <a className="page-link" href="#" tabIndex={-1} aria-disabled="true" onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(currentPage - 1);
-              }}>
+              <a
+                className="page-link"
+                href="#"
+                tabIndex={-1}
+                aria-disabled="true"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(currentPage - 1);
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -241,27 +244,28 @@ const ReservationsTable = () => {
               </a>
             </li>
             {[...Array(totalPages)].map((_, idx) => (
-            <li
-              className={`page-item ${currentPage === idx + 1 ? "active" : ""}`}
-              key={idx}
-            >
+              <li className={`page-item ${currentPage === idx + 1 ? "active" : ""}`} key={idx}>
+                <a
+                  className="page-link"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(idx + 1);
+                  }}
+                >
+                  {idx + 1}
+                </a>
+              </li>
+            ))}
+            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
               <a
                 className="page-link"
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageChange(idx + 1);
+                  handlePageChange(currentPage + 1);
                 }}
               >
-                {idx + 1}
-              </a>
-            </li>
-          ))}
-            <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-              <a className="page-link" href="#" onClick={(e) => {
-                e.preventDefault();
-                handlePageChange(currentPage + 1);
-              }}>
                 następna
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

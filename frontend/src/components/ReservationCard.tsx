@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 
 const ReservationCard = () => {
-
   const [reservationsCount, setReservationsCount] = useState(0);
   const [difference, setDifference] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -102,7 +101,8 @@ const ReservationCard = () => {
               <span className="text-muted">Różnica</span>
             </div>
             <div className="ms-auto">
-              <span className={`${
+              <span
+                className={`${
                   difference >= 0 ? "text-green" : "text-red"
                 } d-inline-flex align-items-center lh-1`}
               >

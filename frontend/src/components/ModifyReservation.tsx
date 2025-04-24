@@ -110,12 +110,12 @@ const ModifyReservation = ({ reservationId }) => {
         ...prevData,
         reservationRooms: checked
           ? [
-            ...prevData.reservationRooms,
-            {
-              room: selectedRoom,
-              guestCount: 1,
-            },
-          ]
+              ...prevData.reservationRooms,
+              {
+                room: selectedRoom,
+                guestCount: 1,
+              },
+            ]
           : prevData.reservationRooms.filter((room) => room.room.id !== roomId),
       }));
       setRoomGuests((prevGuests) => ({
@@ -154,7 +154,6 @@ const ModifyReservation = ({ reservationId }) => {
         guestCount: Number(roomGuests[rr.room.id] ?? rr.guestCount),
       })),
     };
-
 
     await modifyReservation(updatedFormData);
     await updateRoomAssignments();
@@ -322,7 +321,7 @@ const ModifyReservation = ({ reservationId }) => {
     setFormData((prev) => ({
       ...prev,
       reservationRooms: prev.reservationRooms.map((rr) =>
-        rr.room.id === roomId ? { ...rr, guestCount: value } : rr
+        rr.room.id === roomId ? { ...rr, guestCount: value } : rr,
       ),
     }));
   };
@@ -339,13 +338,10 @@ const ModifyReservation = ({ reservationId }) => {
     const end = new Date(endDate);
     const days = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
 
-
-
-
     let total = 0;
     reservationRooms.forEach(({ room, guestCount }) => {
       const { bedCount, pricePerNight } = room;
-      const roomPrice = ((guestCount / bedCount) * pricePerNight) * days;
+      const roomPrice = (guestCount / bedCount) * pricePerNight * days;
       total += roomPrice;
     });
     if (originalKwota === 0) {
@@ -366,8 +362,6 @@ const ModifyReservation = ({ reservationId }) => {
   const validateForm = () => {
     const today = new Date().toISOString().split("T")[0];
     const { startDate, endDate, guestPesel, guestPhone } = formData;
-
-
 
     if (endDate && endDate < startDate) {
       return "Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.";
@@ -669,9 +663,12 @@ const ModifyReservation = ({ reservationId }) => {
                 </button>
               )
             ) : (
-
               <>
-                <button type="button" className="btn btn-secondary" onClick={() => setIsEditable(true)}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setIsEditable(true)}
+                >
                   Edytuj
                 </button>
                 {isEditable && (

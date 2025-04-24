@@ -50,10 +50,10 @@ const RepairTable = () => {
     try {
       await api.delete(`/maintenance-requests/${selectedRepairId}`);
       setRepairs((prev) => prev.filter((task) => task.id !== selectedRepairId));
-      showNotification('success', 'Zlecenie zostało usunięte.');
+      showNotification("success", "Zlecenie zostało usunięte.");
     } catch (err) {
-      console.error('Błąd podczas usuwania zgłoszenia:', err);
-      showNotification('error', 'Nie udało się usunąć zgłoszenia.');
+      console.error("Błąd podczas usuwania zgłoszenia:", err);
+      showNotification("error", "Nie udało się usunąć zgłoszenia.");
     } finally {
       setShowDeleteModal(false);
       setSelectedRepairId(null);
@@ -83,7 +83,9 @@ const RepairTable = () => {
   };
 
   const assigneeOptions = Array.from(
-    new Set(repairs.map((r) => r.assignee?.id + "|" + r.assignee?.firstName + " " + r.assignee?.lastName))
+    new Set(
+      repairs.map((r) => r.assignee?.id + "|" + r.assignee?.firstName + " " + r.assignee?.lastName),
+    ),
   ).filter(Boolean);
 
   const filteredRepairs = repairs
@@ -98,7 +100,7 @@ const RepairTable = () => {
   const totalPages = Math.ceil(filteredRepairs.length / itemsPerPage);
   const currentData = filteredRepairs.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const formatDate = (dateStr) => (dateStr ? new Date(dateStr).toLocaleDateString() : "-");
@@ -122,7 +124,9 @@ const RepairTable = () => {
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
             >
               {[5, 8, 10, 20, 50].map((count) => (
-                <option key={count} value={count}>{count}</option>
+                <option key={count} value={count}>
+                  {count}
+                </option>
               ))}
             </select>
             <span>wyników</span>
@@ -218,7 +222,10 @@ const RepairTable = () => {
                 </td>
                 <td>{formatDate(req.completionDate)}</td>
                 <td className="text-end">
-                  <button className="btn btn-primary" onClick={() => handleShowRepairDetails(req.id)}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleShowRepairDetails(req.id)}
+                  >
                     Zobacz
                   </button>
                 </td>

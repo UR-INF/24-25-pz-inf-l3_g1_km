@@ -5,8 +5,6 @@ const InvoiceDetails = () => {
   const location = useLocation();
   const invoiceId = location.state?.invoice ?? 1;
 
-
-
   return (
     <div className="page-wrapper">
       <div className="page-body">

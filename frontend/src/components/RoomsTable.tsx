@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { api } from "../services/api";
 
 const RoomsTable = () => {
-
   const navigate = useNavigate();
 
   const [rooms, setRooms] = useState([]);
@@ -32,7 +31,7 @@ const RoomsTable = () => {
         const response = await api.get("/rooms");
 
         setRooms(response.data);
-        console.log(rooms)
+        console.log(rooms);
       } catch (error) {
         console.error("Błąd przy pobieraniu pokoi:", error);
       } finally {
@@ -44,17 +43,15 @@ const RoomsTable = () => {
   }, []);
 
   const filteredRooms = rooms.filter((room) =>
-    room.roomNumber?.toString().toLowerCase().includes(search.toLowerCase())
+    room.roomNumber?.toString().toLowerCase().includes(search.toLowerCase()),
   );
-
 
   const totalPages = Math.ceil(filteredRooms.length / resultsPerPage);
   const startIndex = (currentPage - 1) * resultsPerPage;
   const displayedRooms = filteredRooms.slice(
     (currentPage - 1) * resultsPerPage,
-    currentPage * resultsPerPage
+    currentPage * resultsPerPage,
   );
-
 
   const handleChangePage = (page) => {
     if (page > 0 && page <= totalPages) {
@@ -132,14 +129,15 @@ const RoomsTable = () => {
                   <td>{room.pricePerNight.toFixed(2)} PLN</td>
                   <td>
                     <span
-                      className={`badge me-1 ${room.status === "AVAILABLE"
+                      className={`badge me-1 ${
+                        room.status === "AVAILABLE"
                           ? "bg-success"
                           : room.status === "OCCUPIED"
                             ? "bg-warning"
                             : room.status === "UNAVAILABLE"
                               ? "bg-danger"
                               : "bg-secondary"
-                        }`}
+                      }`}
                     ></span>
                     {room.status === "AVAILABLE"
                       ? "Dostępny"
@@ -175,18 +173,25 @@ const RoomsTable = () => {
                   </td> */}
                 </tr>
               ))}
-
             </tbody>
           </table>
         </div>
 
         <div className="card-footer d-flex align-items-center">
           <p className="m-0 text-secondary">
-            Wyświetlono <span>{startIndex + 1}</span> do <span>{Math.min(startIndex + resultsPerPage, filteredRooms.length)}</span> z <span>{filteredRooms.length}</span> wyników
+            Wyświetlono <span>{startIndex + 1}</span> do{" "}
+            <span>{Math.min(startIndex + resultsPerPage, filteredRooms.length)}</span> z{" "}
+            <span>{filteredRooms.length}</span> wyników
           </p>
           <ul className="pagination m-0 ms-auto">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <a className="page-link" href="#" tabIndex={-1} aria-disabled="true" onClick={() => handleChangePage(currentPage - 1)}>
+              <a
+                className="page-link"
+                href="#"
+                tabIndex={-1}
+                aria-disabled="true"
+                onClick={() => handleChangePage(currentPage - 1)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 
 const RoomsCard = () => {
-
-const [occupiedCount, setOccupiedCount] = useState(0);
+  const [occupiedCount, setOccupiedCount] = useState(0);
   const [availableCount, setAvailableCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +43,9 @@ const [occupiedCount, setOccupiedCount] = useState(0);
               <span className="text-muted">Dostepne pokoje</span>
             </div>
             <div className="ms-auto">
-              <span className="text-green d-inline-flex align-items-center lh-1">{availableCount}</span>
+              <span className="text-green d-inline-flex align-items-center lh-1">
+                {availableCount}
+              </span>
             </div>
           </div>
         </div>

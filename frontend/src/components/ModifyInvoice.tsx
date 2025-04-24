@@ -37,7 +37,7 @@ const ModifyInvoice = ({ invoiceId }) => {
       ...prevData,
       [name]: value,
     }));
-    console.log(invoiceData)
+    console.log(invoiceData);
   };
 
   const handleSubmit = async (e) => {

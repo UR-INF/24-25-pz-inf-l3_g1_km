@@ -93,7 +93,9 @@ const CleaningTable = () => {
   };
 
   const employeeOptions = Array.from(
-    new Set(tasks.map((t) => t.employee?.id + "|" + t.employee?.firstName + " " + t.employee?.lastName))
+    new Set(
+      tasks.map((t) => t.employee?.id + "|" + t.employee?.firstName + " " + t.employee?.lastName),
+    ),
   ).filter(Boolean);
 
   const filteredTasks = tasks
@@ -108,7 +110,7 @@ const CleaningTable = () => {
   const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
   const currentData = filteredTasks.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const formatDate = (dateStr) => (dateStr ? new Date(dateStr).toLocaleDateString() : "-");
@@ -132,7 +134,9 @@ const CleaningTable = () => {
               onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
             >
               {[5, 8, 10, 20, 50].map((count) => (
-                <option key={count} value={count}>{count}</option>
+                <option key={count} value={count}>
+                  {count}
+                </option>
               ))}
             </select>
             <span>wyników</span>
@@ -316,7 +320,6 @@ const CleaningTable = () => {
     </div>
   );
 };
-
 
 const getStatusColor = (status: string) => {
   switch (status) {

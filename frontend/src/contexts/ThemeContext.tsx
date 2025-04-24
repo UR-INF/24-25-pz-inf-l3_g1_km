@@ -29,18 +29,18 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Aktualnie stosowany motyw (jasny lub ciemny)
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
     const storedMode = localStorage.getItem("themeMode") as ThemeMode;
-    
+
     if (storedMode === "light" || storedMode === "dark") {
       return storedMode;
     }
-    
+
     return getSystemTheme();
   });
 
   // Nasłuchiwanie zmian
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    
+
     const handleChange = () => {
       if (themeMode === "system") {
         setCurrentTheme(getSystemTheme());
@@ -58,7 +58,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     } else {
       setCurrentTheme(themeMode);
     }
-    
+
     localStorage.setItem("themeMode", themeMode);
   }, [themeMode]);
 
@@ -86,7 +86,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         themeMode,
         setTheme,
         toggleTheme,
-        isSystemPreferred: themeMode === "system"
+        isSystemPreferred: themeMode === "system",
       }}
     >
       {children}

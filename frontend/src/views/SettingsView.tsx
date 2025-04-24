@@ -309,7 +309,7 @@ const SettingsView = () => {
                         </label>
                       </div>
                     </div>
-                    
+
                     <div className="col-auto">
                       <div className="form-check">
                         <input
@@ -326,7 +326,7 @@ const SettingsView = () => {
                         </label>
                       </div>
                     </div>
-                    
+
                     <div className="col-auto">
                       <div className="form-check">
                         <input
