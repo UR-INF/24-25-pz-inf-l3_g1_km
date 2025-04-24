@@ -212,6 +212,7 @@ const AddReservationForm = () => {
               onChange={handleChange}
               required
               title="To pole jest wymagane"
+              min={new Date().toISOString().split("T")[0]}
             />
           </div>
           <div className="col-md">
@@ -224,6 +225,7 @@ const AddReservationForm = () => {
               onChange={handleChange}
               required
               title="To pole jest wymagane"
+              min={formData.startDate}
             />
           </div>
         </div>
@@ -358,30 +360,19 @@ const AddReservationForm = () => {
               onChange={handleChange}
             ></textarea>
           </div>
-          {/* <div className="col-md">
-            <div className="form-label">ID Faktury (Opcjonalne)</div>
-            <input
-              type="text"
-              className="form-control"
-              name="invoiceId"
-              value={formData.invoiceId}
-              onChange={handleChange}
-            />
-          </div> */}
-        </div>
-
-        <h3 className="card-title mt-4">Catering</h3>
-        <div>
-          <label className="form-check form-switch">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              name="catering"
-              checked={formData.catering}
-              onChange={handleChange}
-            />
-            <span className="form-check-label">Dołącz catering dla gości hotelowych</span>
-          </label>
+          <div className="col-md">
+            <div className="form-label">Catering</div>
+            <label className="form-check form-switch">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                name="catering"
+                checked={formData.catering}
+                onChange={handleChange}
+              />
+              <span className="form-check-label">Dołącz catering dla gości hotelowych</span>
+            </label>
+          </div>
         </div>
 
         <h3 className="card-title mt-4">Status</h3>
@@ -432,14 +423,14 @@ const AddReservationForm = () => {
           <label className="form-check-label">Zakończona</label>
         </div>
         <h3 className="card-title mt-4">Do zapłaty</h3>
-        <h3 className="card-title mt-4">{kwota} PLN</h3>
+        <h3 className="card-title">{kwota} PLN</h3>
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            <a href="#" className="btn btn-1">
+            {/* <a href="#" className="btn btn-1">
               Anuluj
-            </a>
-            <button type="submit" className="btn btn-primary btn-2">
-              Zatwierdź
+            </a> */}
+            <button type="submit" className="btn btn-primary">
+              Zatwierdż i dodaj rezerwację
             </button>
           </div>
         </div>

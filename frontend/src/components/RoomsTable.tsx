@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
+import { useUser, RoleName } from "../contexts/user";
 
 const RoomsTable = () => {
   const navigate = useNavigate();
+  const { userRoleName } = useUser();
 
   const [rooms, setRooms] = useState([]);
   const [search, setSearch] = useState("");
@@ -25,6 +27,7 @@ const RoomsTable = () => {
   const handleShowRoom = (roomId) => {
     navigate(`/rooms/${roomId}`);
   };
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -95,7 +98,7 @@ const RoomsTable = () => {
                 <input
                   type="text"
                   className="form-control form-control-sm"
-                  aria-label="Search invoice"
+                  aria-label="Szukaj pokoju"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -108,13 +111,13 @@ const RoomsTable = () => {
           <table className="table table-selectable card-table table-vcenter text-nowrap datatable">
             <thead>
               <tr>
-                <th className="w-1">ID Pokoju</th>
-                <th>Numer Pokoju</th>
-                <th>Pietro</th>
-                <th>Liczba Łóżek</th>
-                <th>Cena za Noc</th>
+                <th className="w-1">ID pokoju</th>
+                <th>Numer pokoju</th>
+                <th>Piętro</th>
+                <th>Liczba łóżek</th>
+                <th>Cena za noc</th>
                 <th>Status</th>
-                <th></th>
+                {userRoleName === RoleName.MANAGER && <th>Akcje</th>}
               </tr>
             </thead>
             <tbody>
@@ -147,30 +150,32 @@ const RoomsTable = () => {
                           ? "Niedostępny"
                           : room.status}
                   </td>
-                  <td className="text-end">
-                    <a
-                      href="#"
-                      className="btn btn-primary"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleShowRoom(room.id);
-                      }}
-                    >
-                      Zobacz
-                    </a>
-                  </td>
-                  {/* <td>
-                    <a
-                      href="#"
-                      className="btn btn-danger"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDeleteRoom(room.id);
-                      }}
-                    >
-                      Usuń
-                    </a>
-                  </td> */}
+
+                  {userRoleName === RoleName.MANAGER && (
+                    <td className="text-end">
+                      <a
+                        href="#"
+                        className="btn btn-danger"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDeleteRoom(room.id);
+                        }}
+                      >
+                        Usuń
+                      </a>
+
+                      <a
+                        href="#"
+                        className="btn btn-danger"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDeleteRoom(room.id);
+                        }}
+                      >
+                        Usuń
+                      </a>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

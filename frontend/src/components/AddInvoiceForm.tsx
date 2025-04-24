@@ -7,7 +7,7 @@ const AddInvoiceForm = ({ reservationId }) => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const [invoiceData, setInvoiceData] = useState({
-    issueDate: "",
+    issueDate: new Date().toISOString().slice(0, 10),
     pdfFile: "",
     companyNip: "",
     companyName: "",

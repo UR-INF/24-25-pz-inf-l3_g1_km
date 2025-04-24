@@ -29,10 +29,6 @@ const ModifyReservation = ({ reservationId }) => {
     status: "ACTIVE",
   });
 
-  const handleClickNewReservation = () => {
-    navigate("/RecepcionistDashboard/Reservations");
-  };
-
   const getReservation = async () => {
     try {
       const response = await api.get(`/reservations/${reservationId}`);
@@ -157,7 +153,9 @@ const ModifyReservation = ({ reservationId }) => {
 
     await modifyReservation(updatedFormData);
     await updateRoomAssignments();
-    handleClickNewReservation();
+
+    // navigate("/RecepcionistDashboard/Reservations");
+    setIsEditable(false);
   };
 
   const modifyReservation = async (updatedFormData) => {
@@ -393,6 +391,7 @@ const ModifyReservation = ({ reservationId }) => {
               value={formData.startDate}
               onChange={handleChange}
               disabled={!isEditable}
+              min={new Date().toISOString().split("T")[0]}
             />
           </div>
           <div className="col-md">
@@ -404,6 +403,7 @@ const ModifyReservation = ({ reservationId }) => {
               value={formData.endDate}
               onChange={handleChange}
               disabled={!isEditable}
+              min={formData.startDate}
             />
           </div>
         </div>
@@ -540,31 +540,19 @@ const ModifyReservation = ({ reservationId }) => {
             ></textarea>
           </div>
           <div className="col-md">
-            <div className="form-label">ID Faktury (Opcjonalne)</div>
-            <input
-              type="text"
-              className="form-control"
-              name="invoiceId"
-              value={formData.invoiceId}
-              onChange={handleChange}
-              disabled={!isEditable}
-            />
+            <div className="form-label">Catering</div>
+            <label className="form-check form-switch">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                name="catering"
+                checked={formData.catering}
+                onChange={handleChange}
+                disabled={!isEditable}
+              />
+              <span className="form-check-label">Dołącz catering dla gości hotelowych</span>
+            </label>
           </div>
-        </div>
-
-        <h3 className="card-title mt-4">Catering</h3>
-        <div>
-          <label className="form-check form-switch">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              name="catering"
-              checked={formData.catering}
-              onChange={handleChange}
-              disabled={!isEditable}
-            />
-            <span className="form-check-label">Dołącz catering dla gości hotelowych</span>
-          </label>
         </div>
 
         <h3 className="card-title mt-4">Status</h3>
@@ -576,6 +564,7 @@ const ModifyReservation = ({ reservationId }) => {
             value="UPCOMING"
             checked={formData.status === "UPCOMING"}
             onChange={handleChange}
+            disabled={!isEditable}
           />
           <label className="form-check-label">Nadchodząca</label>
         </div>
@@ -616,7 +605,7 @@ const ModifyReservation = ({ reservationId }) => {
           <label className="form-check-label">Zakończona</label>
         </div>
         <h3 className="card-title mt-4">Kwota bazowa</h3>
-        <h3 className="card-title mt-4">{kwota} PLN</h3>
+        <h3 className="card-title">{kwota} PLN</h3>
         {originalKwota > 0 && originalKwota !== parseFloat(kwota) && (
           <div>
             <h4>
@@ -664,16 +653,25 @@ const ModifyReservation = ({ reservationId }) => {
               )
             ) : (
               <>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setIsEditable(true)}
-                >
-                  Edytuj
-                </button>
-                {isEditable && (
-                  <button type="submit" className="btn btn-primary btn-2">
-                    Zatwierdź
+                {(isEditable && (
+                  <button type="submit" className="btn btn-primary">
+                    Zatwierdź zmiany
+                  </button>
+                )) || (
+                  <button
+                    type="button"
+                    className="btn btn-warning"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      showNotification(
+                        "info",
+                        "Dane rezerwacji zostały odblokowane - możesz je teraz edytować.",
+                        5000,
+                      );
+                      setIsEditable(true);
+                    }}
+                  >
+                    Edytuj dane rezerwacji
                   </button>
                 )}
               </>

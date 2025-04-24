@@ -95,7 +95,12 @@ public class ReservationSeeder {
                 ReservationRoom rr = new ReservationRoom();
                 rr.setReservation(reservation);
                 rr.setRoom(room);
-                rr.setGuestCount(2);
+
+                // Losowa liczba zakwaterowanych gości
+                int maxGuests = room.getBedCount();
+                int randomGuestCount = (int) (Math.random() * maxGuests) + 1;
+                rr.setGuestCount(randomGuestCount);
+
                 reservationRoomRepository.save(rr);
             }
 

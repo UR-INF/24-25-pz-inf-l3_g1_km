@@ -121,7 +121,7 @@ const ReservationsTable = () => {
                   aria-label="Search invoice"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Imię lub Nazwisko"
+                  placeholder="Imię lub nazwisko"
                 />
               </div>
             </div>
