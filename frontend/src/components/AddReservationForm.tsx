@@ -10,7 +10,7 @@ const AddReservationForm = () => {
   const [formData, setFormData] = useState({
     startDate: new Date().toISOString().split("T")[0],
     endDate: "",
-    status: "UPCOMING",
+    status: "",
     specialRequests: "",
     modifiedAt: "",
     catering: false,
@@ -96,6 +96,9 @@ const AddReservationForm = () => {
         [name]: newValue,
       }));
     }
+
+    
+
   };
 
   const handleSubmit = async (e) => {
@@ -103,7 +106,8 @@ const AddReservationForm = () => {
 
     const errorMessage = validateForm();
     if (errorMessage) {
-      alert(errorMessage);
+      showNotification("error", errorMessage);
+      //alert(errorMessage);
       return;
     }
 
@@ -168,7 +172,13 @@ const AddReservationForm = () => {
   
   useEffect(() => {
     calculateTotalPrice();
-  }, [formData.startDate, formData.endDate, formData.reservationRooms]);
+    const today = new Date().toISOString().split("T")[0];
+    if (formData.startDate === today ) {
+      setFormData((prev) => ({ ...prev, status: "ACTIVE" }));
+    } else if (formData.startDate > today ) {
+      setFormData((prev) => ({ ...prev, status: "UPCOMING" }));
+    }
+  }, [formData.startDate, formData.endDate, formData.reservationRooms, formData.rooms]);
 
   const calculateTotalPrice = () => {
     const { startDate, endDate, reservationRooms } = formData;
@@ -387,6 +397,7 @@ const AddReservationForm = () => {
             value="UPCOMING"
             checked={formData.status === "UPCOMING"}
             onChange={handleChange}
+            disabled={formData.startDate === new Date().toISOString().split("T")[0]}
           />
           <label className="form-check-label">Nadchodząca</label>
         </div>
@@ -398,6 +409,7 @@ const AddReservationForm = () => {
             value="ACTIVE"
             checked={formData.status === "ACTIVE"}
             onChange={handleChange}
+            disabled={formData.startDate > new Date().toISOString().split("T")[0]}
           />
           <label className="form-check-label">Aktywna</label>
         </div>

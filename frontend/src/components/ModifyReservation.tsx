@@ -142,7 +142,8 @@ const ModifyReservation = ({ reservationId }) => {
 
     const errorMessage = validateForm();
     if (errorMessage) {
-      alert(errorMessage);
+      showNotification("error", errorMessage);
+      //alert(errorMessage);
       return;
     }
 
@@ -328,7 +329,7 @@ const ModifyReservation = ({ reservationId }) => {
 
   useEffect(() => {
     calculateTotalPrice();
-  }, [formData.startDate, formData.endDate, formData.reservationRooms]);
+  }, [formData.startDate, formData.endDate, formData.reservationRooms, formData.rooms]);
 
   const calculateTotalPrice = () => {
     const { startDate, endDate, reservationRooms } = formData;

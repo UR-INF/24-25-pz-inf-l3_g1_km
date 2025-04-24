@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 const ReservationsTable = () => {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ const ReservationsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [resultsPerPage, setResultsPerPage] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
+  const [iid, setId] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [filterStatus, setFilterStatus] = useState("ALL");
 
   const getReservations = async () => {
     try {
@@ -22,18 +26,22 @@ const ReservationsTable = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Czy na pewno chcesz usunąć tę rezerwację?")) {
-      try {
-        const response = await api.delete(`/reservations/${id}`);
-        console.log("Rezerwacja została usunięta:", response.data);
-        showNotification("success", "Rezerwacja została usunięta.");
-        getReservations();
-      } catch (error) {
-        console.error("Błąd podczas usuwania rezerwacji:", error);
-        showNotification("error", "Wystąpił błąd podczas usuwania rezerwacji.");
-      }
-    }
+    setShowDeleteModal(true);
+    setId(id);
   };
+
+  const handleDeleteFull = async (id) => {
+    setShowDeleteModal(false)
+    try {
+      const response = await api.delete(`/reservations/${id}`);
+      console.log("Rezerwacja została usunięta:", response.data);
+      showNotification("success", "Rezerwacja została usunięta.");
+      getReservations();
+    } catch (error) {
+      console.error("Błąd podczas usuwania rezerwacji:", error);
+      showNotification("error", "Wystąpił błąd podczas usuwania rezerwacji.");
+    }
+};
 
   useEffect(() => {
     getReservations();
@@ -46,14 +54,17 @@ const ReservationsTable = () => {
   };
 
   useEffect(() => {
-    const filtered = reservations.filter((res) =>
-      `${res.guestFirstName} ${res.guestLastName}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
+    const filtered = reservations.filter((res) => {
+      const fullName = `${res.guestFirstName} ${res.guestLastName}`.toLowerCase();
+      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+      const matchesStatus = filterStatus === "ALL" || res.status === filterStatus;
+  
+      return matchesSearch && matchesStatus;
+    });
+  
     setFilteredReservations(filtered);
     setCurrentPage(1);
-  }, [searchTerm, reservations]);
+  }, [searchTerm, reservations, filterStatus]);
 
   const totalPages = Math.ceil(filteredReservations.length / resultsPerPage);
   const paginatedReservations = filteredReservations.slice(
@@ -89,7 +100,19 @@ const ReservationsTable = () => {
               </div>
               wyników
             </div>
-            <div className="ms-auto text-secondary">
+            <div className="ms-auto text-secondary d-flex align-items-center">
+              <select
+                className="form-select form-select-sm me-2"
+                style={{ width: "170px" }}
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="ALL">Wszystkie statusy</option>
+                <option value="ACTIVE">Aktywna</option>
+                <option value="UPCOMING">Nadchodząca</option>
+                <option value="CANCELLED">Anulowana</option>
+                <option value="COMPLETED">Ukończona</option>
+              </select>
               Wyszukaj:
               <div className="ms-2 d-inline-block">
                 <input
@@ -259,6 +282,12 @@ const ReservationsTable = () => {
           </ul>
         </div>
       </div>
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        handleConfirm={() => handleDeleteFull(iid)}
+        message="Czy na pewno chcesz usunąć tę rezerwację?"
+      />
     </div>
   );
 };

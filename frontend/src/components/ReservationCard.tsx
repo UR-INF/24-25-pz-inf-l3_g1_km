@@ -66,7 +66,7 @@ const ReservationCard = () => {
         <div className="card-body">
           <div className="d-flex align-items-center">
             <div className="subheader">Rezerwacje</div>
-            <div className="ms-auto lh-1">
+            <div className="lh-1 ms-2">
               <div className="dropdown">
                 <a
                   className="dropdown-toggle text-secondary"
