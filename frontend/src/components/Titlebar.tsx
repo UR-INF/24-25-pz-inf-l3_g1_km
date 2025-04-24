@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigationHistory } from "../hooks/useNavigationHistory";
-import useTheme from "../hooks/useTheme";
+import { useTheme } from "../contexts/ThemeContext";
 
 const Titlebar = () => {
   const handleMinimize = () => window.ipcRenderer.send("window:minimize");
   const handleMaximize = () => window.ipcRenderer.send("window:maximize");
   const handleClose = () => window.ipcRenderer.send("window:close");
 
-  const { theme, toggleTheme } = useTheme();
+  const { currentTheme, toggleTheme } = useTheme();
 
   const { goBack, goForward, canGoBack, canGoForward } = useNavigationHistory();
 
@@ -88,10 +88,10 @@ const Titlebar = () => {
             <li className="nav-item">
               <button
                 className="nav-link px-1 btn btn-link"
-                title={`Przełącz na ${theme === "dark" ? "jasny" : "ciemny"} motyw`}
-                onClick={toggleTheme} // Używamy toggleTheme z useTheme
+                title={`Przełącz na ${currentTheme === "dark" ? "jasny" : "ciemny"} motyw`}
+                onClick={toggleTheme}
               >
-                <i className={`fs-2 ti ti-${theme === "dark" ? "sun" : "moon"}`}></i>
+                <i className={`fs-2 ti ti-${currentTheme === "dark" ? "sun" : "moon"}`}></i>
               </button>
             </li>
 

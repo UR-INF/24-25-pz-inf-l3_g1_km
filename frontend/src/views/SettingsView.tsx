@@ -4,7 +4,7 @@ import { api } from "../services/api";
 import { useState, useEffect } from "react";
 import { useNotification } from "../contexts/notification";
 import { validateEmailFormat } from "../utils/regexUtils";
-import useTheme from "../hooks/useTheme";
+import { useTheme } from "../contexts/ThemeContext";
 
 const SettingsView = () => {
   const {
@@ -19,7 +19,7 @@ const SettingsView = () => {
     userNotificationsEnabled,
   } = useUser();
 
-  const { theme, toggleTheme, toggleSystemPreference, isSystemPreferred } = useTheme();
+  const { currentTheme, themeMode, setTheme } = useTheme();
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -171,6 +171,7 @@ const SettingsView = () => {
         <div className="container-xl">
           <div className="card">
             <div className="card-body">
+              {/* Sekcja zdjęcia profilowego */}
               <h3 className="card-title">Szczegóły konta</h3>
               <div className="row align-items-center">
                 <div className="col-auto">
@@ -203,6 +204,8 @@ const SettingsView = () => {
                   </button>
                 </div>
               </div>
+
+              {/* Sekcja danych użytkownika */}
               <h3 className="card-title mt-4">Twoje dane</h3>
               <div className="row g-3">
                 <div className="col-md">
@@ -223,6 +226,8 @@ const SettingsView = () => {
                   />
                 </div>
               </div>
+
+              {/* Sekcja adresu e-mail */}
               <h3 className="card-title mt-4">Email</h3>
               <p className="card-subtitle">
                 Za pomocą tego adresu e-mail odbywa się logowanie do serwisu.
@@ -244,6 +249,8 @@ const SettingsView = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Sekcja hasła */}
               <h3 className="card-title mt-4">Hasło</h3>
               <p className="card-subtitle">
                 Zmień hasło, jeśli uważasz że osoba nieupoważniona może je znać.
@@ -280,39 +287,59 @@ const SettingsView = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Sekcja motywu */}
               <div>
                 <div className="theme-settings mt-4">
                   <h3 className="card-title mt-4">Motyw</h3>
-                  <div className="row g-2">
+                  <div className="row g-3">
                     <div className="col-auto">
                       <div className="form-check">
                         <input
                           type="radio"
-                          id="light"
+                          id="theme-light"
                           name="theme"
                           value="light"
-                          checked={theme === "light"}
-                          onChange={toggleTheme}
+                          checked={themeMode === "light"}
+                          onChange={() => setTheme("light")}
                           className="form-check-input"
                         />
-                        <label className="form-check-label" htmlFor="light">
+                        <label className="form-check-label" htmlFor="theme-light">
                           Jasny motyw
                         </label>
                       </div>
                     </div>
+                    
                     <div className="col-auto">
                       <div className="form-check">
                         <input
                           type="radio"
-                          id="dark"
+                          id="theme-dark"
                           name="theme"
                           value="dark"
-                          checked={theme === "dark"}
-                          onChange={toggleTheme}
+                          checked={themeMode === "dark"}
+                          onChange={() => setTheme("dark")}
                           className="form-check-input"
                         />
-                        <label className="form-check-label" htmlFor="dark">
+                        <label className="form-check-label" htmlFor="theme-dark">
                           Ciemny motyw
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="col-auto">
+                      <div className="form-check">
+                        <input
+                          type="radio"
+                          id="theme-system"
+                          name="theme"
+                          value="system"
+                          checked={themeMode === "system"}
+                          onChange={() => setTheme("system")}
+                          className="form-check-input"
+                        />
+                        <label className="form-check-label" htmlFor="theme-system">
+                          Automatyczny (motyw systemowy)
                         </label>
                       </div>
                     </div>
@@ -320,19 +347,7 @@ const SettingsView = () => {
                 </div>
               </div>
 
-              <div className="system-theme-toggle">
-                <h3 className="card-title mt-1">Użyj motywu systemowego</h3>
-                <label className="form-check-label">
-                  <input
-                    type="checkbox"
-                    checked={isSystemPreferred}
-                    onChange={toggleSystemPreference}
-                    className="form-check-input me-3"
-                  />
-                  Użyj ustawień systemowych
-                </label>
-              </div>
-
+              {/* Sekcja powiadomień */}
               {(userRoleName === RoleName.HOUSEKEEPER || userRoleName === RoleName.MAINTENANCE) && (
                 <>
                   <h3 className="card-title mt-4">Powiadomienia systemowe</h3>

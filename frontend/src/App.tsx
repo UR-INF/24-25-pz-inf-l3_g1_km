@@ -16,108 +16,114 @@ import ReservationsDetails from "./views/Receptionist/ReservationDetails";
 import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
+import { ThemeProvider } from "./contexts/ThemeContext";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 const App = () => {
   const { state } = useAuth();
 
   return (
-    <Routes>
-      <Route element={<DashboardLayout />}>
-        {/* Trasa główna, widok dashboardu, dostępny tylko dla zalogowanych */}
+    <ThemeProvider>
+      <Routes>
+        <Route element={<DashboardLayout />}>
+          {/* Trasa główna, widok dashboardu, dostępny tylko dla zalogowanych */}
+          <Route
+            path="/"
+            element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
+          />
+
+          {/* Trasy związane z rezerwacjami */}
+          <Route
+            path="/RecepcionistDashboard/Reservations"
+            element={state.loggedIn ? <Reservations /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Reservations/NewReservation"
+            element={state.loggedIn ? <AddReservation /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Reservations/NewInvoice"
+            element={state.loggedIn ? <AddInvoice /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Reservations/InvoiceDetails"
+            element={state.loggedIn ? <InvoiceDetails /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Reservations/ReservationDetails"
+            element={state.loggedIn ? <ReservationsDetails /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/Repairs"
+            element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
+          />
+
+          {/* Trasy związane ze zgłoszeniami */}
+          <Route
+            path="/RecepcionistDashboard/Orders/NewRepair"
+            element={state.loggedIn ? <AddRepair /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/Cleaning"
+            element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/NewCleaningOrder"
+            element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/CleaningOrderDetails"
+            element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/CleaningOrderDetails/:id"
+            element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
+            element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+          />
+
+          <Route
+            path="/RecepcionistDashboard/Orders/RepairsOrderDetails/:id"
+            element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
+          />
+
+          {/* Trasy dla sprzątaczki */}
+          <Route
+            path="/HousekeeperDashboard/Orders/NewCleaningOrder"
+            element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
+          />
+
+          {/* Trasy dla konserwatorów */}
+          <Route
+            path="/MaintenanceDashboard/Orders/NewRepair"
+            element={state.loggedIn ? <AddRepair /> : <LoginView />}
+          />
+
+          <Route path="/Settings" element={state.loggedIn ? <SettingsView /> : <LoginView />} />
+        </Route>
+
+        {/* Trasa logowania: jeśli użytkownik jest już zalogowany, zostanie przekierowany na stronę główną */}
         <Route
-          path="/"
-          element={state.loggedIn ? <RoleBasedDashboardView /> : <Navigate to="/login" replace />}
+          path="/login"
+          element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />}
         />
 
-        {/* Trasy związane z rezerwacjami */}
-        <Route
-          path="/RecepcionistDashboard/Reservations"
-          element={state.loggedIn ? <Reservations /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Reservations/NewReservation"
-          element={state.loggedIn ? <AddReservation /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Reservations/NewInvoice"
-          element={state.loggedIn ? <AddInvoice /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Reservations/InvoiceDetails"
-          element={state.loggedIn ? <InvoiceDetails /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Reservations/ReservationDetails"
-          element={state.loggedIn ? <ReservationsDetails /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/Repairs"
-          element={state.loggedIn ? <RepairsOrders /> : <LoginView />}
-        />
-
-        {/* Trasy związane ze zgłoszeniami */}
-        <Route
-          path="/RecepcionistDashboard/Orders/NewRepair"
-          element={state.loggedIn ? <AddRepair /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/Cleaning"
-          element={state.loggedIn ? <CleaningOrders /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/NewCleaningOrder"
-          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/CleaningOrderDetails"
-          element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/CleaningOrderDetails/:id"
-          element={state.loggedIn ? <CleaningOrderDetails /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/RepairsOrderDetails"
-          element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
-        />
-
-        <Route
-          path="/RecepcionistDashboard/Orders/RepairsOrderDetails/:id"
-          element={state.loggedIn ? <RepairOrderDetails /> : <LoginView />}
-        />
-
-        {/* Trasy dla sprzątaczki */}
-        <Route
-          path="/HousekeeperDashboard/Orders/NewCleaningOrder"
-          element={state.loggedIn ? <AddCleaningOrder /> : <LoginView />}
-        />
-
-        {/* Trasy dla konserwatorów */}
-        <Route
-          path="/MaintenanceDashboard/Orders/NewRepair"
-          element={state.loggedIn ? <AddRepair /> : <LoginView />}
-        />
-
-        <Route path="/Settings" element={state.loggedIn ? <SettingsView /> : <LoginView />} />
-      </Route>
-
-      {/* Trasa logowania: jeśli użytkownik jest już zalogowany, zostanie przekierowany na stronę główną */}
-      <Route path="/login" element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />} />
-
-      {/* Trasa dla strony 404 (Not Found) */}
-      <Route path="*" element={<NotFoundView />} />
-    </Routes>
+        {/* Trasa dla strony 404 (Not Found) */}
+        <Route path="*" element={<NotFoundView />} />
+      </Routes>
+    </ThemeProvider>
   );
 };
 
