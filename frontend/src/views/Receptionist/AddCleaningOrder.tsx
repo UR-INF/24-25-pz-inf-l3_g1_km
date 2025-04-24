@@ -5,9 +5,7 @@ const AddCleaningOrder = () => {
     <div className="page-wrapper">
       <div className="page-body">
         <div className="container-xl">
-          <div className="card">
-            <AddCleaningRequestForm />
-          </div>
+          <AddCleaningRequestForm />
         </div>
       </div>
     </div>

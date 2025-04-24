@@ -5,9 +5,7 @@ const AddRepair = () => {
     <div className="page-wrapper">
       <div className="page-body">
         <div className="container-xl">
-          <div className="card">
-            <AddRepairRequestForm />
-          </div>
+          <AddRepairRequestForm />
         </div>
       </div>
     </div>

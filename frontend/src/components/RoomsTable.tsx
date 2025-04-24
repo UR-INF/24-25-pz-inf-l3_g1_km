@@ -117,7 +117,7 @@ const RoomsTable = () => {
                 <th>Liczba łóżek</th>
                 <th>Cena za noc</th>
                 <th>Status</th>
-                {userRoleName === RoleName.MANAGER && <th>Akcje</th>}
+                {userRoleName === RoleName.MANAGER && <th></th>}
               </tr>
             </thead>
             <tbody>
