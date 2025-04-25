@@ -18,41 +18,60 @@ const HousekeeperCleaningTasks = () => {
       const response = await api.get(`/housekeeping-tasks?employeeId=${userId}`);
       const current = response.data;
 
-      const newTasks = current.filter(
-        (task) => !knownTaskIdsRef.current.has(task.id) && task.employee?.id === userId, // tylko przypisane do aktualnego użytkownika
+      const newAssignedTasks = current.filter(
+        (task) => !knownTaskIdsRef.current.has(task.id) && task.employee?.id === userId
+      );
+
+      const newUnassignedTasks = current.filter(
+        (task) => !knownTaskIdsRef.current.has(task.id) && !task.employee
       );
 
       setTasks(current);
 
-      // powiadomienie tylko jeśli mamy wcześniejsze dane i pojawiły się nowe
-      if (
-        knownTaskIdsRef.current.size > 0 &&
-        newTasks.length > 0 &&
-        Notification.permission === "granted"
-      ) {
-        const firstNew = newTasks[0];
-        const room = firstNew.room?.roomNumber ?? "Nieznany pokój";
-        const taskType = firstNew.cleaningType ?? "Brak typu";
-        const date = new Date(firstNew.assignedAt ?? firstNew.createdAt).toLocaleDateString();
+      if (Notification.permission === "granted") {
+        if (knownTaskIdsRef.current.size > 0 && newAssignedTasks.length > 0) {
+          const firstNew = newAssignedTasks[0];
+          const room = firstNew.room?.roomNumber ?? "Nieznany pokój";
+          const taskType = firstNew.cleaningType ?? "Brak typu";
+          const date = new Date(firstNew.assignedAt ?? firstNew.createdAt).toLocaleDateString();
 
-        const statusMap = {
-          PENDING: "Do wykonania",
-          IN_PROGRESS: "W trakcie",
-          COMPLETED: "Ukończono",
-        };
-        const status = statusMap[firstNew.status] ?? firstNew.status;
+          const statusMap = {
+            PENDING: "Do wykonania",
+            IN_PROGRESS: "W trakcie",
+            COMPLETED: "Ukończono",
+          };
+          const status = statusMap[firstNew.status] ?? firstNew.status;
 
-        const notif = new Notification("Nowe zadanie sprzątania", {
-          body: `Pokój: ${room}\nTyp: ${taskType}\nStatus: ${status}\nData: ${date}`,
-        });
+          const notif = new Notification("Nowe zadanie sprzątania", {
+            body: `Pokój: ${room}\nTyp: ${taskType}\nStatus: ${status}\nData: ${date}`,
+          });
 
-        notif.onclick = () => {
-          window.focus();
-          window.location.href = "/HousekeeperDashboard";
-        };
+          notif.onclick = () => {
+            window.focus();
+            window.location.href = "/HousekeeperDashboard";
+          };
+        }
+
+        if (knownTaskIdsRef.current.size > 0 && newUnassignedTasks.length > 0) {
+          const firstUnassigned = newUnassignedTasks[0];
+          const room = firstUnassigned.room?.roomNumber ?? "Nieznany pokój";
+          const taskType = firstUnassigned.cleaningType ?? "Brak typu";
+          const date = new Date(firstUnassigned.createdAt).toLocaleDateString();
+
+          const notif = new Notification("Nowe nieprzypisane zadanie sprzątania", {
+            body: `Pokój: ${room}\nTyp: ${taskType}\nData: ${date}`,
+          });
+
+          notif.onclick = () => {
+            window.focus();
+            window.location.href = "/HousekeeperDashboard";
+          };
+        }
       }
 
-      newTasks.forEach((task) => knownTaskIdsRef.current.add(task.id));
+      [...newAssignedTasks, ...newUnassignedTasks].forEach((task) =>
+        knownTaskIdsRef.current.add(task.id)
+      );
     } catch (error) {
       console.error("Błąd ładowania zadań:", error);
       showNotification("error", "Nie udało się pobrać zadań sprzątania.");
