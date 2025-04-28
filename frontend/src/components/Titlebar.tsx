@@ -40,6 +40,7 @@ const Titlebar = () => {
                   opacity: canGoBack ? 1 : 0.4,
                 }}
                 title="Wstecz"
+                disabled={!canGoForward}
               >
                 <i className="ti ti-chevron-left fs-2"></i>
               </button>
