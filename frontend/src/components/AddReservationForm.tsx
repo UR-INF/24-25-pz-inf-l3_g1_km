@@ -393,34 +393,43 @@ const AddReservationForm = () => {
             className="form-check-input"
             name="status"
             value="UPCOMING"
+            id="UPCOMING"
             checked={formData.status === "UPCOMING"}
             onChange={handleChange}
             disabled={formData.startDate === new Date().toISOString().split("T")[0]}
           />
-          <label className="form-check-label">Nadchodząca</label>
+          <label className="form-check-label" htmlFor="UPCOMING">
+            Nadchodząca
+          </label>
         </div>
         <div className="form-check">
           <input
             type="radio"
             className="form-check-input"
             name="status"
+            id="ACTIVE"
             value="ACTIVE"
             checked={formData.status === "ACTIVE"}
             onChange={handleChange}
             disabled={formData.startDate > new Date().toISOString().split("T")[0]}
           />
-          <label className="form-check-label">Aktywna</label>
+          <label className="form-check-label" htmlFor="ACTIVE">
+            Aktywna
+          </label>
         </div>
         <div className="form-check">
           <input
             type="radio"
             className="form-check-input"
             name="status"
+            id="CANCELLED"
             value="CANCELLED"
             checked={formData.status === "CANCELLED"}
             onChange={handleChange}
           />
-          <label className="form-check-label">Anulowana</label>
+          <label className="form-check-label" htmlFor="CANCELLED">
+            Anulowana
+          </label>
         </div>
         <div className="form-check">
           <input
@@ -428,10 +437,13 @@ const AddReservationForm = () => {
             className="form-check-input"
             name="status"
             value="COMPLETED"
+            id="COMPLETED"
             checked={formData.status === "COMPLETED"}
             onChange={handleChange}
           />
-          <label className="form-check-label">Zakończona</label>
+          <label className="form-check-label" htmlFor="COMPLETED">
+            Zakończona
+          </label>
         </div>
         <h3 className="card-title mt-4">Do zapłaty</h3>
         <h3 className="card-title">{kwota} PLN</h3>
