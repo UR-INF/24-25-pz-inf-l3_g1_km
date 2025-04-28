@@ -18,6 +18,7 @@ import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
 import { ThemeProvider } from "./contexts/theme";
 import RoomsView from "./views/Manager/RoomsView";
+import EmployeesView from "./views/Manager/EmployeesView";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
@@ -49,6 +50,11 @@ const protectedRoutes = [
 
   // Trasy dla menedżera
   { path: "/ManagerDashboard/Rooms", element: <RoomsView /> },
+  // { path: "/ManagerDashboard/Rooms/NewRoom", element: <RoomsView /> },
+  // { path: "/ManagerDashboard/Rooms/RoomDetails", element: <RoomsView /> },
+  { path: "/ManagerDashboard/Employees", element: <EmployeesView /> },
+  
+  // { path: "/ManagerDashboard/Reports", element: <EmployeesView /> },
 
   { path: "/Settings", element: <SettingsView /> },
 ];

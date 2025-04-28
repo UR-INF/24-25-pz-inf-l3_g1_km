@@ -13,7 +13,7 @@ const Titlebar = () => {
 
   return (
     <header
-      className="navbar navbar-expand-md d-print-none"
+      className="navbar navbar-expand-md"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       <div

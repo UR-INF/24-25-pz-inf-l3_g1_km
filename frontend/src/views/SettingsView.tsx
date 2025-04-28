@@ -157,7 +157,7 @@ const SettingsView = () => {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header d-print-none">
+      <div className="page-header">
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">

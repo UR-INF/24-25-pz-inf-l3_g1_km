@@ -11,7 +11,7 @@ const RepairsOrders = () => {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header d-print-none">
+      <div className="page-header">
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">
@@ -19,7 +19,7 @@ const RepairsOrders = () => {
               <h1 className="page-title">Podsumowanie</h1>
             </div>
 
-            <div className="col-auto ms-auto d-print-none">
+            <div className="col-auto ms-auto">
               <button type="button" className="btn btn-primary" onClick={handleClickNewRepairOrder}>
                 <i className="ti ti-plus fs-2 me-2"></i>
                 Stwórz nowe zgłoszenie naprawy

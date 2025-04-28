@@ -10,7 +10,7 @@ import { Link } from "react-router";
 const ReceptionistDashboard = () => {
   return (
     <div className="page-wrapper">
-      <div className="page-header d-print-none">
+      <div className="page-header">
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">
@@ -18,7 +18,7 @@ const ReceptionistDashboard = () => {
               <h1 className="page-title">Podsumowanie</h1>
             </div>
 
-            <div className="col-auto ms-auto d-print-none">
+            <div className="col-auto ms-auto">
               <Link to="/RecepcionistDashboard/Reservations/NewReservation">
                 <button type="button" className="btn btn-primary">
                   <i className="ti ti-plus fs-2 me-2"></i>
