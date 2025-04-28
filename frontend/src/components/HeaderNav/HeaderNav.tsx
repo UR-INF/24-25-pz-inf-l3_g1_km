@@ -29,7 +29,12 @@ const HeaderNav = () => {
       case RoleName.RECEPTIONIST:
         return <ReceptionistMenu />;
       case RoleName.MANAGER:
-        return <ManagerMenu />;
+        return (
+          <>
+            <ReceptionistMenu />
+            <ManagerMenu />
+          </>
+        );
       case RoleName.HOUSEKEEPER:
         return <HousekeeperMenu />;
       case RoleName.MAINTENANCE:

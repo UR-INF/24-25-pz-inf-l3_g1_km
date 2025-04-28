@@ -17,6 +17,7 @@ import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
 import { ThemeProvider } from "./contexts/theme";
+import RoomsView from "./views/Manager/RoomsView";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
@@ -45,6 +46,9 @@ const protectedRoutes = [
 
   // Trasy dla konserwatorów
   { path: "/MaintenanceDashboard/Orders/NewRepair", element: <AddRepair /> },
+
+  // Trasy dla menedżera
+  { path: "/ManagerDashboard/Rooms", element: <RoomsView /> },
 
   { path: "/Settings", element: <SettingsView /> },
 ];

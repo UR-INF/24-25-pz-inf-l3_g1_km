@@ -155,15 +155,16 @@ const RoomsTable = () => {
                     <td className="text-end">
                       <a
                         href="#"
-                        className="btn btn-danger"
+                        className="btn btn-primary me-2"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleDeleteRoom(room.id);
+                          handleShowRoom(room.id);
                         }}
                       >
-                        Usuń
+                        Edytuj
                       </a>
 
+                      {/* TODO: Potwierdzenie przy usunięciu w postaci modala */}
                       <a
                         href="#"
                         className="btn btn-danger"
