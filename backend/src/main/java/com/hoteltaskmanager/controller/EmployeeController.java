@@ -175,7 +175,7 @@ public class EmployeeController {
         PasswordHasher hasher = new PasswordHasher();
 
         Employee employee = optionalEmployee.get();
-        employee.setPassword(hasher.hashPassword(newPassword)); // tutaj można dodać szyfrowanie, np. encoder.encode()
+        employee.setPassword(hasher.hashPassword(newPassword));
         employeeRepository.save(employee);
 
         return ResponseEntity.ok("Hasło zostało pomyślnie zmienione.");

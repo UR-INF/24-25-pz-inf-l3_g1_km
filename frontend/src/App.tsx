@@ -16,7 +16,7 @@ import ReservationsDetails from "./views/Receptionist/ReservationDetails";
 import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeProvider } from "./contexts/theme";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 const App = () => {

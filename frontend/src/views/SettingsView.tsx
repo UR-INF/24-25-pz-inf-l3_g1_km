@@ -4,7 +4,7 @@ import { api } from "../services/api";
 import { useState, useEffect } from "react";
 import { useNotification } from "../contexts/notification";
 import { validateEmailFormat } from "../utils/regexUtils";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/theme";
 
 const SettingsView = () => {
   const {

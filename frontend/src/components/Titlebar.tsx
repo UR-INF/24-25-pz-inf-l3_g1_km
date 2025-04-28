@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigationHistory } from "../hooks/useNavigationHistory";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../contexts/theme";
 
 const Titlebar = () => {
   const handleMinimize = () => window.ipcRenderer.send("window:minimize");

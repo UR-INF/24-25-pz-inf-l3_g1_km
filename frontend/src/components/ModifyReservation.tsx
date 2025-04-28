@@ -490,33 +490,45 @@ const ModifyReservation = ({ reservationId }) => {
               const isSelected = formData.reservationRooms?.some((rr) => rr.room.id === room.id);
 
               return (
-                <div key={room.id} className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id={`room${room.id}`}
-                    name="rooms"
-                    value={room.id}
-                    checked={isSelected}
-                    onChange={() => handleRoomToggle(room)}
-                    disabled={!isEditable}
-                  />
-                  <label className="form-check-label" htmlFor={`room${room.id}`}>
-                    Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek
-                  </label>
+                <div key={room.id} className="form-fieldset d-flex flex-column gap-2">
+                  <div className="d-flex gap-2">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id={`room${room.id}`}
+                      name="rooms"
+                      value={room.id}
+                      checked={isSelected}
+                      onChange={() => handleRoomToggle(room)}
+                      disabled={!isEditable}
+                    />
+                    <label className="form-check-label" htmlFor={`room${room.id}`}>
+                      Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek -{" "}
+                      {room.pricePerNight} PLN za noc
+                    </label>
+                  </div>
                   {isSelected && (
-                    <div className="mt-1 ms-4">
-                      <label className="form-label">Liczba osób w pokoju:</label>
-                      <input
-                        type="number"
-                        className="form-control"
-                        style={{ maxWidth: "150px" }}
-                        value={roomGuests[room.id]}
-                        onChange={(e) => handleGuestCountChange(room.id, e)}
-                        min={1}
-                        max={room.bedCount}
-                        disabled={!isEditable}
-                      />
+                    <div>
+                      <label className={`form-label ${isEditable ? "" : "text-muted"}`}>
+                        Liczba osób w pokoju:
+                      </label>
+                      <div className="d-flex align-items-center gap-2">
+                        <input
+                          type="number"
+                          className="form-control"
+                          style={{ maxWidth: "100px" }}
+                          value={roomGuests[room.id]}
+                          onChange={(e) => handleGuestCountChange(room.id, e)}
+                          min={1}
+                          max={room.bedCount}
+                          disabled={!isEditable}
+                        />
+                        <div className={`fw-semibold ${isEditable ? "" : "text-muted"}`}>
+                          {roomGuests[room.id]
+                            ? `${((roomGuests[room.id] / room.bedCount) * room.pricePerNight).toFixed(2)} PLN`
+                            : "0.00 PLN"}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
