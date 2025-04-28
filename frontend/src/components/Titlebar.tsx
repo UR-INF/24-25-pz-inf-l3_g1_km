@@ -64,17 +64,19 @@ const Titlebar = () => {
         </div>
 
         <div className="navbar-brand d-flex align-items-center justify-content-center gap-2">
-          <i
-            className="ti ti-building-skyscraper fs-1"
+          <img
+            src="/hotel.png"
+            alt="Logo"
             style={{
-              backgroundColor: "var(--tblr-primary, #066fd1)",
-              color: "var(--tblr-body-bg)",
-              fontSize: "20px",
+              backgroundColor: "var(--tblr-body-bg)",
               borderRadius: "8px",
               padding: "4px",
               boxShadow: "0 0 0 1px rgba(0,0,0,0.05)",
+              width: "32px",
+              height: "32px",
+              objectFit: "contain",
             }}
-          ></i>
+          />
           <span className="fw-bold text-reset text-decoration-none">Hotel Task Manager</span>
         </div>
 
