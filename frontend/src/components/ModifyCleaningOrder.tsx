@@ -194,12 +194,15 @@ const ModifyCleaningOrder = () => {
                 className="form-check-input"
                 type="radio"
                 name="status"
+                id={status}
                 value={status}
                 checked={formData.status === status}
                 onChange={handleChange}
                 disabled={!isEditable}
               />
-              <label className="form-check-label">{translateStatus(status)}</label>
+              <label className="form-check-label" htmlFor={status}>
+                {translateStatus(status)}
+              </label>
             </div>
           ))}
         </div>
