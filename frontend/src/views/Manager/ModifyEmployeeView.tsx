@@ -98,7 +98,12 @@ const ModifyEmployeeView = () => {
     if (file) {
       setAvatarFile(file);
       setAvatarPreview(URL.createObjectURL(file));
-      showNotification("info", "Wybrano nowe zdjęcie profilowe. Kliknij 'Zapisz nowe'.", 3000);
+
+      showNotification(
+        "info",
+        "Wybrane zdjęcie profilowe zostało załadowane. Zatwierdź zmiany przyciskając 'Zapisz nowe zdjęcie profilowe'.",
+        5000,
+      );
     }
   };
 
