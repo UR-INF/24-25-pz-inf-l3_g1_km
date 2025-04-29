@@ -46,9 +46,11 @@ const EmployeeCard: FC<EmployeeCardProps> = ({
           <a className="card-btn w-50" onClick={() => onEdit && onEdit(id)}>
             <i className="ti ti-edit fs-2 me-2"></i> Edytuj
           </a>
-          <a className="card-btn w-50" onClick={() => onDelete && onDelete(id)}>
-            <i className="ti ti-trash fs-2 me-2"></i> Usuń
-          </a>
+          {!role?.includes("Menedżer") && (
+            <a className="card-btn w-50" onClick={() => onDelete && onDelete(id)}>
+              <i className="ti ti-trash fs-2 me-2"></i> Usuń
+            </a>
+          )}
         </div>
       </div>
     </div>
