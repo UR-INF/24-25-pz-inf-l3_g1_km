@@ -16,9 +16,9 @@ import ReservationsDetails from "./views/Receptionist/ReservationDetails";
 import CleaningOrderDetails from "./views/Receptionist/CleaningOrderDetails";
 import RepairOrderDetails from "./views/Receptionist/RepairOrderDetails";
 import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
-import { ThemeProvider } from "./contexts/theme";
 import RoomsView from "./views/Manager/RoomsView";
 import EmployeesView from "./views/Manager/EmployeesView";
+import { useUser } from "./contexts/user";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
@@ -61,26 +61,37 @@ const protectedRoutes = [
 
 const App = () => {
   const { state } = useAuth();
+  const { loading } = useUser();
+
+  if (state.loading || loading) {
+    return (
+      <div className="page page-center d-flex align-items-center justify-content-center vh-100">
+        <div className="container container-slim py-4">
+          <div className="text-center">
+            <div className="text-secondary mb-3">Ładowanie aplikacji...</div>
+            <div className="progress progress-sm">
+              <div className="progress-bar progress-bar-indeterminate"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ThemeProvider>
-      <Routes>
-        <Route element={<DashboardLayout />}>
-          {protectedRoutes.map(({ path, element }) => (
-            <Route key={path} path={path} element={state.loggedIn ? element : <LoginView />} />
-          ))}
-        </Route>
+    <Routes>
+      {/* Trasy chronione */}
+      <Route element={state.loggedIn ? <DashboardLayout /> : <Navigate to="/login" replace />}>
+        {protectedRoutes.map(({ path, element }) => (
+          <Route key={path} path={path} element={element} />
+        ))}
+      </Route>
+      {/* Trasa logowania */}
+      <Route path="/login" element={<LoginView />} />
 
-        {/* Trasa logowania: jeśli użytkownik jest już zalogowany, zostanie przekierowany na stronę główną */}
-        <Route
-          path="/login"
-          element={state.loggedIn ? <Navigate to="/" replace /> : <LoginView />}
-        />
-
-        {/* Trasa dla strony 404 (Not Found) */}
-        <Route path="*" element={<NotFoundView />} />
-      </Routes>
-    </ThemeProvider>
+      {/* Trasa dla strony 404 */}
+      <Route path="*" element={<NotFoundView />} />
+    </Routes>
   );
 };
 

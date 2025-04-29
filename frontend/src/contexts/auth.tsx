@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const email = payload.email;
       dispatch({ type: "LOGIN", payload: { email, token } });
 
-      showNotification("success", "Pomyślnie zalogowano do systemu!");
+      // showNotification("success", "Pomyślnie zalogowano do systemu!");
     } else {
       logout();
     }

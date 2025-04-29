@@ -6,22 +6,22 @@ import HousekeeperDashboard from "./Housekeeper/HousekeeperDashboard.tsx";
 import MaintenanceDashboard from "./Maintenance/MaintenanceDashboard.tsx";
 
 const RoleBasedDashboardView = () => {
-  const { loading, error, userRoleName } = useUser();
+  const { error, userRoleName } = useUser();
 
-  if (loading) {
-    return (
-      <div className="page page-center">
-        <div className="container container-slim py-4">
-          <div className="text-center">
-            <div className="text-secondary mb-3">Ładowanie aplikacji...</div>
-            <div className="progress progress-sm">
-              <div className="progress-bar progress-bar-indeterminate"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="page page-center">
+  //       <div className="container container-slim py-4">
+  //         <div className="text-center">
+  //           <div className="text-secondary mb-3">Ładowanie aplikacji...</div>
+  //           <div className="progress progress-sm">
+  //             <div className="progress-bar progress-bar-indeterminate"></div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return <DashboardAlert heading="Błąd aplikacji" description={error} />;
