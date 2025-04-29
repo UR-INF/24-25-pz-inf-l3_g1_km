@@ -1,9 +1,9 @@
 package com.hoteltaskmanager.controller;
 
-import com.hoteltaskmanager.model.Employee;
-import com.hoteltaskmanager.model.Role;
-import com.hoteltaskmanager.model.RoleName;
+import com.hoteltaskmanager.model.*;
 import com.hoteltaskmanager.repository.EmployeeRepository;
+import com.hoteltaskmanager.repository.HousekeepingTaskRepository;
+import com.hoteltaskmanager.repository.MaintenanceRequestRepository;
 import com.hoteltaskmanager.repository.RoleRepository;
 import com.hoteltaskmanager.security.PasswordHasher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +42,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
+    @Autowired
+    private MaintenanceRequestRepository maintenanceRequestRepository;
+
+    @Autowired
+    private HousekeepingTaskRepository housekeepingTaskRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -124,10 +129,55 @@ public class EmployeeController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (!employeeRepository.existsById(id)) {
+        System.out.println("[DEBUG] Próba usunięcia pracownika o ID: " + id);
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isEmpty()) {
+            System.out.println("[DEBUG] Pracownik o ID " + id + " nie istnieje.");
             return ResponseEntity.notFound().build();
         }
+
+        Employee employee = optionalEmployee.get();
+        System.out.println("[DEBUG] Znaleziono pracownika: " + employee.getEmail());
+
+        // Usuwanie awatara
+        String avatarFilename = employee.getAvatarFilename();
+        if (avatarFilename != null && !avatarFilename.contains("example")) {
+            try {
+                Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads", "avatars");
+                Path avatarPath = uploadDir.resolve(avatarFilename);
+                boolean deleted = Files.deleteIfExists(avatarPath);
+                System.out.println("[DEBUG] Usuwanie awatara: " + avatarFilename + " - wynik: " + deleted);
+            } catch (IOException e) {
+                System.out.println("[ERROR] Błąd podczas usuwania awatara: " + e.getMessage());
+            }
+        } else {
+            System.out.println("[DEBUG] Awatar jest domyślny lub null - pomijam usuwanie.");
+        }
+
+        // Usuwanie przypisanych zadań serwisowych (konserwator)
+        if (employee.getRole().getName() == RoleName.MAINTENANCE) {
+            List<MaintenanceRequest> assignedRequests = maintenanceRequestRepository.findByAssigneeId(id);
+            System.out.println("[DEBUG] Ilość przypisanych zgłoszeń serwisowych do usunięcia: " + assignedRequests.size());
+            maintenanceRequestRepository.deleteAll(assignedRequests);
+        }
+
+        // Usuwanie przypisanych zadań sprzątania (pokojówka)
+        if (employee.getRole().getName() == RoleName.HOUSEKEEPER) {
+            List<HousekeepingTask> assignedTasks = housekeepingTaskRepository.findByEmployeeId(id);
+            System.out.println("[DEBUG] Ilość przypisanych zadań housekeeping do usunięcia: " + assignedTasks.size());
+            housekeepingTaskRepository.deleteAll(assignedTasks);
+        }
+
+        // Usuwanie zgłoszeń gdzie był zgłaszającym (requester)
+        List<MaintenanceRequest> reportedRequests = maintenanceRequestRepository.findByRequesterId(id);
+        System.out.println("[DEBUG] Ilość zgłoszeń zgłoszonych przez pracownika do usunięcia: " + reportedRequests.size());
+        maintenanceRequestRepository.deleteAll(reportedRequests);
+
+        // Na końcu usuń pracownika
         employeeRepository.deleteById(id);
+        System.out.println("[DEBUG] Pracownik został usunięty.");
+
         return ResponseEntity.noContent().build();
     }
 

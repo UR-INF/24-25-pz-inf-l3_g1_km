@@ -3,6 +3,8 @@ import EmployeeCard from "./EmployeeCard";
 import { api } from "../services/api";
 import { RoleName } from "../contexts/user";
 import { getRoleNameInPolish } from "../utils/roleUtils";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { useNotification } from "../contexts/notification";
 
 interface Employee {
   id: number;
@@ -31,6 +33,9 @@ const EmployeesTable = ({
 }: EmployeesTableProps) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     const loadEmployees = async () => {
@@ -47,6 +52,29 @@ const EmployeesTable = ({
 
     loadEmployees();
   }, []);
+
+  const handleDeleteClick = (id, role) => {
+    if (role === RoleName.MANAGER) {
+      showNotification("error", "Nie możesz usunąć menadżera hotelu.");
+    } else {
+      setSelectedUserId(id);
+      setShowDeleteModal(true);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await api.delete(`/employees/${selectedUserId}`);
+      setEmployees((prev) => prev.filter((user) => user.id !== selectedUserId));
+      showNotification("success", "Pracownik został usunięty.");
+    } catch (err) {
+      console.error("Błąd podczas usuwania pracownika:", err);
+      showNotification("error", "Nie udało się usunąć pracownika.");
+    } finally {
+      setShowDeleteModal(false);
+      setSelectedUserId(null);
+    }
+  };
 
   // Filtrowanie po wyszukiwarce
   const filteredEmployees = employees.filter((employee) =>
@@ -84,9 +112,16 @@ const EmployeesTable = ({
           email={employee.email}
           phoneNumber={employee.phoneNumber}
           onEdit={(id) => console.log("Edytuj pracownika:", id)}
-          onDelete={(id) => console.log("Usuń pracownika:", id)}
+          onDelete={(id) => handleDeleteClick(id, employee.role.name)}
         />
       ))}
+
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        handleConfirm={handleConfirmDelete}
+        message="Czy na pewno chcesz usunąć tego pracownika? Nie można cofnąć tej operacji."
+      />
     </div>
   );
 };

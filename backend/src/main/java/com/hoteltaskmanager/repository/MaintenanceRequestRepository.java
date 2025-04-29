@@ -22,4 +22,9 @@ public interface MaintenanceRequestRepository extends JpaRepository<MaintenanceR
      * Znajduje zgłoszenia przypisane danemu pracownikowi.
      */
     List<MaintenanceRequest> findByAssigneeId(Long assigneeId);
+
+    /**
+     * Znajduje zgłoszenia jakie zgłosił dany pracownik.
+     */
+    List<MaintenanceRequest> findByRequesterId(Long requesterId);
 }

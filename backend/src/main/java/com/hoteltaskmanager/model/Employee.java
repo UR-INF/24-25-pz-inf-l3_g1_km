@@ -82,7 +82,6 @@ public class Employee {
         }
     }
 
-
     /**
      * Token wykorzystywany do resetowania hasła.
      * Generowany losowo i przypisany tymczasowo do użytkownika.
