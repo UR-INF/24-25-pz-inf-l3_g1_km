@@ -142,7 +142,7 @@ public class EmployeeController {
      * Zaktualizuj dane istniejącego pracownika
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> update(@PathVariable Long id, @RequestBody Employee updatedEmployee) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
 
         if (optionalEmployee.isEmpty()) {
@@ -150,14 +150,44 @@ public class EmployeeController {
         }
 
         Employee existing = optionalEmployee.get();
-        existing.setFirstName(updatedEmployee.getFirstName());
-        existing.setLastName(updatedEmployee.getLastName());
-        existing.setEmail(updatedEmployee.getEmail());
-        existing.setPassword(updatedEmployee.getPassword());
-        existing.setPhoneNumber(updatedEmployee.getPhoneNumber());
-        existing.setRole(updatedEmployee.getRole());
 
-        return ResponseEntity.ok(employeeRepository.save(existing));
+        String email = (String) payload.get("email");
+        String firstName = (String) payload.get("firstName");
+        String lastName = (String) payload.get("lastName");
+        String phoneNumber = (String) payload.get("phoneNumber");
+        String roleName = (String) ((Map<?, ?>) payload.get("role")).get("name");
+
+        if (email == null || firstName == null || lastName == null || phoneNumber == null || roleName == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Wszystkie wymagane pola muszą być wypełnione."));
+        }
+
+        if (employeeRepository.existsByEmailIgnoreCase(email)) {
+            Optional<Employee> existingByEmail = employeeRepository.findByEmail(email);
+
+            if (existingByEmail.isPresent() && !existingByEmail.get().getId().equals(existing.getId())) {
+                return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "Użytkownik o podanym adresie e-mail już istnieje."));
+            }
+        }
+
+        Role role;
+        try {
+            role = roleRepository.findByName(RoleName.valueOf(roleName))
+                .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono roli: " + roleName));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Nieprawidłowa rola: " + roleName));
+        }
+
+        existing.setFirstName(firstName);
+        existing.setLastName(lastName);
+        existing.setEmail(email);
+        existing.setPhoneNumber(phoneNumber);
+        existing.setRole(role);
+
+        Employee updated = employeeRepository.save(existing);
+
+        return ResponseEntity.ok(updated);
     }
 
     /**

@@ -26,7 +26,7 @@ const EmployeeCard: FC<EmployeeCardProps> = ({
       <div className="card overflow-hidden">
         <div className="card-body p-4 text-center">
           <span
-            className="avatar avatar-xl mb-3 rounded"
+            className="avatar shadow avatar-xl shadow mb-3 rounded"
             style={{ backgroundImage: `url(${avatarUrl})` }}
           ></span>
           <h3 className="m-0 mb-1">{name}</h3>
@@ -34,20 +34,20 @@ const EmployeeCard: FC<EmployeeCardProps> = ({
         </div>
 
         <div className="d-flex">
-          <a href={`mailto:${email}`} className="card-btn w-50">
+          <a href={`mailto:${email}`} className="card-btn w-50 cursor-pointer">
             <i className="ti ti-mail fs-2 me-2"></i> Email
           </a>
-          <a href={`tel:${phoneNumber}`} className="card-btn w-50">
+          <a href={`tel:${phoneNumber}`} className="card-btn w-50 cursor-pointer">
             <i className="ti ti-phone fs-2 me-2"></i> Zadzwoń
           </a>
         </div>
 
         <div className="d-flex">
-          <a className="card-btn w-50" onClick={() => onEdit && onEdit(id)}>
+          <a className="card-btn w-50 cursor-pointer" onClick={() => onEdit && onEdit(id)}>
             <i className="ti ti-edit fs-2 me-2"></i> Edytuj
           </a>
           {!role?.includes("Menedżer") && (
-            <a className="card-btn w-50" onClick={() => onDelete && onDelete(id)}>
+            <a className="card-btn w-50 cursor-pointer" onClick={() => onDelete && onDelete(id)}>
               <i className="ti ti-trash fs-2 me-2"></i> Usuń
             </a>
           )}

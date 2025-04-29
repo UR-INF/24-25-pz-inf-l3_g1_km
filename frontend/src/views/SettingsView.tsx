@@ -178,7 +178,7 @@ const SettingsView = () => {
                   <img
                     src={avatarUrl}
                     alt="Zdjęcie profilowe"
-                    className="avatar avatar-xl rounded"
+                    className="avatar shadow avatar-xl rounded"
                   />
                 </div>
                 <div className="col-auto">

@@ -56,7 +56,7 @@ const protectedRoutes = [
   // { path: "/ManagerDashboard/Rooms/RoomDetails", element: <RoomsView /> },
   { path: "/ManagerDashboard/Employees", element: <EmployeesView /> },
   { path: "/ManagerDashboard/Employees/Create", element: <CreateNewEmployeeView /> },
-  { path: "/ManagerDashboard/Employees/Modify", element: <ModifyEmployeeView /> },
+  { path: "/ManagerDashboard/Employees/Modify/:id", element: <ModifyEmployeeView /> },
   
   // { path: "/ManagerDashboard/Reports", element: <EmployeesView /> },
 

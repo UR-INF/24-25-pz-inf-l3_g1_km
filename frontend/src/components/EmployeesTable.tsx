@@ -5,6 +5,7 @@ import { RoleName } from "../contexts/user";
 import { getRoleNameInPolish } from "../utils/roleUtils";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import { useNotification } from "../contexts/notification";
+import { useNavigate } from "react-router";
 
 interface Employee {
   id: number;
@@ -36,6 +37,7 @@ const EmployeesTable = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const { showNotification } = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadEmployees = async () => {
@@ -111,7 +113,7 @@ const EmployeesTable = ({
           avatarUrl={employee.avatarUrl}
           email={employee.email}
           phoneNumber={employee.phoneNumber}
-          onEdit={(id) => console.log("Edytuj pracownika:", id)}
+          onEdit={(id) => navigate(`/ManagerDashboard/Employees/Modify/${id}`)}
           onDelete={(id) => handleDeleteClick(id, employee.role.name)}
         />
       ))}

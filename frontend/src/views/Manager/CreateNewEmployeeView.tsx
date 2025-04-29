@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { api } from "../../services/api";
 import { useNotification } from "../../contexts/notification";
 import { validateEmailFormat, validatePhoneNumber } from "../../utils/regexUtils";
@@ -19,6 +19,8 @@ const CreateNewEmployeeView = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -70,6 +72,24 @@ const CreateNewEmployeeView = () => {
       const errorMessage = error.response?.data?.error || "Błąd podczas tworzenia pracownika.";
       showNotification("error", errorMessage);
       console.log(error.response?.data);
+    }
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setAvatarFile(file);
+    if (file) {
+      setAvatarPreview(URL.createObjectURL(file));
+    } else {
+      setAvatarPreview(null);
+    }
+  };
+
+  const handleDeleteAvatar = () => {
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -201,13 +221,36 @@ const CreateNewEmployeeView = () => {
               </div>
 
               <div className="mb-3">
-                <label className="form-label">Zdjęcie profilowe (opcjonalne)</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  accept="image/*"
-                  onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
-                />
+                <h3 className="card-title">Zdjęcie profilowe</h3>
+                <div className="row align-items-center">
+                  {avatarPreview && (
+                    <div className="col-auto">
+                      <img
+                        src={avatarPreview}
+                        alt="Zdjęcie profilowe"
+                        className="avatar shadow avatar-xl rounded"
+                      />
+                    </div>
+                  )}
+                  <div className="col-auto">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="form-control"
+                      ref={fileInputRef}
+                    />
+                  </div>
+                  <div className="col-auto">
+                    <button
+                      className="btn btn-outline-danger"
+                      onClick={handleDeleteAvatar}
+                      disabled={!avatarPreview}
+                    >
+                      Usuń zdjęcie profilowe
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="card-footer d-flex justify-content-end">

@@ -20,7 +20,7 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
         aria-label="Otwórz menu użytkownika"
       >
         <span
-          className="avatar avatar-sm"
+          className="avatar shadow avatar-sm"
           style={{
             backgroundImage: `url(${userAvatarUrl})`,
           }}
