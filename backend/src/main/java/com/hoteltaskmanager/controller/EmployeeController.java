@@ -93,11 +93,48 @@ public class EmployeeController {
      * Dodaj nowego pracownika
      */
     @PostMapping
-    public ResponseEntity<Employee> create(@RequestBody Employee employee) {
-        if (employeeRepository.existsByEmail(employee.getEmail())) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+        String email = (String) payload.get("email");
+        String rawPassword = (String) payload.get("password");
+        String firstName = (String) payload.get("firstName");
+        String lastName = (String) payload.get("lastName");
+        String phoneNumber = (String) payload.get("phoneNumber");
+        String roleName = (String) payload.get("roleName");
+
+        if (email == null || rawPassword == null || firstName == null || lastName == null || roleName == null) {
+            return ResponseEntity
+                .badRequest()
+                .body(Map.of("error", "Wszystkie wymagane pola muszą być wypełnione."));
         }
-        return ResponseEntity.ok(employeeRepository.save(employee));
+
+        if (employeeRepository.existsByEmailIgnoreCase(email)) {
+            return ResponseEntity
+                .badRequest()
+                .body(Map.of("error", "Użytkownik o podanym adresie e-mail już istnieje."));
+        }
+
+        Role role;
+        try {
+            role = roleRepository.findByName(RoleName.valueOf(roleName))
+                .orElseThrow(() -> new IllegalArgumentException("Nie znaleziono roli: " + roleName));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                .badRequest()
+                .body(Map.of("error", "Nieprawidłowa rola: " + roleName));
+        }
+
+        Employee employee = new Employee();
+        employee.setEmail(email.toLowerCase());
+        PasswordHasher passwordHasher = new PasswordHasher();
+        employee.setPassword(passwordHasher.hashPassword(rawPassword));
+        employee.setFirstName(firstName);
+        employee.setLastName(lastName);
+        employee.setPhoneNumber(phoneNumber);
+        employee.setRole(role);
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return ResponseEntity.ok(savedEmployee);
     }
 
     /**

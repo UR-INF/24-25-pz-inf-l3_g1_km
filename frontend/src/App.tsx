@@ -19,6 +19,8 @@ import InvoiceDetails from "./views/Receptionist/InvoiceDetails";
 import RoomsView from "./views/Manager/RoomsView";
 import EmployeesView from "./views/Manager/EmployeesView";
 import { useUser } from "./contexts/user";
+import CreateNewEmployeeView from "./views/Manager/CreateNewEmployeeView";
+import ModifyEmployeeView from "./views/Manager/ModifyEmployeeView";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
@@ -53,6 +55,8 @@ const protectedRoutes = [
   // { path: "/ManagerDashboard/Rooms/NewRoom", element: <RoomsView /> },
   // { path: "/ManagerDashboard/Rooms/RoomDetails", element: <RoomsView /> },
   { path: "/ManagerDashboard/Employees", element: <EmployeesView /> },
+  { path: "/ManagerDashboard/Employees/Create", element: <CreateNewEmployeeView /> },
+  { path: "/ManagerDashboard/Employees/Modify", element: <ModifyEmployeeView /> },
   
   // { path: "/ManagerDashboard/Reports", element: <EmployeesView /> },
 

@@ -20,6 +20,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     boolean existsByEmail(String email);
 
     /**
+     * Sprawdź, czy istnieje pracownik z danym e-mailem (ignorując wielkość znaków).
+     */
+    boolean existsByEmailIgnoreCase(String email);
+
+    /**
      * Znajdź wszystkich pracowników z daną rolą.
      */
     List<Employee> findAllByRole(Role role);

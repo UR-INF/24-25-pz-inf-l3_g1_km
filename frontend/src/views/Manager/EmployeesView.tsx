@@ -61,7 +61,7 @@ const EmployeesView = () => {
                 <Link
                   type="button"
                   className="btn btn-primary"
-                  to="/ManagerDashboard/Employees/AddEmployee"
+                  to="/ManagerDashboard/Employees/Create"
                 >
                   <i className="ti ti-plus fs-2 me-2"></i>
                   Dodaj nowego pracownika

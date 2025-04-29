@@ -1,5 +1,6 @@
 package com.hoteltaskmanager.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -43,7 +44,7 @@ public class Employee {
     /**
      * Hasło pracownika (przechowywane jako zahaszowany ciąg znaków).
      */
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
 

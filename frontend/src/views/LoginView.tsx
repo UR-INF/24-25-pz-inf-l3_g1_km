@@ -152,7 +152,7 @@ const LoginView = () => {
                     id="email"
                     autoComplete="email"
                     className="form-control"
-                    placeholder="wpisz email"
+                    placeholder="wpisz e-mail"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required

@@ -19,7 +19,7 @@ const SettingsView = () => {
     userNotificationsEnabled,
   } = useUser();
 
-  const { currentTheme, themeMode, setTheme } = useTheme();
+  const { themeMode, setTheme } = useTheme();
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
