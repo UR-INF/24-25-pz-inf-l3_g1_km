@@ -24,7 +24,7 @@ public class HousekeepingTask {
      * Pracownik przypisany do wykonania zadania.
      */
     @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id", nullable = true)
     private Employee employee;
 
     /**

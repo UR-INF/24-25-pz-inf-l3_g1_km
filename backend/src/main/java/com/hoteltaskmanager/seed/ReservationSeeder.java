@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Komponent odpowiedzialny za inicjalizację danych rezerwacji.
@@ -50,16 +51,16 @@ public class ReservationSeeder {
             }
 
             // Lista przykładowych rezerwacji
-            Reservation r1 = createReservation("Karolina", "Maj", "88010156789", "508999777", ReservationStatus.ACTIVE,
+            Reservation r1 = createReservation("Karolina", "Maj", "88010156789", "508999777", ReservationStatus.UPCOMING,
                     LocalDate.now().plusDays(2), LocalDate.now().plusDays(5),
                     "Pokój blisko windy i łóżeczko dziecięce", true);
 
-            Reservation r2 = createReservation("Marek", "Kowal", "81051233333", "600300200", ReservationStatus.COMPLETED,
+            Reservation r2 = createReservation("Marek", "Kowal", "81051233333", "600300200", ReservationStatus.UPCOMING,
                     LocalDate.now().plusDays(1), LocalDate.now().plusDays(4),
                     "Alergia - poduszki bez pierza", false);
 
             Reservation r3 = createReservation("Julia", "Lewandowska", "92092398765", "507000111", ReservationStatus.ACTIVE,
-                    LocalDate.now().plusDays(7), LocalDate.now().plusDays(14),
+                    LocalDate.now().minusDays(2), LocalDate.now().plusDays(14),
                     "Pokój z balkonem i widokiem", true);
 
             Reservation r4 = createReservation("Tomasz", "Nowak", "90011122233", "505505505", ReservationStatus.CANCELLED,
@@ -71,11 +72,11 @@ public class ReservationSeeder {
                     "Standardowa rezerwacja", true);
 
             Reservation r6 = createReservation("Kamil", "Rogalski", "95010145678", "504123321", ReservationStatus.ACTIVE,
-                    LocalDate.now().plusDays(1), LocalDate.now().plusDays(2),
+                    LocalDate.now(), LocalDate.now().plusDays(2),
                     "Zamówienie bez wymagań", false);
 
             Reservation r7 = createReservation("Ewa", "Sosna", "87050578901", "501202303", ReservationStatus.ACTIVE,
-                    LocalDate.now().plusDays(4), LocalDate.now().plusDays(8),
+                    LocalDate.now(), LocalDate.now().plusDays(8),
                     "Prośba o cichą lokalizację", true);
 
             // Zapisz wszystkie rezerwacje
@@ -87,9 +88,11 @@ public class ReservationSeeder {
                 Room room = availableRooms.get(i);
                 Reservation reservation = reservations.get(i);
 
-                // Ustaw status pokoju na zajęty
-                room.setStatus(RoomStatus.OCCUPIED);
-                roomRepository.save(room);
+                // Ustaw status pokoju na zajęty, jeśli rezerwacja jest aktywna
+                if (reservation.getStatus() == ReservationStatus.ACTIVE) {
+                    room.setStatus(RoomStatus.OCCUPIED);
+                    roomRepository.save(room);
+                }
 
                 // Stwórz powiązanie pokoju z rezerwacją
                 ReservationRoom rr = new ReservationRoom();
@@ -98,7 +101,8 @@ public class ReservationSeeder {
 
                 // Losowa liczba zakwaterowanych gości
                 int maxGuests = room.getBedCount();
-                int randomGuestCount = (int) (Math.random() * maxGuests) + 1;
+                Random rand = new Random();
+                int randomGuestCount = rand.nextInt(maxGuests) + 1;
                 rr.setGuestCount(randomGuestCount);
 
                 reservationRoomRepository.save(rr);

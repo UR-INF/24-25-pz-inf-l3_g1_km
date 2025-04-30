@@ -22,20 +22,12 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Value("${app.db.seed:false}")
     private boolean seedEnabled;
 
-    /**
-     * Flaga aktywująca proces czyszczenia bazy danych przed seedem.
-     * Wartość pobierana z application.properties: app.db.clear-before-seed=true
-     */
-    @Value("${app.db.clear-before-seed:false}")
-    private boolean clearBeforeSeedEnabled;
-
     private final RoleSeeder roleSeeder;
     private final EmployeeSeeder employeeSeeder;
     private final RoomSeeder roomSeeder;
     private final HousekeepingTaskSeeder housekeepingTaskSeeder;
     private final MaintenanceRequestSeeder maintenanceRequestSeeder;
     private final ReservationSeeder reservationSeeder;
-    private final DatabaseCleanerService databaseCleanerService;
 
     /**
      * Konstruktor wstrzykujący seederów dla konkretnych modeli oraz DatabaseCleanerService.
@@ -46,7 +38,6 @@ public class DatabaseSeeder implements CommandLineRunner {
      * @param housekeepingTaskSeeder     komponent odpowiedzialny za dane w tabeli zadań sprzątających
      * @param maintenanceRequestSeeder   komponent odpowiedzialny za dane w tabeli zgłoszeń usterek
      * @param reservationSeeder          komponent odpowiedzialny za dane w tabeli rezerwacji
-     * @param databaseCleanerService     serwis czyszczący wszystkie dane z bazy
      */
     public DatabaseSeeder(
             RoleSeeder roleSeeder,
@@ -54,8 +45,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             RoomSeeder roomSeeder,
             HousekeepingTaskSeeder housekeepingTaskSeeder,
             MaintenanceRequestSeeder maintenanceRequestSeeder,
-            ReservationSeeder reservationSeeder,
-            DatabaseCleanerService databaseCleanerService
+            ReservationSeeder reservationSeeder
     ) {
         this.roleSeeder = roleSeeder;
         this.employeeSeeder = employeeSeeder;
@@ -63,7 +53,6 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.housekeepingTaskSeeder = housekeepingTaskSeeder;
         this.maintenanceRequestSeeder = maintenanceRequestSeeder;
         this.reservationSeeder = reservationSeeder;
-        this.databaseCleanerService = databaseCleanerService;
     }
 
     /**
@@ -81,15 +70,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         System.out.println("📦 Rozpoczynanie inicjalizacji danych...");
 
-        // Najpierw czyścimy bazę danych
-
-        if (clearBeforeSeedEnabled) {
-            databaseCleanerService.clearDatabase();
-        } else {
-            System.out.println("🧹 Czyszczenie danych wyłączone.");
-        }
-
-        // A potem uruchamiamy seedery w odpowiedniej kolejności
+        // Uruchamiamy seedery w odpowiedniej kolejności
         roleSeeder.seed();
         employeeSeeder.seed();
         roomSeeder.seed();
