@@ -199,18 +199,24 @@ const RepairTable = () => {
                 <td>{req.id}</td>
                 <td>{formatDate(req.requestDate)}</td>
                 <td>{req.description}</td>
-                <td>{req.room?.roomNumber ?? "-"}</td>
+                <td className={!req.room?.roomNumber ? "text-muted" : ""}>
+                  {req.room?.roomNumber ?? "-"}
+                </td>
                 <td>
                   <div className="d-flex py-1 align-items-center">
-                    <span
-                      className="avatar shadow avatar-sm me-2"
-                      style={{
-                        backgroundImage: `url(${req.assignee?.avatarUrl})`,
-                      }}
-                    ></span>
+                    {req.assignee && (
+                      <span
+                        className="avatar shadow avatar-sm me-2"
+                        style={{
+                          backgroundImage: `url(${req.assignee?.avatarUrl})`,
+                        }}
+                      ></span>
+                    )}
                     <div className="flex-fill">
-                      <div className="font-weight-medium">
-                        {req.assignee?.firstName} {req.assignee?.lastName}
+                      <div className={`font-weight-medium ${req.assignee ? "" : "text-muted"}`}>
+                        {req.assignee
+                          ? `${req.assignee.firstName} ${req.assignee.lastName}`
+                          : "Brak przypisania"}
                       </div>
                     </div>
                   </div>
@@ -220,7 +226,10 @@ const RepairTable = () => {
                     {translateStatus(req.status)}
                   </span>
                 </td>
-                <td>{formatDate(req.completionDate)}</td>
+                <td className={!req.completionDate ? "text-muted" : ""}>
+                  {formatDate(req.completionDate) ?? "-"}
+                </td>
+
                 <td className="text-end">
                   <button
                     className="btn btn-primary"

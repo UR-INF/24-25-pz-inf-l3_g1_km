@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../services/api";
 import { useUser } from "../../contexts/user";
-import CleaningCard from "../../components/CleaningCard";
 import CleaningTable from "../../components/CleaningTable";
 import { useNotification } from "../../contexts/notification";
 import { useNavigate } from "react-router";
@@ -19,11 +18,11 @@ const HousekeeperCleaningTasks = () => {
       const current = response.data;
 
       const newAssignedTasks = current.filter(
-        (task) => !knownTaskIdsRef.current.has(task.id) && task.employee?.id === userId
+        (task) => !knownTaskIdsRef.current.has(task.id) && task.employee?.id === userId,
       );
 
       const newUnassignedTasks = current.filter(
-        (task) => !knownTaskIdsRef.current.has(task.id) && !task.employee
+        (task) => !knownTaskIdsRef.current.has(task.id) && !task.employee,
       );
 
       setTasks(current);
@@ -31,9 +30,9 @@ const HousekeeperCleaningTasks = () => {
       if (Notification.permission === "granted") {
         if (knownTaskIdsRef.current.size > 0 && newAssignedTasks.length > 0) {
           const firstNew = newAssignedTasks[0];
-          const room = firstNew.room?.roomNumber ?? "Nieznany pokój";
-          const taskType = firstNew.cleaningType ?? "Brak typu";
-          const date = new Date(firstNew.assignedAt ?? firstNew.createdAt).toLocaleDateString();
+          const room = firstNew.room?.roomNumber;
+          const date = new Date(firstNew.requestDate).toLocaleDateString();
+          const description = firstNew.description ?? "Brak opisu";
 
           const statusMap = {
             PENDING: "Do wykonania",
@@ -42,35 +41,52 @@ const HousekeeperCleaningTasks = () => {
           };
           const status = statusMap[firstNew.status] ?? firstNew.status;
 
-          const notif = new Notification("Nowe zadanie sprzątania", {
-            body: `Pokój: ${room}\nTyp: ${taskType}\nStatus: ${status}\nData: ${date}`,
+          const bodyLines = [
+            room ? `📍 Pokój: ${room}` : null,
+            `📅 Data: ${date}`,
+            `📌 Status: ${status}`,
+            `📝 ${description}`,
+          ]
+            .filter(Boolean)
+            .join("\n");
+
+          const notif = new Notification("🧽 Nowe zadanie sprzątania", {
+            body: bodyLines,
           });
 
           notif.onclick = () => {
             window.focus();
-            window.location.href = "/HousekeeperDashboard";
+            navigate("/HousekeeperDashboard");
           };
         }
 
         if (knownTaskIdsRef.current.size > 0 && newUnassignedTasks.length > 0) {
           const firstUnassigned = newUnassignedTasks[0];
-          const room = firstUnassigned.room?.roomNumber ?? "Nieznany pokój";
-          const taskType = firstUnassigned.cleaningType ?? "Brak typu";
-          const date = new Date(firstUnassigned.createdAt).toLocaleDateString();
+          const room = firstUnassigned.room?.roomNumber;
+          const date = new Date(firstUnassigned.requestDate).toLocaleDateString();
+          const description = firstUnassigned.description ?? "Brak opisu";
 
-          const notif = new Notification("Nowe nieprzypisane zadanie sprzątania", {
-            body: `Pokój: ${room}\nTyp: ${taskType}\nData: ${date}`,
+          const bodyLines = [
+            room ? `📍 Pokój: ${room}` : null,
+            `📅 Data zgłoszenia: ${date}`,
+            `📝 ${description}`,
+          ]
+            .filter(Boolean)
+            .join("\n");
+
+          const notif = new Notification("🧼 Nowe nieprzypisane zadanie sprzątania", {
+            body: bodyLines,
           });
 
           notif.onclick = () => {
             window.focus();
-            window.location.href = "/HousekeeperDashboard";
+            navigate("/HousekeeperDashboard");
           };
         }
       }
 
       [...newAssignedTasks, ...newUnassignedTasks].forEach((task) =>
-        knownTaskIdsRef.current.add(task.id)
+        knownTaskIdsRef.current.add(task.id),
       );
     } catch (error) {
       console.error("Błąd ładowania zadań:", error);

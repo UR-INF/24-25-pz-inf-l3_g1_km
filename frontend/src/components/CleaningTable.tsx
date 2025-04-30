@@ -210,7 +210,9 @@ const CleaningTable = () => {
                 <td>{task.id}</td>
                 <td>{formatDate(task.requestDate)}</td>
                 <td>{task.description}</td>
-                <td>{task.room?.roomNumber ?? "-"}</td>
+                <td className={!task.room?.roomNumber ? "text-muted" : ""}>
+                  {task.room?.roomNumber ?? "-"}
+                </td>
                 <td>
                   <div className="d-flex py-1 align-items-center">
                     {task.employee && (
@@ -235,7 +237,9 @@ const CleaningTable = () => {
                     {translateStatus(task.status)}
                   </span>
                 </td>
-                <td>{formatDate(task.completionDate)}</td>
+                <td className={!task.completionDate ? "text-muted" : ""}>
+                  {formatDate(task.completionDate)}
+                </td>
                 <td className="text-end">
                   <button className="btn btn-primary" onClick={() => handleShowDetails(task.id)}>
                     Zobacz
