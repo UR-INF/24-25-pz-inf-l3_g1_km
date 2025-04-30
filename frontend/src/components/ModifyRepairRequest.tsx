@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
+import { getRoleNameInPolish } from "../utils/roleUtils";
 
 const ModifyRepairRequest = () => {
   const { id } = useParams();
@@ -17,6 +18,10 @@ const ModifyRepairRequest = () => {
     requestDate: "",
     completionDate: "",
     serviceSummary: "",
+    requesterFirstName: "",
+    requesterLastName: "",
+    requesterAvatar: "",
+    requesterRoleName: "",
   });
 
   const [originalData, setOriginalData] = useState(null);
@@ -37,6 +42,10 @@ const ModifyRepairRequest = () => {
           requestDate: task.requestDate.split("T")[0],
           completionDate: task.completionDate?.split("T")[0] || "",
           serviceSummary: task.serviceSummary || "",
+          requesterFirstName: task.requester?.firstName || "",
+          requesterLastName: task.requester?.lastName || "",
+          requesterAvatar: task.requester?.avatarUrl || "",
+          requesterRoleName: getRoleNameInPolish(task.requester?.role.name) || "",
         };
 
         setFormData(mappedForm);
@@ -127,7 +136,27 @@ const ModifyRepairRequest = () => {
       <form onSubmit={handleSubmit}>
         <h3 className="card-title">Szczegóły zgłoszenia</h3>
 
-        <div className="row g-3">
+        <div className="row">
+          <div className="col-md">
+            <label className="form-label">Zgłaszający </label>
+            <div className="col-auto d-flex flex-row gap-2 align-items-center">
+              <img
+                src={formData.requesterAvatar}
+                alt="Zdjęcie profilowe"
+                className="avatar shadow avatar-lg rounded"
+              />
+
+              <div>
+                <h4 className="m-0">
+                  {formData.requesterFirstName} {formData.requesterLastName}
+                </h4>
+                <div className="text-secondary">{formData.requesterRoleName}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="row g-3 mt-3">
           <div className="col-md">
             <label className="form-label">Pokój</label>
             <select
