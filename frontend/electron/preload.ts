@@ -19,3 +19,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     return ipcRenderer.invoke(channel, ...omit);
   },
 });
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  focusWindow: () => ipcRenderer.send("focus-window"),
+});

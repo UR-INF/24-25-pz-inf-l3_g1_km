@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../../services/api";
 import { useUser } from "../../contexts/user";
-import RepairsCard from "../../components/RepairsCard";
 import RepairTable from "../../components/RepairTable";
 import { useNotification } from "../../contexts/notification";
 import { useNavigate } from "react-router";
@@ -19,13 +18,9 @@ const MaintenanceDashboard = () => {
         const response = await api.get("/maintenance-requests");
         const current = response.data;
 
-        const newTasks = current.filter(
-          (task) => !knownRequestIdsRef.current.has(task.id)
-        );
+        const newTasks = current.filter((task) => !knownRequestIdsRef.current.has(task.id));
 
-        const assignedTasks = current.filter(
-          (task) => task.assignee?.id === userId
-        );
+        const assignedTasks = current.filter((task) => task.assignee?.id === userId);
 
         setRequests(assignedTasks);
 
@@ -34,15 +29,13 @@ const MaintenanceDashboard = () => {
           Notification.permission === "granted" &&
           userNotificationsEnabled
         ) {
-          // Notify about new tasks assigned to the current user
-          const newAssignedTasks = newTasks.filter(
-            (task) => task.assignee?.id === userId
-          );
+          const newAssignedTasks = newTasks.filter((task) => task.assignee?.id === userId);
 
           if (newAssignedTasks.length > 0) {
             const firstNew = newAssignedTasks[0];
-            const room = firstNew.room?.roomNumber ?? "Nieznany pokój";
             const description = firstNew.description ?? "Brak opisu";
+            const requester =
+              `${firstNew.requester?.firstName ?? ""} ${firstNew.requester?.lastName ?? ""}`.trim();
             const statusMap = {
               PENDING: "Do wykonania",
               IN_PROGRESS: "W trakcie",
@@ -51,25 +44,33 @@ const MaintenanceDashboard = () => {
             const status = statusMap[firstNew.status] ?? firstNew.status;
             const date = new Date(firstNew.requestDate).toLocaleDateString();
 
-            const notif = new Notification("Nowe zlecenie naprawy", {
-              body: `Pokój: ${room}\nOpis: ${description}\nStatus: ${status}\nData: ${date}`,
+            const lines = [
+              firstNew.room ? `📍 Pokój: ${firstNew.room.roomNumber}` : null,
+              `📝 Opis: ${description}`,
+              `👤 Zgłaszający: ${requester}`,
+              `📌 Status: ${status}`,
+              `📅 Data: ${date}`,
+            ]
+              .filter(Boolean)
+              .join("\n");
+
+            const notif = new Notification("🛠️ Nowe zlecenie naprawy", {
+              body: lines,
+              icon: firstNew.requester?.avatarUrl ?? "",
             });
 
             notif.onclick = () => {
-              window.focus();
-              window.location.href = "/MaintenanceDashboard";
+              window.electronAPI?.focusWindow();
             };
           }
 
-          // Notify about new unassigned tasks
-          const newUnassignedTasks = newTasks.filter(
-            (task) => !task.assignee
-          );
+          const newUnassignedTasks = newTasks.filter((task) => !task.assignee);
 
           if (newUnassignedTasks.length > 0) {
             const firstNew = newUnassignedTasks[0];
-            const room = firstNew.room?.roomNumber ?? "Nieznany pokój";
             const description = firstNew.description ?? "Brak opisu";
+            const requester =
+              `${firstNew.requester?.firstName ?? ""} ${firstNew.requester?.lastName ?? ""}`.trim();
             const statusMap = {
               PENDING: "Do wykonania",
               IN_PROGRESS: "W trakcie",
@@ -78,13 +79,23 @@ const MaintenanceDashboard = () => {
             const status = statusMap[firstNew.status] ?? firstNew.status;
             const date = new Date(firstNew.requestDate).toLocaleDateString();
 
-            const notif = new Notification("Nowe nieprzypisane zlecenie naprawy", {
-              body: `Pokój: ${room}\nOpis: ${description}\nStatus: ${status}\nData: ${date}`,
+            const lines = [
+              firstNew.room ? `📍 Pokój: ${firstNew.room.roomNumber}` : null,
+              `📝 Opis: ${description}`,
+              `👤 Zgłaszający: ${requester}`,
+              `📌 Status: ${status}`,
+              `📅 Data: ${date}`,
+            ]
+              .filter(Boolean)
+              .join("\n");
+
+            const notif = new Notification("🛠️ Nowe nieprzypisane zlecenie naprawy", {
+              body: lines,
+              icon: firstNew.requester?.avatarUrl ?? "",
             });
 
             notif.onclick = () => {
-              window.focus();
-              window.location.href = "/MaintenanceDashboard";
+              window.electronAPI?.focusWindow();
             };
           }
         }

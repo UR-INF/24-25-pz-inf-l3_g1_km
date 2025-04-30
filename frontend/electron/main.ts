@@ -46,6 +46,14 @@ function createWindow() {
 
   ipcMain.on("window:minimize", () => win?.minimize());
 
+  ipcMain.on("focus-window", () => {
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
+    }
+  });
+
   ipcMain.on("window:maximize", () => {
     if (win?.isMaximized()) {
       win?.unmaximize();

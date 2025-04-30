@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode, useRef } from "react";
-import { useNotification } from "./notification";
+// import { useNotification } from "./notification";
 
 /**
  * Reprezentuje użytkownika z adresem email i tokenem JWT.
@@ -86,7 +86,7 @@ const isTokenExpired = (token: string): boolean => {
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-  const { showNotification } = useNotification();
+  // const { showNotification } = useNotification();
   const didRunRef = useRef(false);
 
   const login = (user: User) => {

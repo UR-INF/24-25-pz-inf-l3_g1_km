@@ -25,6 +25,13 @@ function createWindow() {
     }
   });
   ipcMain.on("window:minimize", () => win == null ? void 0 : win.minimize());
+  ipcMain.on("focus-window", () => {
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
+    }
+  });
   ipcMain.on("window:maximize", () => {
     if (win == null ? void 0 : win.isMaximized()) {
       win == null ? void 0 : win.unmaximize();

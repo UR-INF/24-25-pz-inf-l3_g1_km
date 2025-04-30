@@ -55,8 +55,7 @@ const HousekeeperCleaningTasks = () => {
           });
 
           notif.onclick = () => {
-            window.focus();
-            navigate("/HousekeeperDashboard");
+            window.electronAPI?.focusWindow();
           };
         }
 
@@ -79,8 +78,7 @@ const HousekeeperCleaningTasks = () => {
           });
 
           notif.onclick = () => {
-            window.focus();
-            navigate("/HousekeeperDashboard");
+            window.electronAPI?.focusWindow();
           };
         }
       }
