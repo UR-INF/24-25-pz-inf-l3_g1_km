@@ -163,7 +163,9 @@ const ReservationsTable = () => {
                             ? "bg-warning"
                             : res.status === "COMPLETED"
                               ? "bg-danger"
-                              : "bg-secondary"
+                              : res.status === "UPCOMING"
+                                ? "bg-info"
+                                : "bg-secondary"
                       }`}
                     ></span>
                     {res.status === "ACTIVE"
@@ -172,7 +174,9 @@ const ReservationsTable = () => {
                         ? "Anulowana"
                         : res.status === "COMPLETED"
                           ? "Ukończona"
-                          : res.status}
+                          : res.status === "UPCOMING"
+                            ? "Nadchodząca"
+                            : res.status}
                   </td>
                   <td>{new Date(res.startDate).toLocaleDateString()}</td>
                   <td>{new Date(res.endDate).toLocaleDateString()}</td>
