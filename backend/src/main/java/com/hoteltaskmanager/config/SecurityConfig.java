@@ -33,7 +33,7 @@ public class SecurityConfig {
 
             // Konfiguracja żądań - które endpointy są dostępne bez autoryzacji
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/reset-password.html", "/avatars/**").permitAll() // publiczne
+                .requestMatchers("/api/auth/**", "/reset-password.html", "/hotel.png","/hotel.ico", "/avatars/**").permitAll() // publiczne
                 .anyRequest().authenticated() // reszta wymaga autoryzacji
             )
 
