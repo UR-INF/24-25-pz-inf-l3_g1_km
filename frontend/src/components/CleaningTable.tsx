@@ -213,15 +213,19 @@ const CleaningTable = () => {
                 <td>{task.room?.roomNumber ?? "-"}</td>
                 <td>
                   <div className="d-flex py-1 align-items-center">
-                    <span
-                      className="avatar shadow avatar-sm me-2"
-                      style={{
-                        backgroundImage: `url(${task.employee?.avatarUrl})`,
-                      }}
-                    ></span>
+                    {task.employee && (
+                      <span
+                        className="avatar shadow avatar-sm me-2"
+                        style={{
+                          backgroundImage: `url(${task.employee?.avatarUrl})`,
+                        }}
+                      ></span>
+                    )}
                     <div className="flex-fill">
-                      <div className="font-weight-medium">
-                        {task.employee?.firstName} {task.employee?.lastName}
+                      <div className={`font-weight-medium ${task.employee ? "" : "text-muted"}`}>
+                        {task.employee
+                          ? `${task.employee.firstName} ${task.employee.lastName}`
+                          : "Brak przypisania"}
                       </div>
                     </div>
                   </div>
