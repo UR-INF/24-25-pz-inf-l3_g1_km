@@ -9,18 +9,17 @@ import com.hoteltaskmanager.security.PasswordHasher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.hoteltaskmanager.config.JwtConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * REST API dla zarządzania pracownikami.
@@ -53,6 +52,9 @@ public class EmployeeController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private JwtConfig jwtConfig;
 
     /**
      * GET /api/employees
@@ -303,8 +305,11 @@ public class EmployeeController {
      * Zmodyfikuj e-mail pracownika
      */
     @PutMapping("/{id}/email")
-    public ResponseEntity<?> changeEmail(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> changeEmail(@PathVariable Long id,
+                                         @RequestBody Map<String, String> body,
+                                         Authentication authentication) {
         String newEmail = body.get("email");
+        String currentUserEmail = authentication.getName();
 
         if (newEmail == null || !newEmail.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             return ResponseEntity.badRequest().body("Podaj poprawny adres e-mail.");
@@ -320,11 +325,38 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Użytkownik nie istnieje.");
         }
 
-        Employee employee = optionalEmployee.get();
-        employee.setEmail(newEmail);
-        employeeRepository.save(employee);
+        Optional<Employee> currentEmployee = employeeRepository.findByEmail(currentUserEmail);
+        if (currentEmployee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Brak autoryzacji.");
+        }
 
-        return ResponseEntity.ok("Adres e-mail został zaktualizowany.");
+        Employee targetEmployee = optionalEmployee.get();
+        Employee loggedInEmployee = currentEmployee.get();
+        String oldEmail = targetEmployee.getEmail();
+
+        boolean isOwnAccount = oldEmail.equals(currentUserEmail);
+        boolean isManager = loggedInEmployee.getRole().getName() == RoleName.MANAGER;
+
+        if (!isOwnAccount && !isManager) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Nie masz uprawnień do zmiany adresu e-mail innego użytkownika.");
+        }
+
+        targetEmployee.setEmail(newEmail);
+        employeeRepository.save(targetEmployee);
+
+        if (isOwnAccount) {
+            String newToken = jwtConfig.generateToken(newEmail);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Adres e-mail został zaktualizowany. Twoja sesja została odświeżona.");
+            response.put("token", newToken);
+            response.put("tokenRefreshed", true);
+
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.ok("Adres e-mail użytkownika został zaktualizowany.");
     }
 
     /**
@@ -439,4 +471,5 @@ public class EmployeeController {
 
         return ResponseEntity.ok(employee);
     }
+
 }
