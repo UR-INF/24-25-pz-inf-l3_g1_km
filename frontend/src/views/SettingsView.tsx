@@ -99,9 +99,7 @@ const SettingsView = () => {
         email: email,
       });
   
-      // Sprawdź czy serwer zwrócił nowy token
       if (response.data && response.data.token) {
-        // Po prostu zapisz nowy token w localStorage
         localStorage.setItem('token', response.data.token);
         
         showNotification("success", "E-mail został zmieniony i sesja została odświeżona.");
