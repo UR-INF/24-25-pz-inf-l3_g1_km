@@ -108,7 +108,7 @@ const ModifyCleaningOrder = () => {
 
         <div className="row g-3">
           <div className="col-md">
-            <div className="form-label">Numer pokoju</div>
+            <div className="form-label">Pokój (opcjonalne)</div>
             <input
               type="text"
               className="form-control"
@@ -117,7 +117,7 @@ const ModifyCleaningOrder = () => {
             />
           </div>
           <div className="col-md">
-            <div className="form-label">Pracownik</div>
+            <div className="form-label">Pracownik (opcjonalne)</div>
             {!isEditable ? (
               <input
                 type="text"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
+import { useUser } from "../contexts/user";
 
 const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   });
 
   const [rooms, setRooms] = useState([]);
+  const { user } = useUser();
   const [employees, setEmployees] = useState([]);
   const { showNotification } = useNotification();
 
@@ -42,28 +44,34 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const selectedRoom = rooms.find((room) => room.id.toString() === formData.roomId);
-    const selectedEmployee = employees.find((emp) => emp.id.toString() === formData.assigneeId);
-
-    if (!selectedRoom || !selectedEmployee || !formData.description) {
-      showNotification("error", "Uzupełnij wszystkie pola.");
+    if (!formData.description) {
+      showNotification("error", "Opis naprawy jest wymagany.");
       return;
     }
 
-    try {
-      const updatedRoom = { ...selectedRoom, status: "OUT_OF_SERVICE" };
-      await api.put(`/rooms/${selectedRoom.id}`, updatedRoom);
+    const payload = {
+      room: formData.roomId
+        ? rooms.find((room) => room.id.toString() === formData.roomId)
+        : null,
+      requester: user,
+      assignee: formData.assigneeId
+        ? employees.find((emp) => emp.id.toString() === formData.assigneeId)
+        : null,
+      requestDate: `${formData.requestDate}T${new Date().toTimeString().split(" ")[0]}`,
+      completionDate: null,
+      status: "PENDING",
+      description: formData.description,
+      serviceSummary: null,
+    };
 
-      const payload = {
-        room: selectedRoom,
-        requester: selectedEmployee,
-        assignee: selectedEmployee,
-        requestDate: `${formData.requestDate}T${new Date().toTimeString().split(" ")[0]}`,
-        completionDate: null,
-        status: "PENDING",
-        description: formData.description,
-        serviceSummary: null,
-      };
+    try {
+      if (formData.roomId) {
+        const selectedRoom = rooms.find((room) => room.id.toString() === formData.roomId);
+        if (selectedRoom) {
+          const updatedRoom = { ...selectedRoom, status: "OUT_OF_SERVICE" };
+          await api.put(`/rooms/${selectedRoom.id}`, updatedRoom);
+        }
+      }
 
       await api.post("/maintenance-requests", payload);
       showNotification("success", "Zlecenie serwisowe dodane pomyślnie!");
@@ -92,15 +100,14 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
           <div className="row g-3">
             <div className="col-md">
-              <div className="form-label">Pokój</div>
+              <div className="form-label">Pokój (opcjonalne)</div>
               <select
                 className="form-select"
                 name="roomId"
                 value={formData.roomId}
                 onChange={handleChange}
-                required
               >
-                <option value="">Wybierz pokój</option>
+                <option value="">Brak</option>
                 {rooms.map((room) => (
                   <option key={room.id} value={room.id}>
                     {room.roomNumber} (Piętro: {room.floor})
@@ -110,15 +117,14 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             </div>
 
             <div className="col-md">
-              <div className="form-label">Pracownik odpowiedzialny</div>
+              <div className="form-label">Pracownik (opcjonalne)</div>
               <select
                 className="form-select"
                 name="assigneeId"
                 value={formData.assigneeId}
                 onChange={handleChange}
-                required
               >
-                <option value="">Wybierz pracownika</option>
+                <option value="">Brak</option>
                 {employees.map((emp) => (
                   <option key={emp.id} value={emp.id}>
                     {emp.firstName} {emp.lastName} ({emp.email})
@@ -130,18 +136,25 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
           <div className="row g-3 mt-3">
             <div className="col-md">
-              <div className="form-label">Opis naprawy</div>
+              <div className="form-label">Opis zadania</div>
               <textarea
                 className="form-control"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 required
-              />
+              ></textarea>
+              <div style={{ minHeight: "1.5em" }}>
+                {formData.roomId === "" && (
+                  <small className="form-text text-muted">
+                    Nie wybrano pokoju, określ miejsce, w którym ma zostać wykonane zlecenie.
+                  </small>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="row g-3 mt-3">
+          <div className="row g-3 mt-2">
             <div className="col-md">
               <div className="form-label">Data zgłoszenia</div>
               <input

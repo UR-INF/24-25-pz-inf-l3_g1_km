@@ -3,11 +3,13 @@ import { useParams, useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 import { getRoleNameInPolish } from "../utils/roleUtils";
+import { useUser } from "../contexts/user";
 
 const ModifyRepairRequest = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+  const { user } = useUser();
 
   const [isEditable, setIsEditable] = useState(false);
   const [formData, setFormData] = useState({
@@ -107,20 +109,28 @@ const ModifyRepairRequest = () => {
     e.preventDefault();
 
     try {
-      const room = { id: parseInt(formData.repairType) };
-      const employee = { id: parseInt(formData.responsiblePerson) };
+      // Sprawdzenie, czy mamy dane zalogowanego użytkownika jako requester
+      if (!user) {
+        showNotification("error", "Brak danych zalogowanego użytkownika.");
+        return;
+      }
 
-      await api.put(`/maintenance-requests/${id}`, {
-        room,
-        assignee: employee,
-        requester: employee,
+      const payload = {
+        room: formData.repairType
+          ? rooms.find((room) => room.id.toString() === formData.repairType)
+          : null,
+        assignee: formData.responsiblePerson
+          ? employees.find((emp) => emp.id.toString() === formData.responsiblePerson)
+          : null,
+        requester: user, // Ustawiamy zalogowanego użytkownika jako requester
         requestDate: `${formData.requestDate}T00:00:00`,
         completionDate: formData.completionDate ? `${formData.completionDate}T00:00:00` : null,
         description: formData.repairDescription,
         status: formData.status.toUpperCase(),
         serviceSummary: formData.serviceSummary,
-      });
+      };
 
+      await api.put(`/maintenance-requests/${id}`, payload);
       showNotification("success", "Zgłoszenie zostało zaktualizowane.");
       navigate("/RecepcionistDashboard/Orders/Repairs");
     } catch (err) {
@@ -158,16 +168,15 @@ const ModifyRepairRequest = () => {
 
         <div className="row g-3 mt-3">
           <div className="col-md">
-            <label className="form-label">Pokój</label>
+            <label className="form-label">Pokój (opcjonalne)</label>
             <select
               className="form-select"
               name="repairType"
               value={formData.repairType}
               onChange={handleChange}
               disabled={!isEditable}
-              required
             >
-              <option value="">Wybierz pokój</option>
+              <option value="">Brak</option>
               {rooms.map((room) => (
                 <option key={room.id} value={room.id}>
                   {room.roomNumber} (Piętro: {room.floor})
@@ -177,16 +186,15 @@ const ModifyRepairRequest = () => {
           </div>
 
           <div className="col-md">
-            <label className="form-label">Pracownik</label>
+            <label className="form-label">Pracownik (opcjonalne)</label>
             <select
               className="form-select"
               name="responsiblePerson"
               value={formData.responsiblePerson}
               onChange={handleChange}
               disabled={!isEditable}
-              required
             >
-              <option value="">Wybierz pracownika</option>
+              <option value="">Brak</option>
               {employees.map((emp) => (
                 <option key={emp.id} value={emp.id}>
                   {emp.firstName} {emp.lastName} ({emp.email})
@@ -234,6 +242,13 @@ const ModifyRepairRequest = () => {
               disabled={!isEditable}
               required
             />
+            <div style={{ minHeight: "1.5em" }}>
+              {formData.repairType === "" && (
+                <small className="form-text text-muted">
+                  Nie wybrano pokoju, określ miejsce, w którym ma zostać wykonane zlecenie.
+                </small>
+              )}
+            </div>
           </div>
         </div>
 
