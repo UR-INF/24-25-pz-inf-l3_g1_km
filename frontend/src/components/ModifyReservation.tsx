@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
 import { useNotification } from "../contexts/notification";
-import { useAuth } from "../contexts/auth";
 import ShowInvoiceButton from "./ShowInvoiceButton";
 const ModifyReservation = ({ reservationId }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,14 +29,6 @@ const ModifyReservation = ({ reservationId }) => {
     catering: true,
     status: "ACTIVE",
   });
-
-  const { state } = useAuth();
-
-  useEffect(() => {
-    if (state.user) {
-      console.log("Zalogowany token:", state.user.token); // Wyświetlenie tokenu w logach
-    }
-  }, [state.user]);
 
   const getReservation = async () => {
     try {
@@ -670,11 +661,7 @@ const ModifyReservation = ({ reservationId }) => {
                   >
                     Edytuj fakturę
                   </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger ms-2"
-                    onClick={handleDeleteInvoice}
-                  >
+                  <button type="button" className="btn btn-danger" onClick={handleDeleteInvoice}>
                     Usuń fakturę
                   </button>
                 </>

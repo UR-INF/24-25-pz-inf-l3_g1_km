@@ -49,7 +49,7 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
       );
       if (response.status === 200) {
         showNotification("success", "Faktura została zaktualizowana.");
-        navigate("/RecepcionistDashboard/Reservations");
+        navigate(-1);
       } else {
         console.error("Nie udało się zaktualizować faktury");
       }
