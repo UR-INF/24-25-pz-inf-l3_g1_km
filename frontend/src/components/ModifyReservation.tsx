@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
 import { useNotification } from "../contexts/notification";
+import { useAuth } from "../contexts/auth";
 const ModifyReservation = ({ reservationId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all");
@@ -28,6 +29,14 @@ const ModifyReservation = ({ reservationId }) => {
     catering: true,
     status: "ACTIVE",
   });
+
+  const { state } = useAuth();
+
+  useEffect(() => {
+    if (state.user) {
+      console.log("Zalogowany token:", state.user.token); // Wyświetlenie tokenu w logach
+    }
+  }, [state.user]);
 
   const getReservation = async () => {
     try {
@@ -306,6 +315,34 @@ const ModifyReservation = ({ reservationId }) => {
       showNotification("error", "Wystąpił błąd.");
     }
   };
+
+  const handleShowInvoice = async () => {
+    const response = await api.get(`/invoices/reservation/${reservationId}`)
+    console.log(response.data.id);
+    const responsePdf = await api.get(`/invoices/${response.data.id}/pdf`, {
+      responseType: 'blob', 
+    });
+    console.log(responsePdf)
+    if (!(responsePdf.data instanceof Blob)) {
+      console.log('Odpowiedź nie jest Blob-em:', responsePdf.data);
+      return;
+    }
+
+    if (responsePdf.data.size === 0) {
+      console.error('Otrzymano pusty Blob');
+      return;
+    }
+
+    
+
+    const pdfUrl = URL.createObjectURL(responsePdf.data);
+    const link = document.createElement('a');
+    link.href = pdfUrl;
+    link.download = `invoice_${response.data.id}.pdf`;
+    link.click();
+    URL.revokeObjectURL(pdfUrl);
+    
+  }
 
   const handleGuestCountChange = (roomId, e) => {
     const { value } = e.target;
@@ -644,6 +681,13 @@ const ModifyReservation = ({ reservationId }) => {
             {formData.status === "COMPLETED" && !isEditable ? (
               invoiceData ? (
                 <>
+                <button
+                    type="button"
+                    className="btn btn-primary ms-2"
+                    onClick={handleShowInvoice}
+                  >
+                    Zobacz fakturę
+                  </button>
                   <button
                     type="button"
                     className="btn btn-warning"

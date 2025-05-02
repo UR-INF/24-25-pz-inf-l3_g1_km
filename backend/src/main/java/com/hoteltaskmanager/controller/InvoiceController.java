@@ -2,11 +2,14 @@ package com.hoteltaskmanager.controller;
 
 import com.hoteltaskmanager.model.Invoice;
 import com.hoteltaskmanager.service.InvoiceService;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,14 +92,18 @@ public class InvoiceController {
      */
     @GetMapping("/{id}/pdf")
     public ResponseEntity<Resource> downloadPdf(@PathVariable Long id) {
-        Resource pdfResource = invoiceService.getInvoicePdf(id);
+        byte[] pdfResource = invoiceService.getInvoicePdf(id);
         if (pdfResource == null) {
             return ResponseEntity.notFound().build();
         }
 
+        ByteArrayResource resource = new ByteArrayResource(pdfResource);
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + pdfResource.getFilename())
-                .body(pdfResource);
+                .contentLength(pdfResource.length)
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"invoice_" + id + ".pdf\"")
+                .body(resource);
     }
 
     /**

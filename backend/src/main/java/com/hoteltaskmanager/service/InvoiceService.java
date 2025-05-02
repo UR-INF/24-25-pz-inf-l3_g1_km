@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
@@ -114,24 +115,34 @@ public class InvoiceService {
         return Files.readAllBytes(Paths.get(filePath));
     }
 
-    public Resource getInvoicePdf(Long id) {
+    public byte[] getInvoicePdf(Long id) {
         Optional<Invoice> invoiceOpt = invoiceRepository.findById(id);
-        if (invoiceOpt.isEmpty()) return null;
+        if (invoiceOpt.isEmpty()) {
+            return null; // Jeśli faktura nie istnieje
+        }
 
         Invoice invoice = invoiceOpt.get();
         try {
-            byte[] fileContent = Files.readAllBytes(Paths.get(invoice.getPdfFile()));
-            return new ByteArrayResource(fileContent) {
-                @Override
-                public String getFilename() {
-                    return Paths.get(invoice.getPdfFile()).getFileName().toString();
-                }
-            };
+            Path path = Paths.get(invoice.getPdfFile());
+            if (!Files.exists(path)) {
+                System.err.println("Plik nie istnieje: " + path.toAbsolutePath());
+                return null; // Jeśli plik nie istnieje
+            }
+
+            System.out.println(path.toAbsolutePath());
+
+            // Odczytujemy zawartość pliku PDF do tablicy bajtów
+            byte[] fileContent = Files.readAllBytes(path);
+            System.out.println("Wielkość pliku: " + fileContent.length + " bajtów");
+
+            return fileContent; // Zwracamy tablicę bajtów
         } catch (Exception e) {
             System.err.println("Nie udało się odczytać pliku PDF: " + e.getMessage());
-            return null;
+            return null; // Jeśli wystąpi błąd podczas odczytu pliku
         }
     }
+
+
 
     public boolean deleteInvoice(Long id) {
         Optional<Invoice> invoiceOpt = invoiceRepository.findById(id);
