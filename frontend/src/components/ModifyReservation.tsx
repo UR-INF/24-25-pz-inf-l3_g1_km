@@ -3,6 +3,7 @@ import { api } from "../services/api";
 import { useNavigate } from "react-router";
 import { useNotification } from "../contexts/notification";
 import { useAuth } from "../contexts/auth";
+import ShowInvoiceButton from "./ShowInvoiceButton";
 const ModifyReservation = ({ reservationId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all");
@@ -313,55 +314,6 @@ const ModifyReservation = ({ reservationId }) => {
     } catch (error) {
       console.error("Błąd podczas usuwania faktury:", error);
       showNotification("error", "Wystąpił błąd.");
-    }
-  };
-  const handleShowInvoice = async () => {
-    try {
-      // Pobierz fakturę przypisaną do rezerwacji
-      const response = await api.get(`/invoices/reservation/${reservationId}`);
-      const invoiceId = response?.data?.id;
-
-      if (!invoiceId) {
-        showNotification("error", "Nie znaleziono faktury dla tej rezerwacji.");
-        return;
-      }
-
-      // Pobierz plik PDF faktury
-      const pdfResponse = await api.get(`/invoices/${invoiceId}/pdf`, {}, { responseType: "blob" });
-      const blob = pdfResponse.data;
-
-      // Walidacja - sprawdzenie czy blob jest prawidłowym plikiem PDF
-      if (blob.type !== "application/pdf") {
-        const errorText = await blob.text();
-        console.error("Serwer zwrócił błąd zamiast PDF:", errorText);
-        showNotification("error", "Nie udało się pobrać faktury. Serwer zwrócił błąd.");
-        return;
-      }
-
-      if (blob.size === 0) {
-        showNotification("error", "Nie udało się pobrać faktury. Otrzymano pusty plik.");
-        return;
-      }
-
-      const pdfFilePath = response.data.pdfFile;
-      const fileName = pdfFilePath.substring(pdfFilePath.lastIndexOf("/") + 1);
-
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName;
-
-      document.body.appendChild(link);
-      link.click();
-
-      if (document.body.contains(link)) {
-        document.body.removeChild(link);
-      }
-
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Błąd podczas pobierania faktury:", error);
-      showNotification("error", "Wystąpił błąd podczas pobierania faktury.");
     }
   };
 
@@ -702,13 +654,8 @@ const ModifyReservation = ({ reservationId }) => {
             {formData.status === "COMPLETED" && !isEditable ? (
               invoiceData ? (
                 <>
-                  <button
-                    type="button"
-                    className="btn btn-primary ms-2"
-                    onClick={handleShowInvoice}
-                  >
-                    Pobierz fakturę
-                  </button>
+                  <ShowInvoiceButton reservationId={reservationId} />
+
                   <button
                     type="button"
                     className="btn btn-warning"
