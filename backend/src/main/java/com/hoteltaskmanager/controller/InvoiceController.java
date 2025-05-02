@@ -115,12 +115,15 @@ public class InvoiceController {
      * Modyfikuje fakturę w systemie
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Invoice> updateInvoice(@PathVariable Long id, @RequestBody Invoice updatedInvoice) {
-        Optional<Invoice> updated = invoiceService.updateInvoice(id, updatedInvoice);
+    public ResponseEntity<Invoice> updateInvoice(
+            @PathVariable Long id,
+            @RequestParam Long reservationId,
+            @RequestBody Invoice updatedInvoice) {
+
+        Optional<Invoice> updated = invoiceService.updateInvoice(id, reservationId, updatedInvoice);
 
         return updated
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }

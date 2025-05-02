@@ -7,8 +7,9 @@ import com.hoteltaskmanager.repository.ReservationRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,8 +17,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 
 /**
  * Serwis odpowiedzialny za generowanie i zarządzanie fakturami.
@@ -108,12 +107,8 @@ public class InvoiceService {
     }
 
     /**
-     * Zwraca zawartość pliku PDF jako tablica bajtów.
+     * Zwraca zawartość pliku PDF jako zasób (Resource).
      */
-    public byte[] getInvoicePdf(String filePath) throws Exception {
-        return Files.readAllBytes(Paths.get(filePath));
-    }
-
     public Resource getInvoicePdf(Long id) {
         Optional<Invoice> invoiceOpt = invoiceRepository.findById(id);
         if (invoiceOpt.isEmpty()) return null;
@@ -133,39 +128,65 @@ public class InvoiceService {
         }
     }
 
+    /**
+     * Usuwa fakturę i powiązany plik PDF.
+     */
     public boolean deleteInvoice(Long id) {
         Optional<Invoice> invoiceOpt = invoiceRepository.findById(id);
         if (invoiceOpt.isEmpty()) return false;
 
         Invoice invoice = invoiceOpt.get();
-
-        // Usuń plik PDF z dysku, jeśli istnieje
-        try {
-            if (invoice.getPdfFile() != null) {
-                Files.deleteIfExists(Paths.get(invoice.getPdfFile()));
-            }
-        } catch (Exception e) {
-            System.err.println("Błąd podczas usuwania pliku faktury: " + e.getMessage());
-        }
+        deletePdfFile(invoice.getPdfFile());
 
         invoiceRepository.deleteById(id);
         return true;
     }
 
     /**
-     * Aktualizuje dane istniejącej faktury.
+     * Aktualizuje dane istniejącej faktury i generuje nowy plik PDF.
      */
-    public Optional<Invoice> updateInvoice(Long id, Invoice updatedInvoice) {
-        return invoiceRepository.findById(id).map(existing -> {
-            existing.setIssueDate(updatedInvoice.getIssueDate());
-            existing.setCompanyNip(updatedInvoice.getCompanyNip());
-            existing.setCompanyName(updatedInvoice.getCompanyName());
-            existing.setCompanyAddress(updatedInvoice.getCompanyAddress());
-            existing.setPdfFile(updatedInvoice.getPdfFile());
+    public Optional<Invoice> updateInvoice(Long id, Long reservationId, Invoice updatedInvoice) {
+        return invoiceRepository.findById(id).map(existingInvoice -> {
 
-            return invoiceRepository.save(existing);
+            // Usuń stary plik faktury
+            deletePdfFile(existingInvoice.getPdfFile());
+
+            // Aktualizacja danych faktury
+            existingInvoice.setIssueDate(updatedInvoice.getIssueDate());
+            existingInvoice.setCompanyNip(updatedInvoice.getCompanyNip());
+            existingInvoice.setCompanyName(updatedInvoice.getCompanyName());
+            existingInvoice.setCompanyAddress(updatedInvoice.getCompanyAddress());
+
+            // Pobierz powiązaną rezerwację
+            Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Rezerwacja nie istnieje"));
+
+            // Wygeneruj nowy PDF
+            String newFileName = "invoice-" + UUID.randomUUID() + ".pdf";
+            String newPdfPath = "invoices/" + newFileName;
+
+            try {
+                generatePdfFile(existingInvoice, reservation, newPdfPath);
+            } catch (Exception e) {
+                throw new RuntimeException("Błąd podczas generowania nowego pliku PDF", e);
+            }
+
+            existingInvoice.setPdfFile(newPdfPath);
+
+            return invoiceRepository.save(existingInvoice);
         });
     }
 
-
+    /**
+     * Usuwa plik PDF faktury z dysku, jeśli istnieje.
+     */
+    private void deletePdfFile(String filePath) {
+        if (filePath != null) {
+            try {
+                Files.deleteIfExists(Paths.get(filePath));
+            } catch (Exception e) {
+                System.err.println("Błąd podczas usuwania pliku PDF: " + e.getMessage());
+            }
+        }
+    }
 }

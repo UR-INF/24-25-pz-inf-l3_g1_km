@@ -320,50 +320,50 @@ const ModifyReservation = ({ reservationId }) => {
       // Pobierz fakturę przypisaną do rezerwacji
       const response = await api.get(`/invoices/reservation/${reservationId}`);
       const invoiceId = response?.data?.id;
-  
+
       if (!invoiceId) {
         showNotification("error", "Nie znaleziono faktury dla tej rezerwacji.");
         return;
       }
-  
+
       // Pobierz plik PDF faktury
-      const pdfResponse = await api.get(`/invoices/${invoiceId}/pdf`, {}, { responseType: 'blob' });
+      const pdfResponse = await api.get(`/invoices/${invoiceId}/pdf`, {}, { responseType: "blob" });
       const blob = pdfResponse.data;
-  
+
       // Walidacja - sprawdzenie czy blob jest prawidłowym plikiem PDF
       if (blob.type !== "application/pdf") {
         const errorText = await blob.text();
-        console.error('Serwer zwrócił błąd zamiast PDF:', errorText);
+        console.error("Serwer zwrócił błąd zamiast PDF:", errorText);
         showNotification("error", "Nie udało się pobrać faktury. Serwer zwrócił błąd.");
         return;
       }
-  
+
       if (blob.size === 0) {
         showNotification("error", "Nie udało się pobrać faktury. Otrzymano pusty plik.");
         return;
       }
-  
-      // Utwórz link do pobrania i automatycznie kliknij
+
+      const pdfFilePath = response.data.pdfFile;
+      const fileName = pdfFilePath.substring(pdfFilePath.lastIndexOf("/") + 1);
+
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.style.display = 'none';
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `invoice_${invoiceId}.pdf`;
-  
+      link.download = fileName;
+
       document.body.appendChild(link);
       link.click();
-  
+
+      if (document.body.contains(link)) {
+        document.body.removeChild(link);
+      }
+
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
-  
-      showNotification("success", "Faktura została pobrana.");
-  
     } catch (error) {
-      console.error('Błąd podczas pobierania faktury:', error);
+      console.error("Błąd podczas pobierania faktury:", error);
       showNotification("error", "Wystąpił błąd podczas pobierania faktury.");
     }
   };
-  
 
   const handleGuestCountChange = (roomId, e) => {
     const { value } = e.target;
@@ -702,19 +702,22 @@ const ModifyReservation = ({ reservationId }) => {
             {formData.status === "COMPLETED" && !isEditable ? (
               invoiceData ? (
                 <>
-                <button
+                  <button
                     type="button"
                     className="btn btn-primary ms-2"
                     onClick={handleShowInvoice}
                   >
-                    Zobacz fakturę
+                    Pobierz fakturę
                   </button>
                   <button
                     type="button"
                     className="btn btn-warning"
                     onClick={() =>
                       navigate("/RecepcionistDashboard/Reservations/InvoiceDetails", {
-                        state: { invoice: invoiceData },
+                        state: {
+                          invoice: invoiceData,
+                          reservationId: reservationId,
+                        },
                       })
                     }
                   >

@@ -3,12 +3,11 @@ import { api } from "../services/api";
 import { useNavigate } from "react-router";
 import { useNotification } from "../contexts/notification";
 
-const ModifyInvoice = ({ invoiceId }) => {
+const ModifyInvoice = ({ invoiceId, reservationId }) => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const [invoiceData, setInvoiceData] = useState({
     issueDate: "",
-    pdfFile: "",
     companyNip: "",
     companyName: "",
     companyAddress: "",
@@ -44,7 +43,10 @@ const ModifyInvoice = ({ invoiceId }) => {
     e.preventDefault();
 
     try {
-      const response = await api.put(`/invoices/${invoiceId}`, invoiceData);
+      const response = await api.put(
+        `/invoices/${invoiceId}?reservationId=${reservationId}`,
+        invoiceData,
+      );
       if (response.status === 200) {
         showNotification("success", "Faktura została zaktualizowana.");
         navigate("/RecepcionistDashboard/Reservations");
@@ -76,20 +78,6 @@ const ModifyInvoice = ({ invoiceId }) => {
             onChange={handleInputChange}
             className="form-control"
             required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="pdfFile" className="form-label">
-            Plik PDF
-          </label>
-          <input
-            type="text"
-            id="pdfFile"
-            name="pdfFile"
-            value={invoiceData.pdfFile}
-            onChange={handleInputChange}
-            className="form-control"
           />
         </div>
 

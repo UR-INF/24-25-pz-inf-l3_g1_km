@@ -8,7 +8,6 @@ const AddInvoiceForm = ({ reservationId }) => {
   const { showNotification } = useNotification();
   const [invoiceData, setInvoiceData] = useState({
     issueDate: new Date().toISOString().slice(0, 10),
-    pdfFile: "",
     companyNip: "",
     companyName: "",
     companyAddress: "",
@@ -31,7 +30,7 @@ const AddInvoiceForm = ({ reservationId }) => {
         nip: invoiceData.companyNip,
       }).toString();
 
-      const response = await api.post(`/invoices/reservation/${reservationId}?${params}`);
+      await api.post(`/invoices/reservation/${reservationId}?${params}`);
       navigate("/RecepcionistDashboard/Reservations");
       showNotification("success", "Faktura została dodana.");
     } catch (error) {
@@ -59,20 +58,6 @@ const AddInvoiceForm = ({ reservationId }) => {
             onChange={handleInputChange}
             className="form-control"
             required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="pdfFile" className="form-label">
-            Plik PDF
-          </label>
-          <input
-            type="text"
-            id="pdfFile"
-            name="pdfFile"
-            value={invoiceData.pdfFile}
-            onChange={handleInputChange}
-            className="form-control"
           />
         </div>
 
