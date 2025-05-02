@@ -315,34 +315,55 @@ const ModifyReservation = ({ reservationId }) => {
       showNotification("error", "Wystąpił błąd.");
     }
   };
-
   const handleShowInvoice = async () => {
-    const response = await api.get(`/invoices/reservation/${reservationId}`)
-    console.log(response.data.id);
-    const responsePdf = await api.get(`/invoices/${response.data.id}/pdf`, {
-      responseType: 'blob', 
-    });
-    console.log(responsePdf)
-    if (!(responsePdf.data instanceof Blob)) {
-      console.log('Odpowiedź nie jest Blob-em:', responsePdf.data);
-      return;
+    try {
+      // Pobierz fakturę przypisaną do rezerwacji
+      const response = await api.get(`/invoices/reservation/${reservationId}`);
+      const invoiceId = response?.data?.id;
+  
+      if (!invoiceId) {
+        showNotification("error", "Nie znaleziono faktury dla tej rezerwacji.");
+        return;
+      }
+  
+      // Pobierz plik PDF faktury
+      const pdfResponse = await api.get(`/invoices/${invoiceId}/pdf`, {}, { responseType: 'blob' });
+      const blob = pdfResponse.data;
+  
+      // Walidacja - sprawdzenie czy blob jest prawidłowym plikiem PDF
+      if (blob.type !== "application/pdf") {
+        const errorText = await blob.text();
+        console.error('Serwer zwrócił błąd zamiast PDF:', errorText);
+        showNotification("error", "Nie udało się pobrać faktury. Serwer zwrócił błąd.");
+        return;
+      }
+  
+      if (blob.size === 0) {
+        showNotification("error", "Nie udało się pobrać faktury. Otrzymano pusty plik.");
+        return;
+      }
+  
+      // Utwórz link do pobrania i automatycznie kliknij
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.style.display = 'none';
+      link.href = url;
+      link.download = `invoice_${invoiceId}.pdf`;
+  
+      document.body.appendChild(link);
+      link.click();
+  
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+  
+      showNotification("success", "Faktura została pobrana.");
+  
+    } catch (error) {
+      console.error('Błąd podczas pobierania faktury:', error);
+      showNotification("error", "Wystąpił błąd podczas pobierania faktury.");
     }
-
-    if (responsePdf.data.size === 0) {
-      console.error('Otrzymano pusty Blob');
-      return;
-    }
-
-    
-
-    const pdfUrl = URL.createObjectURL(responsePdf.data);
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = `invoice_${response.data.id}.pdf`;
-    link.click();
-    URL.revokeObjectURL(pdfUrl);
-    
-  }
+  };
+  
 
   const handleGuestCountChange = (roomId, e) => {
     const { value } = e.target;
