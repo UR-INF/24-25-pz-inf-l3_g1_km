@@ -188,7 +188,7 @@ app.db.seed=true
 Podczas startu aplikacji seeder automatycznie wypełni bazę przykładowymi danymi.
 
 4. (Opcjonalnie) Po zakończeniu procesu seedowania należy zmienić `app.db.seed` z powrotem na `false`, aby uniknąć ponownego seedowania przy kolejnych uruchomieniach:
-5. 
+
 ```
 app.db.seed=false
 ```
