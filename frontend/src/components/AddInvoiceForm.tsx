@@ -31,7 +31,7 @@ const AddInvoiceForm = ({ reservationId }) => {
       }).toString();
 
       await api.post(`/invoices/reservation/${reservationId}?${params}`);
-      navigate("/RecepcionistDashboard/Reservations");
+      navigate(-1);
       showNotification("success", "Faktura została dodana.");
     } catch (error) {
       console.error("Błąd podczas dodawania faktury:", error);
