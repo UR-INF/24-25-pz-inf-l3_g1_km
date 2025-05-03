@@ -132,14 +132,13 @@ const ReservationsTable = () => {
           <table className="table table-selectable card-table table-vcenter text-nowrap datatable">
             <thead>
               <tr>
-                <th className="w-1">ID Rezerwacji</th>
-                <th>Osoba Rezerwująca</th>
+                <th className="w-1">ID rezerwacji</th>
+                <th>Osoba rezerwująca</th>
                 <th>Status</th>
-                <th>Data Od</th>
-                <th>Data Do</th>
+                <th>Data od</th>
+                <th>Data do</th>
                 <th>Catering</th>
-                <th>Liczba Pokoi</th>
-                <th></th>
+                <th>Liczba pokoi</th>
                 <th></th>
               </tr>
             </thead>
@@ -185,7 +184,7 @@ const ReservationsTable = () => {
                   <td className="text-end">
                     <a
                       href="#"
-                      className="btn btn-primary"
+                      className="btn btn-primary me-2"
                       onClick={(e) => {
                         e.preventDefault();
                         handleShowReservation(res.id);
@@ -193,8 +192,7 @@ const ReservationsTable = () => {
                     >
                       Zobacz
                     </a>
-                  </td>
-                  <td>
+
                     <a
                       href="#"
                       className="btn btn-danger"
