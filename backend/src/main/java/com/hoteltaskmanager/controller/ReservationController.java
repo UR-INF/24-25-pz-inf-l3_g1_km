@@ -1,5 +1,6 @@
 package com.hoteltaskmanager.controller;
 
+import com.hoteltaskmanager.model.Invoice;
 import com.hoteltaskmanager.model.Reservation;
 import com.hoteltaskmanager.model.ReservationRoom;
 import com.hoteltaskmanager.model.ReservationStatus;
@@ -120,10 +121,12 @@ public class ReservationController {
         }
 
         Reservation reservation = reservationOpt.get();
-
-        // Jeśli rezerwacja ma fakturę, usuń fakturę
         if (reservation.getInvoice() != null) {
-            invoiceService.deleteInvoice(reservation.getInvoice().getId());
+            Invoice invoice = reservation.getInvoice();
+            reservation.setInvoice(null);
+            reservationRepository.save(reservation);
+
+            invoiceService.deleteInvoice(invoice.getId());
         }
 
         reservationRepository.deleteById(id);
