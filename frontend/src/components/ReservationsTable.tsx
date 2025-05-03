@@ -33,7 +33,9 @@ const ReservationsTable = () => {
   const handleDeleteFull = async (id) => {
     setShowDeleteModal(false);
     try {
+      const responseData = await api.get(`/invoices/reservation/${id}`);
       const response = await api.delete(`/reservations/${id}`);
+      await api.delete(`/invoices/${responseData.data.id}`);
       console.log("Rezerwacja została usunięta:", response.data);
       showNotification("success", "Rezerwacja została usunięta.");
       getReservations();

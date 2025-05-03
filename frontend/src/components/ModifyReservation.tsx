@@ -391,8 +391,8 @@ const ModifyReservation = ({ reservationId }) => {
               name="startDate"
               value={formData.startDate}
               onChange={handleChange}
-              disabled={!isEditable}
-              min={new Date().toISOString().split("T")[0]}
+              disabled={!isEditable || formData.status == "ACTIVE"}
+              min={(formData.status == "UPCOMING" ? new Date().toISOString().split("T")[0] : formData.startDate)}
             />
           </div>
           <div className="col-md">
@@ -593,7 +593,7 @@ const ModifyReservation = ({ reservationId }) => {
             value="ACTIVE"
             checked={formData.status === "ACTIVE"}
             onChange={handleChange}
-            disabled={!isEditable}
+            disabled={!isEditable ||  formData.startDate != new Date().toISOString().split("T")[0]}
           />
           <label className="form-check-label" htmlFor="ACTIVE">
             Aktywna
