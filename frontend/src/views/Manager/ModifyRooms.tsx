@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { api } from "../../services/api";
 import { useNotification } from "../../contexts/notification";
 
@@ -50,7 +50,7 @@ export default function ModifyRooms() {
     if (formData.bedCount <= 0) {
       return "Liczba łóżek musi być większa od zera.";
     }
-    if (formData.floor <= 0) {
+    if (formData.floor < 0) {
       return "Piętro nie może być mniejsze niż 0.";
     }
     if (formData.pricePerNight <= 0) {
@@ -73,11 +73,11 @@ export default function ModifyRooms() {
 
     try {
       await api.put(`/rooms/${id}`, formData);
-      showNotification("success", "Dane pokoju zostały zaktualizowane");
+      showNotification("success", "Dane pokoju zostały zaktualizowane.");
       setIsEditable(false);
     } catch (error) {
       console.error("Błąd aktualizacji:", error);
-      showNotification("error", "Wystąpił błąd przy aktualizacji pokoju");
+      showNotification("error", "Wystąpił błąd przy aktualizacji pokoju.");
     }
   };
 
@@ -92,40 +92,43 @@ export default function ModifyRooms() {
                 <h3 className="card-title mt-4">Informacje o pokoju</h3>
                 <div className="row g-3">
                   <div className="col-md">
-                    <div className="form-label">LICZBA ŁÓŻEK</div>
+                    <div className="form-label">Liczba łóżek</div>
                     <input
                       type="number"
                       className="form-control"
                       name="bedCount"
+                      min="1"
                       value={formData.bedCount}
                       onChange={handleChange}
                       disabled={!isEditable}
                     />
                   </div>
                   <div className="col-md">
-                    <div className="form-label">PIĘTRO</div>
-                    <input
-                      type="number"
-                      className="form-control"
-                      name="floor"
-                      value={formData.floor}
-                      onChange={handleChange}
-                      disabled={!isEditable}
-                    />
-                  </div>
-                  <div className="col-md">
-                    <div className="form-label">CENA ZA NOC</div>
+                    <div className="form-label">Cena za noc (PLN)</div>
                     <input
                       type="number"
                       className="form-control"
                       name="pricePerNight"
+                      min="1"
                       value={formData.pricePerNight}
                       onChange={handleChange}
                       disabled={!isEditable}
                     />
                   </div>
                   <div className="col-md">
-                    <div className="form-label">NUMER POKOJU</div>
+                    <div className="form-label">Piętro</div>
+                    <input
+                      type="number"
+                      className="form-control"
+                      name="floor"
+                      min="0"
+                      value={formData.floor}
+                      onChange={handleChange}
+                      disabled={!isEditable}
+                    />
+                  </div>
+                  <div className="col-md">
+                    <div className="form-label">Numer pokoju</div>
                     <input
                       type="text"
                       className="form-control"
@@ -149,8 +152,8 @@ export default function ModifyRooms() {
                     onChange={handleChange}
                     disabled={!isEditable}
                   />
-                  <label className="form-check-label" htmlFor="AVAILABLE">
-                    ZAJĘTY
+                  <label className="form-check-label" htmlFor="OCCUPIED">
+                    Zajęty
                   </label>
                 </div>
                 <div className="form-check">
@@ -164,8 +167,8 @@ export default function ModifyRooms() {
                     onChange={handleChange}
                     disabled={!isEditable}
                   />
-                  <label className="form-check-label" htmlFor="ACTIVE">
-                    DOSTĘPNY
+                  <label className="form-check-label" htmlFor="AVAILABLE">
+                    Dostępny
                   </label>
                 </div>
                 <div className="form-check">
@@ -180,30 +183,34 @@ export default function ModifyRooms() {
                     disabled={!isEditable}
                   />
                   <label className="form-check-label" htmlFor="OUT_OF_SERVICE">
-                    NIEDOSTĘPNY
+                    Niedostępny
                   </label>
                 </div>
-                {(isEditable && (
-                  <button type="submit" className="btn btn-primary">
-                    Zatwierdź zmiany
-                  </button>
-                )) || (
-                  <button
-                    type="button"
-                    className="btn btn-warning"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showNotification(
-                        "info",
-                        "Dane pokoju zostały odblokowane - możesz je teraz edytować.",
-                        5000,
-                      );
-                      setIsEditable(true);
-                    }}
-                  >
-                    Edytuj dane rezerwacji
-                  </button>
-                )}
+                <div className="card-footer bg-transparent mt-auto pb-0">
+                  <div className="btn-list justify-content-end">
+                    {(isEditable && (
+                      <button type="submit" className="btn btn-primary">
+                        Zatwierdź zmiany
+                      </button>
+                    )) || (
+                      <button
+                        type="button"
+                        className="btn btn-warning"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          showNotification(
+                            "info",
+                            "Dane pokoju zostały odblokowane - możesz je teraz edytować.",
+                            5000,
+                          );
+                          setIsEditable(true);
+                        }}
+                      >
+                        Edytuj dane pokoju
+                      </button>
+                    )}
+                  </div>
+                </div>
               </form>
             </div>
           </div>

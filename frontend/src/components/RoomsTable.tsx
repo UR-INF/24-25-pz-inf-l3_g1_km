@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useUser, RoleName } from "../contexts/user";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { useNotification } from "../contexts/notification";
 
 const RoomsTable = () => {
   const navigate = useNavigate();
@@ -15,14 +16,17 @@ const RoomsTable = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [iid, setId] = useState(1);
+  const { showNotification } = useNotification();
 
   const handleDeleteFull = async (roomId) => {
     setShowDeleteModal(false);
     try {
       await api.delete(`/rooms/${roomId}`);
       setRooms(rooms.filter((room) => room.id !== roomId));
+      showNotification("success", "Pokój został usunięty.");
     } catch (error) {
       console.error("Błąd przy usuwaniu pokoju:", error);
+      showNotification("error", "Nie udało się usunąć pokoju.");
     }
   };
 
@@ -94,7 +98,7 @@ const RoomsTable = () => {
                   value={resultsPerPage}
                   onChange={(e) => setResultsPerPage(Number(e.target.value))}
                   min={1}
-                  aria-label="Invoices count"
+                  aria-label="Liczba pokoi na stronie"
                 />
               </div>
               wyników
@@ -171,7 +175,6 @@ const RoomsTable = () => {
                         Edytuj
                       </a>
 
-                      {/* TODO: Potwierdzenie przy usunięciu w postaci modala */}
                       <a
                         href="#"
                         className="btn btn-danger"
@@ -255,7 +258,7 @@ const RoomsTable = () => {
         show={showDeleteModal}
         handleClose={() => setShowDeleteModal(false)}
         handleConfirm={() => handleDeleteFull(iid)}
-        message="Czy na pewno chcesz usunąć ten pokuj?"
+        message="Czy na pewno chcesz usunąć ten pokój?"
       />
     </div>
   );

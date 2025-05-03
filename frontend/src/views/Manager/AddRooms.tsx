@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 import { api } from "../../services/api";
 import { useNotification } from "../../contexts/notification";
 
 export default function AddRooms() {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const { showNotification } = useNotification();
   const [formData, setFormData] = useState({
-    bedCount: "",
-    floor: "",
-    pricePerNight: "",
+    bedCount: 1,
+    floor: 0,
+    pricePerNight: 1,
     roomNumber: "",
-    status: "",
+    status: "AVAILABLE",
   });
 
   const handleChange = (e) => {
@@ -33,7 +32,7 @@ export default function AddRooms() {
     if (formData.bedCount <= 0) {
       return "Liczba łóżek musi być większa od zera.";
     }
-    if (formData.floor <= 0) {
+    if (formData.floor < 0) {
       return "Piętro nie może być mniejsze niż 0.";
     }
     if (formData.pricePerNight <= 0) {
@@ -56,11 +55,11 @@ export default function AddRooms() {
 
     try {
       await api.post(`/rooms`, formData);
-      showNotification("success", "Pokuj został dodany.");
+      showNotification("success", "Pokój został dodany.");
       navigate("/ManagerDashboard/Rooms");
     } catch (error) {
       console.error("Błąd aktualizacji:", error);
-      showNotification("error", "Wystąpił błąd przy dodwaniu pokoju");
+      showNotification("error", "Wystąpił błąd przy dodwaniu pokoju.");
     }
   };
 
@@ -75,37 +74,40 @@ export default function AddRooms() {
                 <h3 className="card-title mt-4">Informacje o pokoju</h3>
                 <div className="row g-3">
                   <div className="col-md">
-                    <div className="form-label">LICZBA ŁÓŻEK</div>
+                    <div className="form-label">Liczba łóżek</div>
                     <input
                       type="number"
                       className="form-control"
                       name="bedCount"
+                      min="1"
                       value={formData.bedCount}
                       onChange={handleChange}
                     />
                   </div>
                   <div className="col-md">
-                    <div className="form-label">PIĘTRO</div>
+                    <div className="form-label">Cena za noc (PLN)</div>
                     <input
                       type="number"
                       className="form-control"
-                      name="floor"
-                      value={formData.floor}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="col-md">
-                    <div className="form-label">CENA ZA NOC</div>
-                    <input
-                      type="number"
-                      className="form-control"
+                      min="1"
                       name="pricePerNight"
                       value={formData.pricePerNight}
                       onChange={handleChange}
                     />
                   </div>
                   <div className="col-md">
-                    <div className="form-label">NUMER POKOJU</div>
+                    <div className="form-label">Piętro</div>
+                    <input
+                      type="number"
+                      className="form-control"
+                      min="0"
+                      name="floor"
+                      value={formData.floor}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-md">
+                    <div className="form-label">Numer pokoju</div>
                     <input
                       type="text"
                       className="form-control"
@@ -127,8 +129,8 @@ export default function AddRooms() {
                     checked={formData.status === "OCCUPIED"}
                     onChange={handleChange}
                   />
-                  <label className="form-check-label" htmlFor="AVAILABLE">
-                    ZAJĘTY
+                  <label className="form-check-label" htmlFor="OCCUPIED">
+                    Zajęty
                   </label>
                 </div>
                 <div className="form-check">
@@ -141,8 +143,8 @@ export default function AddRooms() {
                     checked={formData.status === "AVAILABLE"}
                     onChange={handleChange}
                   />
-                  <label className="form-check-label" htmlFor="ACTIVE">
-                    DOSTĘPNY
+                  <label className="form-check-label" htmlFor="AVAILABLE">
+                    Dostępny
                   </label>
                 </div>
                 <div className="form-check">
@@ -156,13 +158,17 @@ export default function AddRooms() {
                     onChange={handleChange}
                   />
                   <label className="form-check-label" htmlFor="OUT_OF_SERVICE">
-                    NIEDOSTĘPNY
+                    Niedostępny
                   </label>
                 </div>
 
-                <button type="submit" className="btn btn-primary">
-                  Dodaj pokuj
-                </button>
+                <div className="card-footer bg-transparent mt-auto pb-0">
+                  <div className="btn-list justify-content-end">
+                    <button type="submit" className="btn btn-primary">
+                      Dodaj pokój
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
           </div>
