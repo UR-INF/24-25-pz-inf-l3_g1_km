@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Kompleksowe testy jednostkowe dla {@link EmployeeController}.
+ * Testy jednostkowe dla {@link EmployeeController}.
  * <p>
  * Zakres testów:
  * <ul>
