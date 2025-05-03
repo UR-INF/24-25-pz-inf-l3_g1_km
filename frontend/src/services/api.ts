@@ -35,7 +35,7 @@ axiosInstance.interceptors.request.use((config) => {
 export const api = {
   /**
    * Wysyła żądanie GET.
-   * 
+   *
    * @param url - Ścieżka endpointu (np. "/invoices")
    * @param params - Parametry zapytania (opcjonalne, przekazywane jako query string)
    * @param config - Dodatkowa konfiguracja Axios (opcjonalna, np. responseType, headers)
@@ -46,7 +46,7 @@ export const api = {
 
   /**
    * Wysyła żądanie POST.
-   * 
+   *
    * @param url - Ścieżka endpointu (np. "/reservations")
    * @param data - Dane do przesłania (body requestu)
    * @param config - Dodatkowa konfiguracja Axios (opcjonalna, np. headers)
@@ -57,7 +57,7 @@ export const api = {
 
   /**
    * Wysyła żądanie PUT.
-   * 
+   *
    * @param url - Ścieżka endpointu (np. "/invoices/123")
    * @param data - Dane do aktualizacji (body requestu)
    * @param config - Dodatkowa konfiguracja Axios (opcjonalna, np. headers)
@@ -68,7 +68,7 @@ export const api = {
 
   /**
    * Wysyła żądanie DELETE.
-   * 
+   *
    * @param url - Ścieżka endpointu (np. "/invoices/123")
    * @param config - Dodatkowa konfiguracja Axios (opcjonalna, np. headers)
    * @returns Promise z odpowiedzią Axios
@@ -76,6 +76,5 @@ export const api = {
   delete: (url: string, config?: AxiosRequestConfig): Promise<AxiosResponse> =>
     axiosInstance.delete(url, config),
 };
-
 
 export { axiosInstance };

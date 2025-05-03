@@ -50,9 +50,7 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     }
 
     const payload = {
-      room: formData.roomId
-        ? rooms.find((room) => room.id.toString() === formData.roomId)
-        : null,
+      room: formData.roomId ? rooms.find((room) => room.id.toString() === formData.roomId) : null,
       requester: user,
       assignee: formData.assigneeId
         ? employees.find((emp) => emp.id.toString() === formData.assigneeId)

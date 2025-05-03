@@ -18,13 +18,12 @@ const RoomsTable = () => {
 
   const handleDeleteFull = async (roomId) => {
     setShowDeleteModal(false);
-      try {
-        await api.delete(`/rooms/${roomId}`);
-        setRooms(rooms.filter((room) => room.id !== roomId));
-      } catch (error) {
-        console.error("Błąd przy usuwaniu pokoju:", error);
-      }
-    
+    try {
+      await api.delete(`/rooms/${roomId}`);
+      setRooms(rooms.filter((room) => room.id !== roomId));
+    } catch (error) {
+      console.error("Błąd przy usuwaniu pokoju:", error);
+    }
   };
 
   const handleDelete = async (id) => {

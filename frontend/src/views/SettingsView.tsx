@@ -88,28 +88,27 @@ const SettingsView = () => {
       showNotification("error", "Podaj poprawny adres e-mail.");
       return;
     }
-  
+
     if (email.toLowerCase() === userEmail.toLowerCase()) {
       showNotification("error", "Podany adres e-mail jest taki sam jak aktualny.");
       return;
     }
-  
+
     try {
       const response = await api.put(`/employees/${userId}/email`, {
         email: email,
       });
-  
+
       if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        
+        localStorage.setItem("token", response.data.token);
+
         showNotification("success", "E-mail został zmieniony i sesja została odświeżona.");
       } else {
         showNotification("success", "E-mail został pomyślnie zaktualizowany.");
       }
-      
     } catch (err: any) {
       console.error("Błąd podczas zmiany e-maila:", err);
-  
+
       if (err.response?.status === 400) {
         showNotification("error", err.response.data || "Nieprawidłowy adres e-mail.");
       } else {

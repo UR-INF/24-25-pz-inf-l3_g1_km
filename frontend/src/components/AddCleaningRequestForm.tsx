@@ -57,9 +57,7 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       employee: formData.employeeId
         ? employees.find((emp) => emp.id.toString() === formData.employeeId)
         : null,
-      room: formData.roomId
-        ? rooms.find((room) => room.id.toString() === formData.roomId)
-        : null,
+      room: formData.roomId ? rooms.find((room) => room.id.toString() === formData.roomId) : null,
       requestDate: `${formData.requestDate}T${new Date().toTimeString().split(" ")[0]}`,
       completionDate: null,
       status: "PENDING",
