@@ -267,7 +267,14 @@ public class EmployeeController {
      */
     @GetMapping("/me")
     public ResponseEntity<Employee> getCurrentUser() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String email;
+        if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
+            email = userDetails.getUsername();
+        } else {
+            email = principal.toString();
+        }
 
         return employeeRepository.findByEmail(email)
                 .map(ResponseEntity::ok)
