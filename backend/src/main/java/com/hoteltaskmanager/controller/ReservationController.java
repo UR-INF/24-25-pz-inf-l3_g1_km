@@ -6,6 +6,7 @@ import com.hoteltaskmanager.model.ReservationStatus;
 import com.hoteltaskmanager.repository.ReservationRepository;
 import com.hoteltaskmanager.repository.ReservationRoomRepository;
 import com.hoteltaskmanager.service.RoomStatusManagerService;
+import com.hoteltaskmanager.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,18 +34,18 @@ public class ReservationController {
 
     private final ReservationRepository reservationRepository;
     private final ReservationRoomRepository reservationRoomRepository;
+    private final InvoiceService invoiceService;
+    private final RoomStatusManagerService roomStatusManagerService;
 
     public ReservationController(ReservationRepository reservationRepository,
-                                 ReservationRoomRepository reservationRoomRepository) {
+                                 ReservationRoomRepository reservationRoomRepository,
+                                 InvoiceService invoiceService,
+                                 RoomStatusManagerService roomStatusManagerService) {
         this.reservationRepository = reservationRepository;
         this.reservationRoomRepository = reservationRoomRepository;
+        this.invoiceService = invoiceService;
+        this.roomStatusManagerService = roomStatusManagerService;
     }
-
-    /**
-     * Serwis odpowiedzialny za aktualizację statusów pokoi na podstawie rezerwacji i zgłoszeń serwisowych.
-     */
-    @Autowired
-    private RoomStatusManagerService roomStatusManagerService;
 
     /**
      * GET /api/reservations
@@ -113,9 +114,18 @@ public class ReservationController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (!reservationRepository.existsById(id)) {
+        Optional<Reservation> reservationOpt = reservationRepository.findById(id);
+        if (reservationOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        Reservation reservation = reservationOpt.get();
+
+        // Jeśli rezerwacja ma fakturę, usuń fakturę
+        if (reservation.getInvoice() != null) {
+            invoiceService.deleteInvoice(reservation.getInvoice().getId());
+        }
+
         reservationRepository.deleteById(id);
         roomStatusManagerService.refreshRoomStatuses(); // Odśwież statusy pokoi po usunięciu rezerwacji
         return ResponseEntity.noContent().build();
