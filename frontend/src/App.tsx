@@ -21,6 +21,8 @@ import EmployeesView from "./views/Manager/EmployeesView";
 import { useUser } from "./contexts/user";
 import CreateNewEmployeeView from "./views/Manager/CreateNewEmployeeView";
 import ModifyEmployeeView from "./views/Manager/ModifyEmployeeView";
+import AddRooms from "./views/Manager/AddRooms";
+import ModifyRooms from "./views/Manager/ModifyRooms";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
@@ -52,8 +54,8 @@ const protectedRoutes = [
 
   // Trasy dla menedżera
   { path: "/ManagerDashboard/Rooms", element: <RoomsView /> },
-  // { path: "/ManagerDashboard/Rooms/NewRoom", element: <RoomsView /> },
-  // { path: "/ManagerDashboard/Rooms/RoomDetails", element: <RoomsView /> },
+  { path: "/ManagerDashboard/Rooms/NewRoom", element: <AddRooms /> },
+  { path: "/ManagerDashboard/Rooms/RoomDetails/:id", element: <ModifyRooms /> },
   { path: "/ManagerDashboard/Employees", element: <EmployeesView /> },
   { path: "/ManagerDashboard/Employees/Create", element: <CreateNewEmployeeView /> },
   { path: "/ManagerDashboard/Employees/Modify/:id", element: <ModifyEmployeeView /> },

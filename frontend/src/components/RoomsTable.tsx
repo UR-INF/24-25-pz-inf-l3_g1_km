@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../services/api";
 import { useUser, RoleName } from "../contexts/user";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 const RoomsTable = () => {
   const navigate = useNavigate();
@@ -12,20 +13,27 @@ const RoomsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [resultsPerPage, setResultsPerPage] = useState(5);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [iid, setId] = useState(1);
 
-  const handleDeleteRoom = async (roomId) => {
-    if (window.confirm("Czy na pewno chcesz usunąć ten pokój?")) {
+  const handleDeleteFull = async (roomId) => {
+    setShowDeleteModal(false);
       try {
         await api.delete(`/rooms/${roomId}`);
         setRooms(rooms.filter((room) => room.id !== roomId));
       } catch (error) {
         console.error("Błąd przy usuwaniu pokoju:", error);
       }
-    }
+    
+  };
+
+  const handleDelete = async (id) => {
+    setShowDeleteModal(true);
+    setId(id);
   };
 
   const handleShowRoom = (roomId) => {
-    navigate(`/rooms/${roomId}`);
+    navigate(`/ManagerDashboard/Rooms/RoomDetails/${roomId}`);
   };
 
   useEffect(() => {
@@ -170,7 +178,7 @@ const RoomsTable = () => {
                         className="btn btn-danger"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleDeleteRoom(room.id);
+                          handleDelete(room.id);
                         }}
                       >
                         Usuń
@@ -244,6 +252,12 @@ const RoomsTable = () => {
           </ul>
         </div>
       </div>
+      <DeleteConfirmationModal
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        handleConfirm={() => handleDeleteFull(iid)}
+        message="Czy na pewno chcesz usunąć ten pokuj?"
+      />
     </div>
   );
 };
