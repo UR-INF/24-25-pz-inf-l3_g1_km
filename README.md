@@ -30,7 +30,7 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 - System powinien być oparty na bazie danych, która pozwala na **szybki dostęp do informacji** o użytkownikach, zadaniach, zgłoszeniach i raportach.
 - Domyślnie aplikacja współpracuje z **MariaDB** jako główną relacyjną bazą danych.
 - Struktura bazy danych tworzona jest automatycznie przy pierwszym uruchomieniu dzięki mechanizmowi JPA/Hibernate.
-- **Przykładowe dane** mogą być opcjonalnie załadowane do bazy – zależnie od konfiguracji użytkownika (np. `app.db.seed=true` w `application.properties`).
+- **Przykładowe dane** mogą być opcjonalnie załadowane do bazy.
 
 ## Bezpieczeństwo i dostęp użytkowników
 
@@ -143,7 +143,55 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 ###### Diagram ERD
 ![Diagram ERD](uml/ERD.png)
 
-###### Skrypt do utworzenia struktury bazy danych
+###### Tworzenie struktury bazy danych
+
+Aplikacja wykorzystuje mechanizmy JPA oraz Hibernate do automatycznego tworzenia struktury bazy danych na podstawie modeli encji.
+
+Aby poprawnie utworzyć strukturę bazy danych, należy wykonać następujące kroki:
+
+1. Utworzyć pustą bazę danych o nazwie `hoteltaskmanager` (MariaDB).
+
+2. Skonfigurować połączenie do bazy danych w pliku `application.properties`, podając odpowiednie dane dostępowe:
+
+```
+spring.application.name=hoteltaskmanager
+
+spring.datasource.url=jdbc:mysql://localhost:3306/hoteltaskmanager?useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDBDialect
+```
+
+3. Uruchomić aplikację.
+
+Przy pierwszym uruchomieniu aplikacji mechanizm JPA automatycznie utworzy tabele w bazie danych na podstawie definicji encji w projekcie.
+
+###### Seedowanie przykładowych danych
+
+Aplikacja posiada wbudowany mechanizm seedowania danych testowych, który umożliwia szybkie wypełnienie bazy przykładowymi rekordami (takimi jak pracownicy, pokoje, rezerwacje).
+
+Aby włączyć seedowanie:
+
+1. Otworzyć plik `application.properties`.
+
+2. Zmienić wartość właściwości `app.db.seed` na `true`:
+
+```
+app.db.seed=true
+```
+
+3. Uruchomić aplikację.
+
+Podczas startu aplikacji seeder automatycznie wypełni bazę przykładowymi danymi.
+
+4. (Opcjonalnie) Po zakończeniu procesu seedowania należy zmienić `app.db.seed` z powrotem na `false`, aby uniknąć ponownego seedowania przy kolejnych uruchomieniach:
+5. 
+```
+app.db.seed=false
+```
 
 ###### Opis bazy danych
 Szczegółowy opis struktury bazy danych, zawierający informacje na temat tabel, relacji między nimi oraz atrybutów, znajduje się w pliku 📄 [Opis bazy danych](uml/Opis_bazy_danych.pdf).
