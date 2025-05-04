@@ -54,22 +54,28 @@ public class ReservationRoomController {
      * Dodaj pokój do rezerwacji
      */
     @PostMapping
-    public ResponseEntity<ReservationRoom> addRoom(@PathVariable Long reservationId,
-                                                   @RequestBody ReservationRoom requestReservationRoom) {
-        // Sprawdzamy, czy rezerwacja istnieje
-        Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
-        if (reservationOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Reservation reservation = reservationOpt.get();
-        requestReservationRoom.setReservation(reservation);
-        ReservationRoom savedReservationRoom = reservationRoomRepository.save(requestReservationRoom);
-        roomStatusManagerService.refreshRoomStatuses();
-
-        return ResponseEntity.ok(savedReservationRoom);
+public ResponseEntity<ReservationRoom> addRoom(@PathVariable Long reservationId,
+                                               @RequestBody ReservationRoom requestReservationRoom) {
+    Optional<Reservation> reservationOpt = reservationRepository.findById(reservationId);
+    if (reservationOpt.isEmpty()) {
+        return ResponseEntity.notFound().build();
     }
 
+    if (requestReservationRoom.getRoom() == null || requestReservationRoom.getRoom().getId() == null) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    if (requestReservationRoom.getGuestCount() <= 0) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    Reservation reservation = reservationOpt.get();
+    requestReservationRoom.setReservation(reservation);
+    ReservationRoom savedReservationRoom = reservationRoomRepository.save(requestReservationRoom);
+    roomStatusManagerService.refreshRoomStatuses();
+
+    return ResponseEntity.ok(savedReservationRoom);
+}
 
     /**
      * PUT /api/reservations/{reservationId}/rooms/{id}
@@ -80,20 +86,28 @@ public class ReservationRoomController {
                                                                 @PathVariable Long id,
                                                                 @RequestBody ReservationRoom updated) {
         Optional<ReservationRoom> optional = reservationRoomRepository.findById(id);
-        if (optional.isEmpty()) return ResponseEntity.notFound().build();
-
+        if (optional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+    
         ReservationRoom existing = optional.get();
         if (!existing.getReservation().getId().equals(reservationId)) {
             return ResponseEntity.badRequest().build(); // Rezerwacja nie pasuje
         }
-
+    
+        // Sprawdzamy, czy pokój jest poprawnie ustawiony
+        if (updated.getRoom() == null || updated.getRoom().getId() == null) {
+            return ResponseEntity.badRequest().build(); // Zwracamy 400, jeśli pokój jest null
+        }
+    
         existing.setRoom(updated.getRoom());
         existing.setGuestCount(updated.getGuestCount());
-
+    
         ReservationRoom saved = reservationRoomRepository.save(existing);
         roomStatusManagerService.refreshRoomStatuses();
         return ResponseEntity.ok(saved);
     }
+    
 
     /**
      * DELETE /api/reservations/{reservationId}/rooms/{id}
