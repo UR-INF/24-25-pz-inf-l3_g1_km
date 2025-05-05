@@ -31,7 +31,7 @@ const ReportsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const [filterReportType, setFilterReportType] = useState("ALL");
-  
+
   useEffect(() => {
     fetchReports();
   }, []);
@@ -51,14 +51,9 @@ const ReportsTable = () => {
   };
 
   const viewReport = (report: Report) => {
-    // Przekierowanie do strony podglądu raportu
     navigate(`/ManagerDashboard/ShowReport/${report.id}`);
   };
 
-  const downloadReport = (reportId: number) => {
-    // Open the PDF in a new window/tab
-    window.open(`/reports/saved/${reportId}`, '_blank');
-  };
 
   const handleResetFilters = () => {
     setSearch("");
@@ -67,17 +62,15 @@ const ReportsTable = () => {
     setCurrentPage(1);
   };
 
-  // Safe check for reports data
   const safeReports = Array.isArray(reports) ? reports : [];
 
   const filteredReports = safeReports
     .filter((report) => {
       if (!report) return false;
-      
-      // Search by report file name or employee name
+
       const reportFile = report.reportFile || "";
       const employeeName = `${report.createdBy?.firstName || ""} ${report.createdBy?.lastName || ""}`;
-      
+
       return (
         reportFile.toLowerCase().includes(search.toLowerCase()) ||
         employeeName.toLowerCase().includes(search.toLowerCase())
@@ -86,7 +79,7 @@ const ReportsTable = () => {
     .filter((report) => {
       if (!report) return false;
       if (filterReportType === "ALL") return true;
-      
+
       return report.reportType === filterReportType;
     });
 
@@ -113,21 +106,50 @@ const ReportsTable = () => {
     transition: "background-color 0.2s"
   };
 
+  const handleClickNewReport = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate("/ManagerDashboard/CreateReport");
+  };
+
+  const deleteReport = async (reportId: number) => {
+    if (window.confirm("Czy na pewno chcesz usunąć ten raport? Ta operacja jest nieodwracalna.")) {
+      try {
+        const response = await api.delete(`/reports/saved/${reportId}`);
+
+        if (response.data.success) {
+          showNotification("success", "Raport został pomyślnie usunięty");
+          fetchReports();
+        } else {
+          showNotification("error", response.data.message || "Wystąpił błąd podczas usuwania raportu");
+        }
+      } catch (error: any) {
+        console.error("Błąd podczas usuwania raportu:", error);
+        showNotification(
+          "error",
+          error.response?.data?.message || "Wystąpił błąd podczas usuwania raportu"
+        );
+      }
+    }
+  };
+
   return (
     <div className="card">
       <div className="card-header">
         <h3 className="card-title">Zapisane raporty</h3>
         <div className="card-actions">
-          <a href="/reports/pdf/staff" target="_blank" className="btn btn-outline-primary btn-sm">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={handleClickNewReport}
+          >
             <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M14 3v4a1 1 0 0 0 1 1h4" />
               <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
               <path d="M9 17h6" />
               <path d="M9 13h6" />
             </svg>
-            Nowy raport personelu
-          </a>
+            Nowy raport
+          </button>
         </div>
       </div>
 
@@ -208,8 +230,8 @@ const ReportsTable = () => {
             </thead>
             <tbody>
               {currentData.map((report) => (
-                <tr 
-                  key={report.id} 
+                <tr
+                  key={report.id}
                   style={tableRowStyle}
                   onClick={() => viewReport(report)}
                   className="hover-row"
@@ -242,34 +264,24 @@ const ReportsTable = () => {
                   <td className="text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="btn-list">
                       <button
-                        className="btn btn-sm btn-icon btn-secondary"
+                        className="btn btn-primary"
                         onClick={(e) => {
                           e.stopPropagation();
                           viewReport(report);
                         }}
                         title="Podgląd raportu"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M12 15l8.385 -8.415a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3z" />
-                          <path d="M16 5l3 3" />
-                          <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6" />
-                        </svg>
+                        Pokaż raport
                       </button>
                       <button
-                        className="btn btn-sm btn-icon btn-primary"
+                        className="btn btn-danger"
                         onClick={(e) => {
                           e.stopPropagation();
-                          downloadReport(report.id);
+                          deleteReport(report.id);
                         }}
-                        title="Pobierz raport"
+                        title="Usuń raport"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                          <path d="M7 11l5 5l5 -5" />
-                          <path d="M12 4l0 12" />
-                        </svg>
+                        Usuń raport
                       </button>
                     </div>
                   </td>
@@ -357,7 +369,7 @@ const ReportsTable = () => {
 // Formatowanie daty i czasu
 export const formatDateTime = (dateTimeString: string) => {
   if (!dateTimeString) return "-";
-  
+
   try {
     const date = new Date(dateTimeString);
     return new Intl.DateTimeFormat("pl-PL", {

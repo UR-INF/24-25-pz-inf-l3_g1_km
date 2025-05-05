@@ -4,14 +4,17 @@ import com.hoteltaskmanager.model.Report;
 import com.hoteltaskmanager.model.ReportType;
 import com.hoteltaskmanager.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,14 +123,12 @@ public class ReportController {
         return ResponseEntity.ok(financialService.generateFinancialReport(period, startDate, endDate));
     }
 
-    // Nowe endpointy PDF
-
     /**
      * Generuje kompletny raport PDF dotyczący pracowników, zawierający dane o wydajności personelu
      * i efektywności obsługi pokojów.
      */
     @GetMapping(value = "/pdf/staff", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getStaffReportPdf(
+    public ResponseEntity<Resource> getStaffReportPdf(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
@@ -142,25 +143,23 @@ public class ReportController {
         reportData.put("staffPerformance", staffPerformanceService.generateStaffPerformanceReport(startDate, endDate));
         reportData.put("housekeepingEfficiency", housekeepingService.generateHousekeepingEfficiencyReport(startDate, endDate));
 
-        // Use generateAndSaveStaffReport instead of generateStaffReport
         Report savedReport = pdfReportGeneratorService.generateAndSaveStaffReport(reportData, startDate, endDate);
 
-        // Get the saved report file
         byte[] reportBytes = reportStorageService.getReportFile(savedReport.getId());
-        ByteArrayInputStream pdfStream = new ByteArrayInputStream(reportBytes);
+        ByteArrayResource resource = new ByteArrayResource(reportBytes);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=staff-report.pdf");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=staff-report.pdf");
 
         return ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(pdfStream));
+                .body(resource);
     }
 
     @GetMapping(value = "/pdf/financial", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getFinancialReportPdf(
+    public ResponseEntity<Resource> getFinancialReportPdf(
             @RequestParam(required = false) String period,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -178,25 +177,23 @@ public class ReportController {
         Map<String, Object> reportData = new HashMap<>();
         reportData.put("financial", financialService.generateFinancialReport(period, startDate, endDate));
 
-        // Use generateAndSaveFinancialReport instead of generateFinancialReport
         Report savedReport = pdfReportGeneratorService.generateAndSaveFinancialReport(reportData, period, startDate, endDate);
 
-        // Get the saved report file
         byte[] reportBytes = reportStorageService.getReportFile(savedReport.getId());
-        ByteArrayInputStream pdfStream = new ByteArrayInputStream(reportBytes);
+        ByteArrayResource resource = new ByteArrayResource(reportBytes);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=financial-report.pdf");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=financial-report.pdf");
 
         return ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(pdfStream));
+                .body(resource);
     }
 
     @GetMapping(value = "/pdf/rooms", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getRoomsReportPdf(
+    public ResponseEntity<Resource> getRoomsReportPdf(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
@@ -212,25 +209,23 @@ public class ReportController {
         reportData.put("maintenanceIssues", maintenanceIssuesService.generateMaintenanceIssuesReport(startDate, endDate));
         reportData.put("reservations", reservationService.generateReservationManagementReport(startDate, endDate));
 
-        // Use generateAndSaveRoomsReport instead of generateRoomsReport
         Report savedReport = pdfReportGeneratorService.generateAndSaveRoomsReport(reportData, startDate, endDate);
 
-        // Get the saved report file
         byte[] reportBytes = reportStorageService.getReportFile(savedReport.getId());
-        ByteArrayInputStream pdfStream = new ByteArrayInputStream(reportBytes);
+        ByteArrayResource resource = new ByteArrayResource(reportBytes);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=rooms-report.pdf");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=rooms-report.pdf");
 
         return ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(pdfStream));
+                .body(resource);
     }
 
     @GetMapping(value = "/pdf/complete", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<InputStreamResource> getCompleteReportPdf(
+    public ResponseEntity<Resource> getCompleteReportPdf(
             @RequestParam(required = false) String period,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -253,38 +248,109 @@ public class ReportController {
         reportData.put("reservations", reservationService.generateReservationManagementReport(startDate, endDate));
         reportData.put("financial", financialService.generateFinancialReport(period, startDate, endDate));
 
-        // Use generateAndSaveCompleteReport instead of generateCompleteReport
         Report savedReport = pdfReportGeneratorService.generateAndSaveCompleteReport(reportData, period, startDate, endDate);
 
-        // Get the saved report file
         byte[] reportBytes = reportStorageService.getReportFile(savedReport.getId());
-        ByteArrayInputStream pdfStream = new ByteArrayInputStream(reportBytes);
+        ByteArrayResource resource = new ByteArrayResource(reportBytes);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=hotel-complete-report.pdf");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=hotel-complete-report.pdf");
 
         return ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(new InputStreamResource(pdfStream));
+                .body(resource);
     }
 
     /**
      * Pobiera zapisany raport z bazy danych.
      */
     @GetMapping(value = "/saved/{reportId}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getSavedReport(@PathVariable Long reportId) {
-        byte[] reportData = reportStorageService.getReportFile(reportId);
+    public ResponseEntity<Resource> getSavedReport(@PathVariable Long reportId) {
+        try {
+            byte[] reportData = reportStorageService.getReportFile(reportId);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "inline; filename=report-" + reportId + ".pdf");
+            if (reportData == null || reportData.length == 0) {
+                System.out.println("Brak danych dla raportu ID: " + reportId);
+                return ResponseEntity.notFound().build();
+            }
 
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(reportData);
+            System.out.println("Odczytano " + reportData.length + " bajtów dla raportu ID: " + reportId);
+
+            // Sprawdź nagłówek PDF
+            if (reportData.length >= 5) {
+                String pdfHeader = new String(reportData, 0, 5, "ASCII");
+                System.out.println("Nagłówek pliku: " + pdfHeader);
+            }
+
+            ByteArrayResource resource = new ByteArrayResource(reportData);
+
+            // ContentDisposition.builder() dla większej kontroli
+            ContentDisposition contentDisposition = ContentDisposition.builder("inline")
+                    .filename("report-" + reportId + ".pdf")
+                    .build();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentLength(reportData.length);
+            headers.setContentDisposition(contentDisposition);
+
+            // Dodajemy CORS nagłówki, jeśli aplikacja działa w środowisku cross-origin
+            headers.add("Access-Control-Allow-Origin", "*");
+            headers.add("Access-Control-Expose-Headers", "Content-Disposition, Content-Type, Content-Length");
+
+            return ResponseEntity
+                    .ok()
+                    .headers(headers)
+                    .body(resource);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Usuwanie raportu z bazy danych i systemu plików.
+     *
+     * @param reportId Identyfikator raportu do usunięcia
+     * @return ResponseEntity zawierający wynik operacji usuwania
+     */
+    @DeleteMapping("/saved/{reportId}")
+    public ResponseEntity<?> deleteReport(@PathVariable Long reportId) {
+        try {
+            Report report = reportStorageService.getReportRepository()
+                    .findById(reportId)
+                    .orElseThrow(() -> new RuntimeException("Raport o ID " + reportId + " nie istnieje"));
+
+            String fileName = report.getReportFile();
+
+            Path filePath = Paths.get(reportStorageService.getReportsStorageLocation()).resolve(fileName);
+
+            boolean fileDeleted = Files.deleteIfExists(filePath);
+
+            if (!fileDeleted) {
+                System.out.println("Plik nie istnieje lub nie mógł zostać usunięty: " + filePath);
+            }
+
+            reportStorageService.getReportRepository().delete(report);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Raport został pomyślnie usunięty",
+                    "reportId", reportId
+            ));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "success", false,
+                            "message", "Błąd podczas usuwania raportu: " + e.getMessage(),
+                            "reportId", reportId
+                    ));
+        }
     }
 
     /**

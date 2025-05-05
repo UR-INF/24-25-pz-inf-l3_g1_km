@@ -85,7 +85,7 @@ const StaffPerformanceTable = () => {
           const nameParts = (employee.employee_name || "").split(" ");
           const firstName = nameParts[0] || "";
           const lastName = nameParts.slice(1).join(" ") || "";
-          
+
           return {
             // Przekształcenie z snake_case na camelCase
             employeeId: employee.employee_id,
@@ -97,7 +97,7 @@ const StaffPerformanceTable = () => {
             completed: employee.completed || 0,
             successRate: employee.success_rate || 0,
             avgTimeToComplete: employee.avg_hours_to_complete || '-',
-            
+
             // Dodatkowe dane dla interfejsu Employee
             id: employee.employee_id,
             firstName: firstName,
@@ -284,25 +284,32 @@ const StaffPerformanceTable = () => {
               />
             </div>
 
-            <select
-              className="form-select form-select-sm"
-              style={{ width: "170px" }}
-              value={filterTaskType}
-              onChange={(e) => setFilterTaskType(e.target.value)}
-            >
-              <option value="ALL">Wszystkie zadania</option>
-              <option value="HOUSEKEEPING">Tylko sprzątanie</option>
-              <option value="MAINTENANCE">Tylko konserwacja</option>
-            </select>
+            <div>
+              <label className="form-label small text-muted mb-1">Typ zadania</label>
+              <select
+                className="form-select form-select-sm"
+                style={{ width: "170px" }}
+                value={filterTaskType}
+                onChange={(e) => setFilterTaskType(e.target.value)}
+              >
+                <option value="ALL">Wszystkie zadania</option>
+                <option value="HOUSEKEEPING">Tylko sprzątanie</option>
+                <option value="MAINTENANCE">Tylko konserwacja</option>
+              </select>
+            </div>
 
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              style={{ width: "180px" }}
-              placeholder="Szukaj pracownika..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div>
+              <label className="form-label small text-muted mb-1">Szukaj pracownika</label>
+              <input
+                type="text"
+                className="form-control form-control-sm"
+                style={{ width: "180px" }}
+                placeholder="Imię Nazwisko..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
 
             <button className="btn btn-outline-secondary btn-sm" onClick={handleResetFilters}>
               Resetuj
@@ -346,7 +353,7 @@ const StaffPerformanceTable = () => {
               {currentData.map((employee, index) => {
                 // Bezpieczne uzyskiwanie wartości wskaźnika sukcesu
                 const successRate = typeof employee.successRate === 'number' ? employee.successRate : 0;
-                
+
                 return (
                   <tr key={employee.employeeId || index}>
                     <td>

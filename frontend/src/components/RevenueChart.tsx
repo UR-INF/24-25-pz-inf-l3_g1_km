@@ -76,7 +76,6 @@ const RevenueChart = () => {
       setLoading(true);
       setError(null);
       
-      // Tworzenie parametrów do zapytania
       const params = new URLSearchParams();
       params.append("period", period);
       params.append("startDate", dateRange.startDate);
@@ -96,11 +95,9 @@ const RevenueChart = () => {
       
       const revenue = res.data.revenueByPeriod || [];
 
-      // Przygotuj dane do wykresu
       const labels = revenue.map(r => formatPeriodLabel(r.period, period));
       const values = revenue.map(r => Number(r.total_revenue) || 0);
       
-      // Oblicz procent zmiany między ostatnim a przedostatnim okresem
       if (values.length >= 2) {
         const lastValue = values[values.length - 1] || 0;
         const prevValue = values[values.length - 2] || 1; // Unikaj dzielenia przez 0
@@ -130,7 +127,6 @@ const RevenueChart = () => {
     new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(value);
 
   const formatPeriodLabel = (periodValue, periodType) => {
-    // Format the period label based on the type (week, month, quarter, day)
     if (!periodValue) return "";
     
     if (periodValue.includes('-W')) {
@@ -313,15 +309,35 @@ const RevenueChart = () => {
                       },
                     },
                     tooltip: { 
+                      enabled: true,
                       theme: "light",
                       x: {
-                        show: true,
+                        show: true
                       },
                       y: {
                         formatter: (value) => formatCurrency(value)
                       },
                       marker: {
-                        show: true,
+                        show: true
+                      },
+                      custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+                        const value = series[seriesIndex][dataPointIndex];
+                        const label = w.globals.labels[dataPointIndex];
+                        
+                        return `
+                          <div class="apexcharts-tooltip-box" 
+                               style="background-color: #f1f5f9; color: #333; border-radius: 3px; padding: 8px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                            <div class="apexcharts-tooltip-title" 
+                                 style="font-weight: 500; color: #64748b; font-size: 13px; margin-bottom: 5px;">
+                              ${label}
+                            </div>
+                            <div class="apexcharts-tooltip-value" style="display: flex; align-items: center;">
+                              <span style="color: #206bc4; margin-right: 5px;">●</span>
+                              <span style="font-weight: 500; color: #64748b; margin-right: 5px;">Przychód:</span>
+                              <span style="font-weight: 600; color: #333;">${formatCurrency(value)}</span>
+                            </div>
+                          </div>
+                        `;
                       }
                     },
                     colors: ["#206bc4"],

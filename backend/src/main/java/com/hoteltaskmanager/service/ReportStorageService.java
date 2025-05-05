@@ -57,7 +57,6 @@ public class ReportStorageService {
      */
     public Report saveReport(ByteArrayInputStream pdfData, ReportType reportType, String reportPrefix) {
         try {
-            // Próba pobrania zalogowanego użytkownika
             Employee currentEmployee = null;
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,10 +67,8 @@ public class ReportStorageService {
                     if (principal instanceof Employee) {
                         currentEmployee = (Employee) principal;
                     }
-                    // Jeśli principal to String (email), szukaj pracownika w bazie danych
                     else if (principal instanceof String) {
                         String email = (String) principal;
-                        // Potrzebujemy dostępu do EmployeeRepository - dodaj jako pole klasy i autowired
                         Optional<Employee> employeeOpt = employeeRepository.findByEmail(email);
                         if (employeeOpt.isPresent()) {
                             currentEmployee = employeeOpt.get();
@@ -93,7 +90,6 @@ public class ReportStorageService {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String filename = reportPrefix + "_" + timestamp + "_" + UUID.randomUUID().toString().substring(0, 8) + ".pdf";
 
-            // Utwórz ścieżkę do pliku
             Path targetLocation = Paths.get(reportsStorageLocation).resolve(filename);
 
             // Zapisz plik na dysku
@@ -101,7 +97,6 @@ public class ReportStorageService {
             pdfData.read(buffer);
             Files.write(targetLocation, buffer);
 
-            // Utwórz i zapisz wpis w bazie danych
             Report report = new Report();
             report.setCreatedAt(LocalDateTime.now());
             report.setReportFile(filename);
@@ -126,10 +121,37 @@ public class ReportStorageService {
 
         try {
             Path filePath = Paths.get(reportsStorageLocation).resolve(report.getReportFile());
-            return Files.readAllBytes(filePath);
+
+            if (!Files.exists(filePath)) {
+                throw new RuntimeException("Plik raportu nie istnieje na dysku: " + filePath);
+            }
+
+            //System.out.println("Odczytywanie pliku raportu: " + filePath);
+
+            byte[] fileData = Files.readAllBytes(filePath);
+
+            //System.out.println("Odczytano " + fileData.length + " bajtów z pliku raportu " + reportId);
+
+            if (fileData.length >= 5) {
+                String pdfHeader = new String(fileData, 0, 5, "ASCII");
+                if (!pdfHeader.equals("%PDF-")) {
+                    System.out.println("Ostrzeżenie: Dane pliku nie zaczynają się od sygnatury PDF (%PDF-)");
+                }
+            }
+
+            return fileData;
         } catch (IOException ex) {
-            throw new RuntimeException("Nie można odczytać pliku raportu", ex);
+            throw new RuntimeException("Nie można odczytać pliku raportu: " + ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * Zwraca ścieżkę do lokalizacji przechowywania raportów.
+     *
+     * @return Ścieżka do katalogu z raportami
+     */
+    public String getReportsStorageLocation() {
+        return reportsStorageLocation;
     }
 
     /**

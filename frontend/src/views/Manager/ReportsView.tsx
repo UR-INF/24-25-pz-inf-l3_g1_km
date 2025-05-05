@@ -12,7 +12,7 @@ import ReportsTable from "../../components/ReportsTable";
 type TabType = "employees" | "cleaning" | "maintenance" | "finance" | "report-files";
 
 const ReportsView: React.FC = () => {
-  // Stan przechowujący aktualnie wybraną zakładkę
+
   const [activeTab, setActiveTab] = useState<TabType>("employees");
 
   // Funkcja obsługująca zmianę zakładki

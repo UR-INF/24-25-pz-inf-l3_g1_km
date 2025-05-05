@@ -843,10 +843,9 @@ public class PdfReportGeneratorService {
             if (tasksByEmployee != null && !tasksByEmployee.isEmpty()) {
                 addSectionTitle(document, "1.1. Top 5 pracowników według liczby zadań");
 
-                // Sortujemy i bierzemy top 5
                 tasksByEmployee.sort((a, b) -> {
-                    Integer totalA = (Integer) a.get("total_tasks");
-                    Integer totalB = (Integer) b.get("total_tasks");
+                    Long totalA = Long.valueOf(a.get("total_tasks").toString());
+                    Long totalB = Long.valueOf(b.get("total_tasks").toString());
                     return totalB.compareTo(totalA);
                 });
 
@@ -1055,7 +1054,6 @@ public class PdfReportGeneratorService {
             }
 
             try {
-                // Zakładamy, że data ma format ISO (yyyy-MM-dd) lub zawiera timestamp
                 if (dateString.contains("T")) {
                     // Format z timestampem
                     LocalDate date = LocalDate.parse(dateString.split("T")[0]);
@@ -1066,7 +1064,7 @@ public class PdfReportGeneratorService {
                     return new Phrase(date.format(DATE_FORMATTER), cellFont);
                 }
             } catch (Exception e) {
-                return new Phrase(dateString, cellFont); // W razie błędu zwracamy oryginalny string
+                return new Phrase(dateString, cellFont);
             }
         } catch (Exception e) {
             throw new DocumentException("Błąd podczas formatowania daty", e);
