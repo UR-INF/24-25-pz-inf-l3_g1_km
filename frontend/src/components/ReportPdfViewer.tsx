@@ -28,7 +28,6 @@ const ReportPdfViewer = () => {
 
       console.log(`Pobieranie raportu o ID: ${reportId}`);
 
-      // Bezpośrednie pobranie danych PDF z API z wyraźnymi nagłówkami
       const response = await api.get(`/reports/saved/${reportId}`, {}, {
         responseType: "blob",
         headers: {
@@ -48,7 +47,6 @@ const ReportPdfViewer = () => {
       const blob = response.data;
       console.log(`Otrzymany blob: typ=${blob.type}, rozmiar=${blob.size} bajtów`);
 
-      // Jeśli typ blob nie jest określony lub jest niepoprawny, tworzymy nowy blob z poprawnym typem
       let pdfBlob = blob;
       if (!blob.type || blob.type !== 'application/pdf') {
         console.log("Tworzymy nowy blob z poprawnym typem MIME...");
@@ -56,7 +54,6 @@ const ReportPdfViewer = () => {
         console.log(`Nowy blob: typ=${pdfBlob.type}, rozmiar=${pdfBlob.size} bajtów`);
       }
 
-      // Tworzymy URL dla blob
       const url = URL.createObjectURL(pdfBlob);
       console.log("Utworzono URL dla blob:", url);
 
@@ -71,7 +68,6 @@ const ReportPdfViewer = () => {
     }
   };
 
-  // Uwalniamy URL przy odmontowaniu komponentu
   useEffect(() => {
     return () => {
       if (pdfUrl) {
@@ -79,34 +75,6 @@ const ReportPdfViewer = () => {
       }
     };
   }, [pdfUrl]);
-
-  const handleGoBack = () => {
-    navigate("/ManagerDashboard/Reports");
-  };
-
-  const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, 2.5));
-  };
-
-  const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 0.5));
-  };
-
-  const resetZoom = () => {
-    setScale(1);
-  };
-
-  // Funkcja do pobrania PDF
-  const downloadPdf = () => {
-    if (pdfUrl) {
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = `raport-${id}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
 
   return (
     <div className="page-wrapper">
