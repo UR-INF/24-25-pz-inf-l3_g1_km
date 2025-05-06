@@ -34,19 +34,22 @@ const AddReservationForm = () => {
 
   const getRooms = async () => {
     try {
-      const response = await api.get("/rooms");
-      const availableRooms = response.data.filter((room) => room.status === "AVAILABLE");
-      setRooms(availableRooms);
+      
+      if (!formData.startDate || !formData.endDate) {
+        return;
+      }
+      const response = await api.get(`/rooms/rooms/available?from=${formData.startDate}&to=${formData.endDate}`);
+      setRooms(response.data);
     } catch (error) {
-      console.error("Błąd podczas dodawania rezerwacji:", error);
+      showNotification("error", "Błąd podczas pobierania dostępnych pokoi:");
     }
   };
+  
 
   useEffect(() => {
     getRooms();
-  }, []);
+  }, [formData.startDate,formData.endDate]);
 
-  // Filtrowanie pokoi na podstawie wyszukiwanego tekstu i liczby łóżek
   const filteredRooms = rooms.filter((room) => {
     const matchesSearch = room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesBeds = bedFilter === "all" || room.bedCount === parseInt(bedFilter);
@@ -82,7 +85,7 @@ const AddReservationForm = () => {
       }));
       setRoomGuests((prevGuests) => ({
         ...prevGuests,
-        [roomId]: checked ? 1 : undefined, // domyślnie 1 osoba, jeśli pokój jest zaznaczony
+        [roomId]: checked ? 1 : undefined,
       }));
     } else {
       let newValue = type === "checkbox" ? checked : value;
@@ -289,20 +292,6 @@ const AddReservationForm = () => {
             onChange={handleSearchChange}
           />
         </div>
-
-        {/* <div className="form-group mb-3">
-            <div className="form-label">Ilość osób</div>
-            <input
-              type="number"
-              className="form-control"
-              name="counterPolple"
-              value={formData.counterPolple}
-              onChange={handleChange}
-              min={1}
-              required
-            />
-          </div> */}
-
         <div className="form-group mb-3">
           <label className="form-label">Liczba łóżek</label>
           <select className="form-select" value={bedFilter} onChange={handleBedFilterChange}>
@@ -315,7 +304,13 @@ const AddReservationForm = () => {
 
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredRooms.length > 0 ? (
-            filteredRooms.map((room) => (
+            [...filteredRooms]
+            .sort((a, b) => {
+              const isASelected = formData.reservationRooms.some((r) => r.room.id === a.id);
+              const isBSelected = formData.reservationRooms.some((r) => r.room.id === b.id);
+              return isASelected === isBSelected ? 0 : isASelected ? -1 : 1;
+            })
+            .map((room) => (
               <div key={room.id} className="form-fieldset d-flex flex-column gap-2">
                 <div className="d-flex gap-2">
                   <input
@@ -325,6 +320,7 @@ const AddReservationForm = () => {
                     name="rooms"
                     value={room.id}
                     onChange={handleChange}
+                    checked={formData.reservationRooms.some((r) => r.room.id === room.id)}
                   />
                   <label className="form-check-label" htmlFor={`room${room.id}`}>
                     Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek -{" "}
@@ -449,9 +445,6 @@ const AddReservationForm = () => {
         <h3 className="card-title">{kwota} PLN</h3>
         <div className="card-footer bg-transparent mt-auto">
           <div className="btn-list justify-content-end">
-            {/* <a href="#" className="btn btn-1">
-              Anuluj
-            </a> */}
             <button type="submit" className="btn btn-primary">
               Zatwierdż i dodaj rezerwację
             </button>

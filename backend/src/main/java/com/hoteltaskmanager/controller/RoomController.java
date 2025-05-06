@@ -6,6 +6,7 @@ import com.hoteltaskmanager.repository.RoomRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
  * Dostępne endpointy:
  *
  * GET    /api/rooms                   - Pobierz wszystkie pokoje
+ * GET    /api/rooms/rooms/available   - Pobierz pokoje dostępne w danym okresie czasu
  * GET    /api/rooms/{id}              - Pobierz pokój po ID
  * POST   /api/rooms                   - Dodaj nowy pokój
  * PUT    /api/rooms/{id}              - Zaktualizuj dane pokoju
@@ -40,6 +42,24 @@ public class RoomController {
     @GetMapping
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
+    }
+
+    /**
+     * GET /api/rooms/rooms/available
+     * Pobierz wszystkie pokoje
+     */
+    @GetMapping("/rooms/available")
+    public ResponseEntity<List<Room>> getAvailableRooms(@RequestParam("from") String from, @RequestParam("to") String to) {
+
+        LocalDate startDate = LocalDate.parse(from);
+        LocalDate endDate = LocalDate.parse(to);
+
+        if (startDate.isAfter(endDate)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<Room> availableRooms = roomRepository.findAvailableRoomsBetweenDates(startDate, endDate);
+        return ResponseEntity.ok(availableRooms);
     }
 
     /**
@@ -119,4 +139,8 @@ public class RoomController {
         boolean exists = roomRepository.existsByRoomNumber(number);
         return ResponseEntity.ok(exists);
     }
+
+
+
+
 }
