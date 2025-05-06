@@ -240,7 +240,7 @@ class RoomStatusReportServiceTest {
         assertNotNull(maintenanceData);
         assertEquals(2, maintenanceData.size());
 
-        Map<String, Object> request1 = maintenanceData.getFirst();
+        Map<String, Object> request1 = maintenanceData.get(0);
         assertEquals(1, request1.get("room_id"));
         assertEquals("101", request1.get("room_number"));
         assertEquals("Zepsuty kran", request1.get("maintenance_issue"));
@@ -279,7 +279,7 @@ class RoomStatusReportServiceTest {
         assertNotNull(revenueData);
         assertEquals(2, revenueData.size());
 
-        Map<String, Object> room1 = revenueData.getFirst();
+        Map<String, Object> room1 = revenueData.get(0);
         assertEquals(3, room1.get("room_id"));
         assertEquals("201", room1.get("room_number"));
         assertEquals(2, room1.get("bed_count"));
