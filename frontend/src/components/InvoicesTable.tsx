@@ -22,7 +22,7 @@ const InvoicesTable = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [loadingPdf, setLoadingPdf] = useState(false);
@@ -85,7 +85,7 @@ const InvoicesTable = () => {
       setLoadingPdf(false);
     }
   };
-  
+
   const handleCloseModal = () => {
     if (pdfUrl) {
       URL.revokeObjectURL(pdfUrl);
@@ -112,7 +112,7 @@ const InvoicesTable = () => {
 
   const handleConfirmDelete = async () => {
     if (invoiceToDelete === null) return;
-    
+
     try {
       const response = await api.delete(`/invoices/${invoiceToDelete}`);
 
@@ -126,7 +126,7 @@ const InvoicesTable = () => {
       console.error("Błąd podczas usuwania faktury:", error);
       showNotification(
         "error",
-        error.response?.data?.message || "Wystąpił błąd podczas usuwania faktury"
+        error.response?.data?.message || "Wystąpił błąd podczas usuwania faktury",
       );
     } finally {
       handleCloseDeleteModal();
@@ -141,18 +141,17 @@ const InvoicesTable = () => {
 
   const safeInvoices = Array.isArray(invoices) ? invoices : [];
 
-  const filteredInvoices = safeInvoices
-    .filter((invoice) => {
-      if (!invoice) return false;
+  const filteredInvoices = safeInvoices.filter((invoice) => {
+    if (!invoice) return false;
 
-      const pdfFile = invoice.pdfFile || "";
-      const companyDetails = `${invoice.companyName || ""} ${invoice.companyNip || ""}`;
+    const pdfFile = invoice.pdfFile || "";
+    const companyDetails = `${invoice.companyName || ""} ${invoice.companyNip || ""}`;
 
-      return (
-        pdfFile.toLowerCase().includes(search.toLowerCase()) ||
-        companyDetails.toLowerCase().includes(search.toLowerCase())
-      );
-    });
+    return (
+      pdfFile.toLowerCase().includes(search.toLowerCase()) ||
+      companyDetails.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   const totalPages = Math.max(1, Math.ceil(filteredInvoices.length / itemsPerPage));
   const currentData = filteredInvoices.slice(
@@ -179,15 +178,15 @@ const InvoicesTable = () => {
 
   const getInvoiceNameToDelete = () => {
     if (invoiceToDelete === null) return "";
-    const invoice = safeInvoices.find(inv => inv.id === invoiceToDelete);
-    return invoice ? (invoice.pdfFile.split('/').pop() || `faktura-${invoice.id}.pdf`) : "";
+    const invoice = safeInvoices.find((inv) => inv.id === invoiceToDelete);
+    return invoice ? invoice.pdfFile.split("/").pop() || `faktura-${invoice.id}.pdf` : "";
   };
 
   return (
     <div className="card">
       <div className="card-header">
         <h3 className="card-title">Faktury</h3>
-        <div className="card-actions">
+        {/* <div className="card-actions">
           <button
             className="btn btn-outline-primary btn-sm"
             onClick={handleClickNewInvoice}
@@ -201,7 +200,7 @@ const InvoicesTable = () => {
             </svg>
             Nowa faktura
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="card-body border-bottom py-3">
@@ -251,9 +250,7 @@ const InvoicesTable = () => {
         <div className="card-body">
           <div className="text-center my-5">
             <div className="h3">Brak faktur</div>
-            <p className="text-muted">
-              Nie znaleziono żadnych faktur dla wybranych kryteriów.
-            </p>
+            <p className="text-muted">Nie znaleziono żadnych faktur dla wybranych kryteriów.</p>
           </div>
         </div>
       ) : (
@@ -272,7 +269,7 @@ const InvoicesTable = () => {
             <tbody>
               {currentData.map((invoice) => (
                 <tr key={invoice.id}>
-                  <td>{invoice.pdfFile.split('/').pop() || `faktura-${invoice.id}.pdf`}</td>
+                  <td>{invoice.pdfFile.split("/").pop() || `faktura-${invoice.id}.pdf`}</td>
                   <td>{formatDate(invoice.issueDate)}</td>
                   <td>{invoice.companyName}</td>
                   <td>{invoice.companyNip}</td>
@@ -288,7 +285,18 @@ const InvoicesTable = () => {
                           "Ładowanie faktury..."
                         ) : (
                           <>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon me-1" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="icon me-1"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              fill="none"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                               <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
                               <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
@@ -301,7 +309,18 @@ const InvoicesTable = () => {
                         className="btn btn-danger"
                         onClick={() => handleDeleteClick(invoice.id)}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="icon me-1" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon me-1"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                           <path d="M4 7l16 0" />
                           <path d="M10 11l0 6" />
@@ -390,7 +409,7 @@ const InvoicesTable = () => {
           </ul>
         )}
       </div>
-      
+
       <Modal
         show={showModal}
         onHide={handleCloseModal}
@@ -417,7 +436,7 @@ const InvoicesTable = () => {
           </div>
         </Modal.Body>
       </Modal>
-      
+
       <DeleteConfirmationModal
         show={showDeleteModal}
         handleClose={handleCloseDeleteModal}
