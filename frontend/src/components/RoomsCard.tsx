@@ -38,7 +38,7 @@ const RoomsCard = () => {
             <div className="subheader">Zajęte pokoje</div>
           </div>
           <div className="h1 mb-3">{occupiedCount}</div>
-          <div className="d-flex mb-2">
+          <div className="d-flex">
             <div>
               <span className="text-muted">Dostepne pokoje</span>
             </div>

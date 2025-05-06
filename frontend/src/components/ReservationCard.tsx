@@ -96,7 +96,7 @@ const ReservationCard = () => {
             </div>
           </div>
           <div className="h1 mb-3">{reservationsCount}</div>
-          <div className="d-flex mb-2">
+          <div className="d-flex">
             <div>
               <span className="text-muted">Różnica</span>
             </div>
