@@ -135,7 +135,6 @@ const ModifyReservation = ({ reservationId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditable(false);
 
     const errorMessage = validateForm();
     if (errorMessage) {
