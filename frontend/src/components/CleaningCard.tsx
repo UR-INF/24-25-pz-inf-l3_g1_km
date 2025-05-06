@@ -32,7 +32,7 @@ const CleaningCard = () => {
             <div className="subheader">Otwarte zgłoszenia sprzątania</div>
           </div>
           <div className="h1 mb-3">{activeTasksCount !== null ? activeTasksCount : "..."}</div>
-          <div className="d-flex mb-2">
+          <div className="d-flex">
             <div>
               <Link to="/RecepcionistDashboard/Orders/Cleaning" className="btn btn-primary">
                 Zobacz
