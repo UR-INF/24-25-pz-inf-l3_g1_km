@@ -23,6 +23,11 @@ import CreateNewEmployeeView from "./views/Manager/CreateNewEmployeeView";
 import ModifyEmployeeView from "./views/Manager/ModifyEmployeeView";
 import AddRooms from "./views/Manager/AddRooms";
 import ModifyRooms from "./views/Manager/ModifyRooms";
+import ReportsView from "./views/Manager/ReportsView";
+import ReportPage from "./components/ReportPdfViewer";
+import CreateReportForm from "./components/CreateReportForm";
+import NewReport from "./views/Manager/NewReport";
+import InvoicesView from "./views/Manager/InvoicesView";
 //import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
@@ -61,6 +66,11 @@ const protectedRoutes = [
   { path: "/ManagerDashboard/Employees/Modify/:id", element: <ModifyEmployeeView /> },
   
   // { path: "/ManagerDashboard/Reports", element: <EmployeesView /> },
+
+  { path: "/ManagerDashboard/Reports", element: <ReportsView /> },
+  { path: "/ManagerDashboard/ShowReport/:id", element: <ReportPage />},
+  { path: "/ManagerDashboard/CreateReport", element: <NewReport />},
+  { path: "/ManagerDashboard/Invoices", element: <InvoicesView />},
 
   { path: "/Settings", element: <SettingsView /> },
 ];

@@ -17,6 +17,7 @@ const LoginView = () => {
     title?: string;
     details?: string[];
   } | null>(null);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const { fetchUser } = useUser();
@@ -89,6 +90,8 @@ const LoginView = () => {
       return;
     }
 
+    setIsResettingPassword(true);
+
     try {
       await api.post("/auth/password/reset-request", { email });
       setAlertMessage({
@@ -106,6 +109,8 @@ const LoginView = () => {
         text: "Nie udało się wysłać linku resetującego.",
         type: "danger",
       });
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -159,12 +164,38 @@ const LoginView = () => {
                   />
                 </div>
 
+                <style>
+                  {`
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                    .spinner-rotate {
+                      animation: spin 1s linear infinite;
+                      display: inline-block;
+                    }
+                  `}
+                </style>
+
                 <div className="mb-2">
                   <label className="form-label">
                     Hasło
                     <span className="form-label-description">
-                      <a href="#" id="forgotPassword" onClick={handlePasswordReset}>
-                        Zapomniałeś hasła?
+                      <a
+                        href="#"
+                        id="forgotPassword"
+                        onClick={handlePasswordReset}
+                        className="d-inline-flex align-items-center"
+                        style={{ pointerEvents: isResettingPassword ? 'none' : 'auto' }}
+                      >
+                        {isResettingPassword ? (
+                          <>
+                            <i className="ti ti-loader spinner-rotate me-1"></i>
+                            Wysyłanie...
+                          </>
+                        ) : (
+                          'Zapomniałeś hasła?'
+                        )}
                       </a>
                     </span>
                   </label>

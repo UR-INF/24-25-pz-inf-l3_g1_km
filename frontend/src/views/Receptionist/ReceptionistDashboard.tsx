@@ -2,9 +2,8 @@ import ReservationCard from "../../components/ReservationCard";
 import RoomsCard from "../../components/RoomsCard";
 import RepairsCard from "../../components/RepairsCard";
 import CleaningCard from "../../components/CleaningCard";
-import CleaningPlot from "../../components/ReservationsPlot";
+import ReservationsPlot from "../../components/ReservationsPlot";
 import RepairTable from "../../components/RepairTable";
-import CleaningTable from "../../components/CleaningTable";
 import { Link } from "react-router";
 
 const ReceptionistDashboard = () => {
@@ -38,7 +37,7 @@ const ReceptionistDashboard = () => {
             <RepairsCard />
             <CleaningCard />
             <div className="col-lg-12">
-              <CleaningPlot />
+              <ReservationsPlot />
             </div>
             {/* <div className="col-lg-12">
               <RepairTable />

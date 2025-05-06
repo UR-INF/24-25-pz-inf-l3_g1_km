@@ -3,7 +3,7 @@ import ApexChart from "react-apexcharts";
 import dayjs from "dayjs";
 import { api } from "../services/api";
 
-const CleaningPlot = () => {
+const ReservationsPlot = () => {
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
   const [radialValue, setRadialValue] = useState<number>(0);
@@ -36,6 +36,8 @@ const CleaningPlot = () => {
 
     fetchReservations();
   }, []);
+
+  const maxChartValue = Math.max(...chartData) + 1;
 
   return (
     <div className="card">
@@ -100,9 +102,8 @@ const CleaningPlot = () => {
                 axisBorder: { show: false },
                 tooltip: { enabled: false },
               },
-              yaxis: { labels: { show: false } },
+              yaxis: { labels: { show: false }, max: maxChartValue },
               grid: { strokeDashArray: 4 },
-              tooltip: { theme: "dark" },
               colors: ["#206bc4"],
               labels: chartLabels,
             }}
@@ -116,4 +117,4 @@ const CleaningPlot = () => {
   );
 };
 
-export default CleaningPlot;
+export default ReservationsPlot;
