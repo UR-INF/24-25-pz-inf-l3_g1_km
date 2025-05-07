@@ -572,6 +572,7 @@ const ModifyReservation = ({ reservationId }) => {
               value={formData.specialRequests}
               onChange={handleChange}
               disabled={!isEditable}
+              style={!isEditable ? { resize: "none", overflow: "auto" } : {}}
             ></textarea>
           </div>
           <div className="col-md">
