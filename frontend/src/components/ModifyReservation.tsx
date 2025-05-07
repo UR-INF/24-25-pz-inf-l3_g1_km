@@ -3,10 +3,12 @@ import { api } from "../services/api";
 import { useNavigate } from "react-router";
 import { useNotification } from "../contexts/notification";
 import ShowInvoiceButton from "./ShowInvoiceButton";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 const ModifyReservation = ({ reservationId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [bedFilter, setBedFilter] = useState("all");
   const [isEditable, setIsEditable] = useState(false);
+  const [showDeleteInvoiceModal, setShowDeleteInvoiceModal] = useState(false);
   const [rooms, setRooms] = useState([]);
   const [reservationRoomAssignments, setReservationRoomAssignments] = useState([]);
   const [invoiceData, setInvoiceData] = useState(null);
@@ -319,6 +321,8 @@ const ModifyReservation = ({ reservationId }) => {
     } catch (error) {
       console.error("Błąd podczas usuwania faktury:", error);
       showNotification("error", "Wystąpił błąd.");
+    } finally {
+      setShowDeleteInvoiceModal(false);
     }
   };
 
@@ -679,7 +683,11 @@ const ModifyReservation = ({ reservationId }) => {
                   >
                     Edytuj fakturę
                   </button>
-                  <button type="button" className="btn btn-danger" onClick={handleDeleteInvoice}>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => setShowDeleteInvoiceModal(true)}
+                  >
                     Usuń fakturę
                   </button>
                 </>
@@ -723,6 +731,13 @@ const ModifyReservation = ({ reservationId }) => {
           </div>
         </div>
       </form>
+
+      <DeleteConfirmationModal
+        show={showDeleteInvoiceModal}
+        handleClose={() => setShowDeleteInvoiceModal(false)}
+        handleConfirm={handleDeleteInvoice}
+        message="Czy na pewno chcesz usunąć tę fakturę? Jest to operacja nieodwracalna."
+      />
     </div>
   );
 };

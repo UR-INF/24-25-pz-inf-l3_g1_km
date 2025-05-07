@@ -304,7 +304,7 @@ const StaffPerformanceTable = () => {
                 type="text"
                 className="form-control form-control-sm"
                 style={{ width: "180px" }}
-                placeholder="Imię Nazwisko..."
+                placeholder="Imię lub nazwisko"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
