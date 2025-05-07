@@ -149,6 +149,7 @@ const CreateReportForm = () => {
                 className="form-control"
                 name="startDate"
                 value={formData.startDate}
+                max={formData.endDate}
                 onChange={handleChange}
                 required
               />
@@ -160,6 +161,7 @@ const CreateReportForm = () => {
                 type="date"
                 className="form-control"
                 name="endDate"
+                min={formData.startDate}
                 value={formData.endDate}
                 onChange={handleChange}
                 required

@@ -272,6 +272,7 @@ const StaffPerformanceTable = () => {
                 type="date"
                 className="form-control form-control-sm"
                 value={startDate}
+                max={endDate}
                 onChange={handleStartDateChange}
               />
             </div>
@@ -281,6 +282,7 @@ const StaffPerformanceTable = () => {
                 type="date"
                 className="form-control form-control-sm"
                 value={endDate}
+                min={startDate}
                 onChange={handleEndDateChange}
               />
             </div>
@@ -380,7 +382,7 @@ const StaffPerformanceTable = () => {
                     <td>{employee.totalTasks || 0}</td>
                     <td>{employee.completed || 0}</td>
                     <td>
-                      <div className="progress progress-sm">
+                      <div className="progress progress-sm mb-1">
                         <div
                           className={`progress-bar bg-${getSuccessRateColor(successRate)}`}
                           style={{ width: `${successRate}%` }}

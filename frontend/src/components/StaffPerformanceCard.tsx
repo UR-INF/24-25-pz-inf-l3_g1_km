@@ -275,6 +275,7 @@ const StaffPerformanceCard = () => {
                   type="date"
                   className="form-control form-control-sm"
                   value={startDate}
+                  max={endDate}
                   onChange={handleStartDateChange}
                 />
               </div>
@@ -284,6 +285,7 @@ const StaffPerformanceCard = () => {
                   type="date"
                   className="form-control form-control-sm"
                   value={endDate}
+                  min={startDate}
                   onChange={handleEndDateChange}
                 />
               </div>

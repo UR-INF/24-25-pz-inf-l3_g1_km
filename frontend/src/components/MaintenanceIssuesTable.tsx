@@ -159,6 +159,7 @@ const MaintenanceIssuesTable = () => {
                 type="date"
                 className="form-control form-control-sm"
                 value={startDate}
+                max={endDate}
                 onChange={(e) => {
                   setStartDate(e.target.value);
                   setSelectedRange("custom");
@@ -171,6 +172,7 @@ const MaintenanceIssuesTable = () => {
                 type="date"
                 className="form-control form-control-sm"
                 value={endDate}
+                min={startDate}
                 onChange={(e) => {
                   setEndDate(e.target.value);
                   setSelectedRange("custom");

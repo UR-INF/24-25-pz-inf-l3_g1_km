@@ -43,11 +43,11 @@ const RoomStatusCard = () => {
             <div>
               Pokoje wymagające serwisu: {maintenanceRooms !== null ? maintenanceRooms : "..."}
             </div>
-            <div className="ms-auto">
+            {/* <div className="ms-auto">
               <Link to="/Reports/RoomStatus" className="btn btn-primary">
                 Szczegóły
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
