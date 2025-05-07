@@ -415,6 +415,7 @@ const ModifyReservation = ({ reservationId }) => {
                   ? new Date().toISOString().split("T")[0]
                   : formData.startDate
               }
+              max={formData.endDate}
             />
           </div>
           <div className="col-md">
@@ -558,7 +559,7 @@ const ModifyReservation = ({ reservationId }) => {
               );
             })
           ) : (
-            <div>Brak pokoi spełniających kryteria wyszukiwania.</div>
+            <div>Brak dostępnych pokoi spełniających kryteria wyszukiwania.</div>
           )}
         </div>
 

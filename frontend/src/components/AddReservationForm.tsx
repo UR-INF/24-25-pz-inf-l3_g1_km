@@ -216,6 +216,7 @@ const AddReservationForm = () => {
               required
               title="To pole jest wymagane"
               min={new Date().toISOString().split("T")[0]}
+              max={formData.endDate}
             />
           </div>
           <div className="col-md">
@@ -351,7 +352,9 @@ const AddReservationForm = () => {
                     )}
                   </div>
                 ))
-            : (formData.endDate && <div>Brak pokoi spełniających kryteria wyszukiwania.</div>) || (
+            : (formData.endDate && (
+                <div>Brak dostępnych pokoi spełniających kryteria wyszukiwania.</div>
+              )) || (
                 <div className="text-warning">
                   Proszę najpierw wybrać datę zakończenia rezerwacji.
                 </div>
@@ -415,7 +418,7 @@ const AddReservationForm = () => {
             Aktywna
           </label>
         </div>
-        <div className="form-check">
+        {/* <div className="form-check">
           <input
             type="radio"
             className="form-check-input"
@@ -442,7 +445,7 @@ const AddReservationForm = () => {
           <label className="form-check-label" htmlFor="COMPLETED">
             Zakończona
           </label>
-        </div>
+        </div> */}
         <h3 className="card-title mt-4">Do zapłaty</h3>
         <h3 className="card-title">{kwota} PLN</h3>
         <div className="card-footer bg-transparent mt-auto">

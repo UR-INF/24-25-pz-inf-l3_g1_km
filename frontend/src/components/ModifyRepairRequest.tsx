@@ -227,6 +227,7 @@ const ModifyRepairRequest = () => {
               value={formData.completionDate}
               onChange={handleChange}
               disabled={!isEditable}
+              min={formData.requestDate}
             />
           </div>
         </div>
@@ -244,8 +245,9 @@ const ModifyRepairRequest = () => {
             />
             <div style={{ minHeight: "1.5em" }}>
               {formData.repairType === "" && (
-                <small className="form-text text-muted">
-                  Nie wybrano pokoju, określ miejsce, w którym ma zostać wykonane zlecenie.
+                <small className="form-text text-warning">
+                  Nie wybrano pokoju. W opisie zlecenia należy określić miejsce, w którym ma zostać
+                  wykonane zlecenie.
                 </small>
               )}
             </div>
@@ -296,8 +298,15 @@ const ModifyRepairRequest = () => {
             {!isEditable ? (
               <button
                 type="button"
-                className="btn btn-secondary"
-                onClick={() => setIsEditable(true)}
+                className="btn btn-warning"
+                onClick={() => {
+                  setIsEditable(true);
+                  showNotification(
+                    "info",
+                    "Dane zgłoszenia zostały odblokowane - możesz je teraz edytować.",
+                    5000,
+                  );
+                }}
               >
                 Edytuj
               </button>

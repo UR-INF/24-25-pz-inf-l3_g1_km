@@ -3,6 +3,7 @@ import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 import { useNavigate } from "react-router";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import { getRoleNameInPolish } from "../utils/roleUtils";
 
 interface Employee {
   id: number;
@@ -289,7 +290,7 @@ const ReportsTable = () => {
                         <div className="font-weight-medium">
                           {report.createdBy?.firstName} {report.createdBy?.lastName}
                         </div>
-                        <div className="text-muted small">{report.createdBy?.role?.name || ""}</div>
+                        <div className="text-muted small">{getRoleNameInPolish(report.createdBy?.role?.name) || ""}</div>
                       </div>
                     </div>
                   </td>

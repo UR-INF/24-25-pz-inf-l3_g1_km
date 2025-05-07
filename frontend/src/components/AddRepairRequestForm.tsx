@@ -144,8 +144,9 @@ const AddRepairRequestForm = ({ onSuccess }: { onSuccess?: () => void }) => {
               ></textarea>
               <div style={{ minHeight: "1.5em" }}>
                 {formData.roomId === "" && (
-                  <small className="form-text text-muted">
-                    Nie wybrano pokoju, określ miejsce, w którym ma zostać wykonane zlecenie.
+                  <small className="form-text text-warning">
+                    Nie wybrano pokoju. W opisie zlecenia określ miejsce, w którym ma zostać
+                    wykonane zlecenie.
                   </small>
                 )}
               </div>

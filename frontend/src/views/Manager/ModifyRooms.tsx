@@ -140,7 +140,7 @@ export default function ModifyRooms() {
                   </div>
                 </div>
 
-                <h3 className="card-title mt-4">Status</h3>
+                {/* <h3 className="card-title mt-4">Status</h3>
                 <div className="form-check">
                   <input
                     type="radio"
@@ -185,8 +185,8 @@ export default function ModifyRooms() {
                   <label className="form-check-label" htmlFor="OUT_OF_SERVICE">
                     Niedostępny
                   </label>
-                </div>
-                <div className="card-footer bg-transparent mt-auto pb-0">
+                </div> */}
+                <div className="card-footer border-0 bg-transparent mt-auto pb-0 pe-0">
                   <div className="btn-list justify-content-end">
                     {(isEditable && (
                       <button type="submit" className="btn btn-primary">

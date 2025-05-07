@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.hoteltaskmanager.util.RoleName.getRoleNameInPolish;
+
 @Service
 public class PdfReportGeneratorService {
 
@@ -461,7 +463,7 @@ public class PdfReportGeneratorService {
 
             for (Map<String, Object> employee : tasksByEmployee) {
                 PdfPCell nameCell = new PdfPCell(new Phrase(String.valueOf(employee.get("employee_name")), cellFont));
-                PdfPCell roleCell = new PdfPCell(new Phrase(String.valueOf(employee.get("role_name")), cellFont));
+                PdfPCell roleCell = new PdfPCell(new Phrase(String.valueOf(getRoleNameInPolish((String) employee.get("role_name"))), cellFont));
                 PdfPCell housekeepingCell = new PdfPCell(new Phrase(String.valueOf(employee.get("housekeeping_tasks")), cellFont));
                 PdfPCell maintenanceCell = new PdfPCell(new Phrase(String.valueOf(employee.get("maintenance_tasks")), cellFont));
                 PdfPCell totalCell = new PdfPCell(new Phrase(String.valueOf(employee.get("total_tasks")), cellFont));
@@ -862,7 +864,7 @@ public class PdfReportGeneratorService {
 
                     for (Map<String, Object> employee : top5) {
                         table.addCell(new PdfPCell(new Phrase(String.valueOf(employee.get("employee_name")), cellFont)));
-                        table.addCell(new PdfPCell(new Phrase(String.valueOf(employee.get("role_name")), cellFont)));
+                        table.addCell(new PdfPCell(new Phrase(String.valueOf(getRoleNameInPolish((String) employee.get("role_name"))), cellFont)));
                         table.addCell(new PdfPCell(new Phrase(String.valueOf(employee.get("total_tasks")), cellFont)));
                         table.addCell(new PdfPCell(new Phrase(String.valueOf(employee.get("success_rate")), cellFont)));
                     }

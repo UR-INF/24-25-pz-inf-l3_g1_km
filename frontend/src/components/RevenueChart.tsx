@@ -165,7 +165,7 @@ const RevenueChart = () => {
       <div className="card-header border-0">
         <div className="card-title d-flex align-items-center">
           <div>Przychody – trend {getPeriodName(period)}</div>
-          <div className="ms-auto">
+          <div className="ms-2">
             <div className="btn-group">
               <select
                 className="form-select form-select-sm"

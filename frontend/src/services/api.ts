@@ -1,13 +1,13 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 // Konfiguracja podstawowego URL dla backendu
-const API_URL = "http://localhost:8080/api";
+export const API_URL = "http://localhost:8080";
 
 /**
  * Tworzenie instancji axios z podstawowymi ustawieniami.
  */
 const axiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL + "/api",
 });
 
 /**

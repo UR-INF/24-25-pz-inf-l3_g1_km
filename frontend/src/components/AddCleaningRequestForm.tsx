@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
+import { Navigate, useNavigate } from "react-router";
 
 const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
   const { showNotification } = useNotification();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRoomsAndEmployees = async () => {
@@ -80,6 +82,8 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     } catch (error: any) {
       console.error("Błąd tworzenia zadania:", error);
       showNotification("error", "Wystąpił błąd podczas tworzenia zadania sprzątania.");
+    } finally {
+      navigate(-1);
     }
   };
 
@@ -139,8 +143,9 @@ const AddCleaningTaskForm = ({ onSuccess }: { onSuccess?: () => void }) => {
               ></textarea>
               <div style={{ minHeight: "1.5em" }}>
                 {formData.roomId === "" && (
-                  <small className="form-text text-muted">
-                    Nie wybrano pokoju, określ miejsce, w którym ma zostać wykonane zlecenie.
+                  <small className="form-text text-warning">
+                    Nie wybrano pokoju. W opisie zadania określ miejsce, w którym ma zostać wykonane
+                    zadanie.
                   </small>
                 )}
               </div>

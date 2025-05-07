@@ -12,7 +12,7 @@ const ModifyCleaningOrder = () => {
 
   const [formData, setFormData] = useState({
     employee: {},
-    room: {},
+    room: null,
     requestDate: "",
     completionDate: "",
     status: "PENDING",
@@ -169,6 +169,7 @@ const ModifyCleaningOrder = () => {
               value={formData.completionDate}
               onChange={handleChange}
               disabled={!isEditable}
+              min={formData.requestDate}
             />
           </div>
         </div>
@@ -183,6 +184,15 @@ const ModifyCleaningOrder = () => {
               onChange={handleChange}
               disabled={!isEditable}
             />
+
+            <div style={{ minHeight: "1.5em" }}>
+              {!formData.room && (
+                <small className="form-text text-warning">
+                  Nie wybrano pokoju. W opisie zadania należy określić miejsce, w którym ma zostać
+                  wykonane zadanie.
+                </small>
+              )}
+            </div>
           </div>
         </div>
 
@@ -212,8 +222,15 @@ const ModifyCleaningOrder = () => {
             {!isEditable ? (
               <button
                 type="button"
-                className="btn btn-secondary"
-                onClick={() => setIsEditable(true)}
+                className="btn btn-warning"
+                onClick={() => {
+                  setIsEditable(true);
+                  showNotification(
+                    "info",
+                    "Dane zadania zostały odblokowane - możesz je teraz edytować.",
+                    5000,
+                  );
+                }}
               >
                 Edytuj
               </button>

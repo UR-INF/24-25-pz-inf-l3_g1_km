@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { api } from "../services/api";
+import { api, API_URL } from "../services/api";
 import { useNotification } from "../contexts/notification";
+import { getRoleNameInPolish } from "../utils/roleUtils";
 
 interface Employee {
   id: number;
@@ -76,7 +77,7 @@ const StaffPerformanceTable = () => {
       console.log("Pobieranie danych z parametrami:", params.toString());
 
       const response = await api.get(`/reports/staff-performance?${params}`);
-      console.log("Otrzymane dane:", response.data);
+      // console.log("Otrzymane dane:", response.data);
 
       // Funkcja transformująca dane do odpowiedniego formatu
       const transformData = (data) => {
@@ -105,7 +106,7 @@ const StaffPerformanceTable = () => {
             role: {
               name: employee.role_name || "",
             },
-            avatarUrl: employee.avatar_url || "",
+            avatarUrl: API_URL + "/avatars/" + employee.avatar_filename || "",
           };
         });
       };
@@ -373,7 +374,7 @@ const StaffPerformanceTable = () => {
                         </div>
                       </div>
                     </td>
-                    <td>{employee.roleName || "-"}</td>
+                    <td>{getRoleNameInPolish(employee.roleName) || "-"}</td>
                     <td>{employee.housekeepingTasks || 0}</td>
                     <td>{employee.maintenanceTasks || 0}</td>
                     <td>{employee.totalTasks || 0}</td>
