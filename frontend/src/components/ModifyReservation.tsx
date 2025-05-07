@@ -49,10 +49,13 @@ const ModifyReservation = ({ reservationId }) => {
         catering: data.catering ?? false,
         status: data.status || "",
       });
-      getRooms(data.reservationRooms?.map((rr) => rr.room.id), {
-        startDate: data.startDate,
-        endDate: data.endDate,
-      });
+      getRooms(
+        data.reservationRooms?.map((rr) => rr.room.id),
+        {
+          startDate: data.startDate,
+          endDate: data.endDate,
+        },
+      );
     } catch (error) {
       console.error("Błąd podczas pobierania rezerwacji:", error);
     }
@@ -61,20 +64,15 @@ const ModifyReservation = ({ reservationId }) => {
   const getRooms = async (idRoom, formData) => {
     try {
       const response = await api.get("/rooms");
-      let availableRooms = response.data.filter(
-        (room) => idRoom.includes(room.id)
-      );
-  
+      let availableRooms = response.data.filter((room) => idRoom.includes(room.id));
+
       if (formData.startDate && formData.endDate) {
         const dateResponse = await api.get(
-          `/rooms/rooms/available?from=${formData.startDate}&to=${formData.endDate}`
+          `/rooms/rooms/available?from=${formData.startDate}&to=${formData.endDate}`,
         );
         const dateAvailableRooms = dateResponse.data;
-  
-        availableRooms = [
-          ...availableRooms,
-          ...dateAvailableRooms
-        ];
+
+        availableRooms = [...availableRooms, ...dateAvailableRooms];
       }
       setRooms(availableRooms);
     } catch (error) {
@@ -82,7 +80,7 @@ const ModifyReservation = ({ reservationId }) => {
       showNotification("error", "Błąd podczas pobierania pokoi.");
     }
   };
-  
+
   const getIdRef = async () => {
     try {
       const response = await api.get(`/reservations/${reservationId}/rooms`);

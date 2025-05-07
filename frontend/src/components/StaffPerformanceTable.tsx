@@ -80,7 +80,7 @@ const StaffPerformanceTable = () => {
 
       // Funkcja transformująca dane do odpowiedniego formatu
       const transformData = (data) => {
-        return data.map(employee => {
+        return data.map((employee) => {
           // Rozdzielamy imię i nazwisko z pełnego nazwiska (jeśli istnieje)
           const nameParts = (employee.employee_name || "").split(" ");
           const firstName = nameParts[0] || "";
@@ -96,16 +96,16 @@ const StaffPerformanceTable = () => {
             totalTasks: employee.total_tasks || 0,
             completed: employee.completed || 0,
             successRate: employee.success_rate || 0,
-            avgTimeToComplete: employee.avg_hours_to_complete || '-',
+            avgTimeToComplete: employee.avg_hours_to_complete || "-",
 
             // Dodatkowe dane dla interfejsu Employee
             id: employee.employee_id,
             firstName: firstName,
             lastName: lastName,
             role: {
-              name: employee.role_name || ""
+              name: employee.role_name || "",
             },
-            avatarUrl: employee.avatar_url || ""
+            avatarUrl: employee.avatar_url || "",
           };
         });
       };
@@ -310,7 +310,6 @@ const StaffPerformanceTable = () => {
               />
             </div>
 
-
             <button className="btn btn-outline-secondary btn-sm" onClick={handleResetFilters}>
               Resetuj
             </button>
@@ -352,7 +351,8 @@ const StaffPerformanceTable = () => {
             <tbody>
               {currentData.map((employee, index) => {
                 // Bezpieczne uzyskiwanie wartości wskaźnika sukcesu
-                const successRate = typeof employee.successRate === 'number' ? employee.successRate : 0;
+                const successRate =
+                  typeof employee.successRate === "number" ? employee.successRate : 0;
 
                 return (
                   <tr key={employee.employeeId || index}>
@@ -361,11 +361,15 @@ const StaffPerformanceTable = () => {
                         <span
                           className="avatar shadow avatar-sm me-2"
                           style={{
-                            backgroundImage: employee.avatarUrl ? `url(${employee.avatarUrl})` : "none",
+                            backgroundImage: employee.avatarUrl
+                              ? `url(${employee.avatarUrl})`
+                              : "none",
                           }}
                         ></span>
                         <div className="flex-fill">
-                          <div className="font-weight-medium">{employee.employeeName || "Nieznany"}</div>
+                          <div className="font-weight-medium">
+                            {employee.employeeName || "Nieznany"}
+                          </div>
                         </div>
                       </div>
                     </td>

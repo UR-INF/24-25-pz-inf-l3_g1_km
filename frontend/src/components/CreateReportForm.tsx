@@ -3,7 +3,6 @@ import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 import { useNavigate } from "react-router";
 
-
 const CreateReportForm = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
@@ -12,7 +11,7 @@ const CreateReportForm = () => {
   const today = new Date();
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(today.getDate() - 30);
-  
+
   const [formData, setFormData] = useState({
     reportType: "STAFF_REPORT", // domyślny typ raportu
     startDate: thirtyDaysAgo.toISOString().split("T")[0],
@@ -20,9 +19,7 @@ const CreateReportForm = () => {
     period: "month", // dla raportów finansowych (week, month, quarter)
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -37,12 +34,12 @@ const CreateReportForm = () => {
     try {
       let endpoint = "";
       let params = new URLSearchParams();
-      
+
       // Dodaj parametry dat
       params.append("startDate", formData.startDate);
       params.append("endDate", formData.endDate);
-      
-      switch(formData.reportType) {
+
+      switch (formData.reportType) {
         case "STAFF_REPORT":
           endpoint = "/reports/pdf/staff";
           break;
@@ -61,33 +58,36 @@ const CreateReportForm = () => {
           throw new Error("Nieznany typ raportu");
       }
 
-      const response = await api.get(`${endpoint}?${params.toString()}`, {}, {
-        responseType: "blob"
-      });
-      
+      const response = await api.get(
+        `${endpoint}?${params.toString()}`,
+        {},
+        {
+          responseType: "blob",
+        },
+      );
+
       if (!response.data || response.data.size === 0) {
         throw new Error("Otrzymano pustą odpowiedź z serwera");
       }
-      
+
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      
+
       const link = document.createElement("a");
       link.href = url;
       link.target = "_blank";
       link.click();
-      
+
       showNotification("success", "Raport został wygenerowany pomyślnie!");
-      
+
       setTimeout(() => {
         navigate("/ManagerDashboard/Reports");
       }, 1000);
-      
     } catch (error: any) {
       console.error("Błąd podczas generowania raportu:", error);
       showNotification(
-        "error", 
-        `Wystąpił błąd podczas generowania raportu: ${error.message || "nieznany błąd"}`
+        "error",
+        `Wystąpił błąd podczas generowania raportu: ${error.message || "nieznany błąd"}`,
       );
     } finally {
       setLoading(false);
@@ -120,7 +120,8 @@ const CreateReportForm = () => {
               </div>
             </div>
 
-            {(formData.reportType === "FINANCIAL_REPORT" || formData.reportType === "COMPLETE_REPORT") && (
+            {(formData.reportType === "FINANCIAL_REPORT" ||
+              formData.reportType === "COMPLETE_REPORT") && (
               <div className="col-md-6">
                 <div className="form-label">Okres analizy finansowej</div>
                 <select
@@ -168,14 +169,14 @@ const CreateReportForm = () => {
 
           <div className="row mt-4">
             <div className="col-md-12 d-flex justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={loading}
-              >
+              <button type="submit" className="btn btn-primary" disabled={loading}>
                 {loading ? (
                   <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
                     Generowanie raportu...
                   </>
                 ) : (

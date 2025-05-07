@@ -12,7 +12,6 @@ import ReportsTable from "../../components/ReportsTable";
 type TabType = "employees" | "cleaning" | "maintenance" | "finance" | "report-files";
 
 const ReportsView: React.FC = () => {
-
   const [activeTab, setActiveTab] = useState<TabType>("employees");
 
   // Funkcja obsługująca zmianę zakładki
@@ -43,9 +42,9 @@ const ReportsView: React.FC = () => {
       case "maintenance":
         return (
           <>
-          <MaintenanceIssuesTable />
-          <div className="mt-3"></div>
-        </>
+            <MaintenanceIssuesTable />
+            <div className="mt-3"></div>
+          </>
         );
       case "finance":
         return (
@@ -55,13 +54,13 @@ const ReportsView: React.FC = () => {
             <FinancialReportTable />
           </>
         );
-        case "report-files":
-          return (
-            <>
-              <ReportsTable />
-              <div className="mt-3"></div>
-            </>
-          );
+      case "report-files":
+        return (
+          <>
+            <ReportsTable />
+            <div className="mt-3"></div>
+          </>
+        );
       default:
         return null;
     }

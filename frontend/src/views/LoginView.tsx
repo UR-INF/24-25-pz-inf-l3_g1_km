@@ -186,7 +186,7 @@ const LoginView = () => {
                         id="forgotPassword"
                         onClick={handlePasswordReset}
                         className="d-inline-flex align-items-center"
-                        style={{ pointerEvents: isResettingPassword ? 'none' : 'auto' }}
+                        style={{ pointerEvents: isResettingPassword ? "none" : "auto" }}
                       >
                         {isResettingPassword ? (
                           <>
@@ -194,7 +194,7 @@ const LoginView = () => {
                             Wysyłanie...
                           </>
                         ) : (
-                          'Zapomniałeś hasła?'
+                          "Zapomniałeś hasła?"
                         )}
                       </a>
                     </span>

@@ -34,21 +34,21 @@ const AddReservationForm = () => {
 
   const getRooms = async () => {
     try {
-      
       if (!formData.startDate || !formData.endDate) {
         return;
       }
-      const response = await api.get(`/rooms/rooms/available?from=${formData.startDate}&to=${formData.endDate}`);
+      const response = await api.get(
+        `/rooms/rooms/available?from=${formData.startDate}&to=${formData.endDate}`,
+      );
       setRooms(response.data);
     } catch (error) {
       showNotification("error", "Błąd podczas pobierania dostępnych pokoi:");
     }
   };
-  
 
   useEffect(() => {
     getRooms();
-  }, [formData.startDate,formData.endDate]);
+  }, [formData.startDate, formData.endDate]);
 
   const filteredRooms = rooms.filter((room) => {
     const matchesSearch = room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase());
@@ -305,52 +305,52 @@ const AddReservationForm = () => {
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredRooms.length > 0 ? (
             [...filteredRooms]
-            .sort((a, b) => {
-              const isASelected = formData.reservationRooms.some((r) => r.room.id === a.id);
-              const isBSelected = formData.reservationRooms.some((r) => r.room.id === b.id);
-              return isASelected === isBSelected ? 0 : isASelected ? -1 : 1;
-            })
-            .map((room) => (
-              <div key={room.id} className="form-fieldset d-flex flex-column gap-2">
-                <div className="d-flex gap-2">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id={`room${room.id}`}
-                    name="rooms"
-                    value={room.id}
-                    onChange={handleChange}
-                    checked={formData.reservationRooms.some((r) => r.room.id === room.id)}
-                  />
-                  <label className="form-check-label" htmlFor={`room${room.id}`}>
-                    Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek -{" "}
-                    {room.pricePerNight} PLN za noc
-                  </label>
-                </div>
+              .sort((a, b) => {
+                const isASelected = formData.reservationRooms.some((r) => r.room.id === a.id);
+                const isBSelected = formData.reservationRooms.some((r) => r.room.id === b.id);
+                return isASelected === isBSelected ? 0 : isASelected ? -1 : 1;
+              })
+              .map((room) => (
+                <div key={room.id} className="form-fieldset d-flex flex-column gap-2">
+                  <div className="d-flex gap-2">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id={`room${room.id}`}
+                      name="rooms"
+                      value={room.id}
+                      onChange={handleChange}
+                      checked={formData.reservationRooms.some((r) => r.room.id === room.id)}
+                    />
+                    <label className="form-check-label" htmlFor={`room${room.id}`}>
+                      Pokój {room.roomNumber} - Piętro {room.floor}, {room.bedCount} łóżek -{" "}
+                      {room.pricePerNight} PLN za noc
+                    </label>
+                  </div>
 
-                {roomGuests[room.id] !== undefined && (
-                  <div>
-                    <label className="form-label">Liczba osób w pokoju:</label>
-                    <div className="d-flex align-items-center gap-2">
-                      <input
-                        type="number"
-                        className="form-control"
-                        style={{ maxWidth: "100px" }}
-                        value={roomGuests[room.id]}
-                        onChange={(e) => handleGuestCountChange(room.id, e)}
-                        min={1}
-                        max={room.bedCount}
-                      />
-                      <div className="fw-semibold">
-                        {roomGuests[room.id]
-                          ? `${((roomGuests[room.id] / room.bedCount) * room.pricePerNight).toFixed(2)} PLN`
-                          : "0.00 PLN"}
+                  {roomGuests[room.id] !== undefined && (
+                    <div>
+                      <label className="form-label">Liczba osób w pokoju:</label>
+                      <div className="d-flex align-items-center gap-2">
+                        <input
+                          type="number"
+                          className="form-control"
+                          style={{ maxWidth: "100px" }}
+                          value={roomGuests[room.id]}
+                          onChange={(e) => handleGuestCountChange(room.id, e)}
+                          min={1}
+                          max={room.bedCount}
+                        />
+                        <div className="fw-semibold">
+                          {roomGuests[room.id]
+                            ? `${((roomGuests[room.id] / room.bedCount) * room.pricePerNight).toFixed(2)} PLN`
+                            : "0.00 PLN"}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))
+                  )}
+                </div>
+              ))
           ) : (
             <div>Brak pokoi spełniających kryteria wyszukiwania.</div>
           )}

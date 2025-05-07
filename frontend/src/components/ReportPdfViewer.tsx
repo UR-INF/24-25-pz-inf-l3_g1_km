@@ -28,12 +28,16 @@ const ReportPdfViewer = () => {
 
       console.log(`Pobieranie raportu o ID: ${reportId}`);
 
-      const response = await api.get(`/reports/saved/${reportId}`, {}, {
-        responseType: "blob",
-        headers: {
-          'Accept': 'application/pdf',
-        }
-      });
+      const response = await api.get(
+        `/reports/saved/${reportId}`,
+        {},
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        },
+      );
 
       console.log("Otrzymano odpowiedź z serwera:", response);
 
@@ -48,9 +52,9 @@ const ReportPdfViewer = () => {
       console.log(`Otrzymany blob: typ=${blob.type}, rozmiar=${blob.size} bajtów`);
 
       let pdfBlob = blob;
-      if (!blob.type || blob.type !== 'application/pdf') {
+      if (!blob.type || blob.type !== "application/pdf") {
         console.log("Tworzymy nowy blob z poprawnym typem MIME...");
-        pdfBlob = new Blob([blob], { type: 'application/pdf' });
+        pdfBlob = new Blob([blob], { type: "application/pdf" });
         console.log(`Nowy blob: typ=${pdfBlob.type}, rozmiar=${pdfBlob.size} bajtów`);
       }
 
@@ -97,7 +101,18 @@ const ReportPdfViewer = () => {
                 <div className="text-center py-5">
                   <div className="empty">
                     <div className="empty-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-file-alert" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-file-alert"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M14 3v4a1 1 0 0 0 1 1h4" />
                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
@@ -110,21 +125,23 @@ const ReportPdfViewer = () => {
                       Spróbuj ponownie lub wróć do listy raportów.
                     </p>
                     <div className="empty-action">
-                      <button className="btn btn-primary" onClick={() => fetchPdfData(id || '')}>
+                      <button className="btn btn-primary" onClick={() => fetchPdfData(id || "")}>
                         Spróbuj ponownie
                       </button>
                     </div>
                   </div>
                 </div>
               ) : pdfUrl ? (
-                <div style={{
-                  height: "80vh",
-                  backgroundColor: "#e6e7e9",
-                  display: "flex",
-                  justifyContent: "center",
-                  padding: "20px",
-                  overflow: "auto"
-                }}>
+                <div
+                  style={{
+                    height: "80vh",
+                    backgroundColor: "#e6e7e9",
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: "20px",
+                    overflow: "auto",
+                  }}
+                >
                   <iframe
                     src={pdfUrl}
                     style={{
@@ -136,7 +153,7 @@ const ReportPdfViewer = () => {
                       transition: "transform 0.2s ease",
                       width: `${100 / scale}%`,
                       height: `${100 / scale}%`,
-                      maxWidth: "1200px"
+                      maxWidth: "1200px",
                     }}
                     title={`Raport PDF ${id}`}
                   />
@@ -145,7 +162,18 @@ const ReportPdfViewer = () => {
                 <div className="text-center py-5">
                   <div className="empty">
                     <div className="empty-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-file-unknown" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="icon icon-tabler icon-tabler-file-unknown"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                        stroke="currentColor"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                         <path d="M14 3v4a1 1 0 0 0 1 1h4" />
                         <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
@@ -158,7 +186,7 @@ const ReportPdfViewer = () => {
                       Nie udało się załadować danych raportu, spróbuj ponownie
                     </p>
                     <div className="empty-action">
-                      <button className="btn btn-primary" onClick={() => fetchPdfData(id || '')}>
+                      <button className="btn btn-primary" onClick={() => fetchPdfData(id || "")}>
                         Spróbuj ponownie
                       </button>
                     </div>

@@ -5,7 +5,7 @@ const StaffPerformanceCard = () => {
   const [completionRate, setCompletionRate] = useState<number | null>(null);
   const [totalCompleted, setTotalCompleted] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Stan dla filtrów czasowych
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
@@ -15,7 +15,7 @@ const StaffPerformanceCard = () => {
   const setDateRange = (range: string) => {
     const today = new Date();
     let start = new Date();
-    
+
     switch (range) {
       case "today":
         // Dzisiejsza data
@@ -43,10 +43,10 @@ const StaffPerformanceCard = () => {
       default:
         start = new Date(today);
     }
-    
+
     // Formatowanie dat do formatu YYYY-MM-DD
-    setStartDate(start.toISOString().split('T')[0]);
-    setEndDate(today.toISOString().split('T')[0]);
+    setStartDate(start.toISOString().split("T")[0]);
+    setEndDate(today.toISOString().split("T")[0]);
     setSelectedRange(range);
   };
 
@@ -65,25 +65,31 @@ const StaffPerformanceCard = () => {
   const fetchStaffPerformance = async () => {
     try {
       setLoading(true);
-      
+
       // Tworzenie parametrów zapytania
       const params = new URLSearchParams();
       if (startDate) params.append("startDate", startDate);
       if (endDate) params.append("endDate", endDate);
-      
+
       const response = await api.get(`/reports/staff-performance?${params}`);
-      
+
       // Dostosowanie do nowej struktury danych
       // Sprawdzamy, czy mamy dane w tasksByType
       if (response.data.tasksByType && Array.isArray(response.data.tasksByType)) {
         const tasks = response.data.tasksByType;
-        
+
         if (tasks.length) {
-          const totalTasks = tasks.reduce((sum: number, type: any) => sum + (type.total_count || 0), 0);
-          const completedTasks = tasks.reduce((sum: number, type: any) => sum + (type.completed_count || 0), 0);
-          
+          const totalTasks = tasks.reduce(
+            (sum: number, type: any) => sum + (type.total_count || 0),
+            0,
+          );
+          const completedTasks = tasks.reduce(
+            (sum: number, type: any) => sum + (type.completed_count || 0),
+            0,
+          );
+
           setTotalCompleted(completedTasks);
-          
+
           if (totalTasks > 0) {
             setCompletionRate(Math.round((completedTasks / totalTasks) * 100));
           } else {
@@ -93,22 +99,22 @@ const StaffPerformanceCard = () => {
           setTotalCompleted(0);
           setCompletionRate(0);
         }
-      } 
+      }
       // Alternatywnie, sprawdzamy czy mamy dane w successRate
       else if (response.data.successRate && Array.isArray(response.data.successRate)) {
         const successRateData = response.data.successRate;
-        
+
         // Obliczamy ogólny wskaźnik sukcesu na podstawie wszystkich zadań
         let totalAssigned = 0;
         let totalCompleted = 0;
-        
+
         successRateData.forEach((item: any) => {
-          totalAssigned += (item.total_assigned || 0);
-          totalCompleted += (item.completed || 0);
+          totalAssigned += item.total_assigned || 0;
+          totalCompleted += item.completed || 0;
         });
-        
+
         setTotalCompleted(totalCompleted);
-        
+
         if (totalAssigned > 0) {
           setCompletionRate(Math.round((totalCompleted / totalAssigned) * 100));
         } else {
@@ -118,17 +124,17 @@ const StaffPerformanceCard = () => {
       // Sprawdzamy czy mamy dane w tasksByEmployee
       else if (response.data.tasksByEmployee && Array.isArray(response.data.tasksByEmployee)) {
         const employees = response.data.tasksByEmployee;
-        
+
         let totalTasks = 0;
         let completedTasks = 0;
-        
+
         employees.forEach((employee: any) => {
-          totalTasks += (employee.total_tasks || 0);
-          completedTasks += (employee.completed || 0);
+          totalTasks += employee.total_tasks || 0;
+          completedTasks += employee.completed || 0;
         });
-        
+
         setTotalCompleted(completedTasks);
-        
+
         if (totalTasks > 0) {
           setCompletionRate(Math.round((completedTasks / totalTasks) * 100));
         } else {
@@ -139,19 +145,19 @@ const StaffPerformanceCard = () => {
       else if (Array.isArray(response.data)) {
         let totalTasks = 0;
         let completedTasks = 0;
-        
+
         response.data.forEach((item: any) => {
           if (item.total_tasks) {
             totalTasks += item.total_tasks;
-            completedTasks += (item.completed || 0);
+            completedTasks += item.completed || 0;
           } else if (item.total_count) {
             totalTasks += item.total_count;
-            completedTasks += (item.completed_count || 0);
+            completedTasks += item.completed_count || 0;
           }
         });
-        
+
         setTotalCompleted(completedTasks);
-        
+
         if (totalTasks > 0) {
           setCompletionRate(Math.round((completedTasks / totalTasks) * 100));
         } else {
@@ -196,34 +202,34 @@ const StaffPerformanceCard = () => {
         <h3 className="card-title">Wskaźnik realizacji zadań</h3>
         <div className="card-actions">
           <div className="btn-group">
-            <button 
-              className={`btn btn-sm ${selectedRange === 'today' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setDateRange('today')}
+            <button
+              className={`btn btn-sm ${selectedRange === "today" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setDateRange("today")}
             >
               Dziś
             </button>
-            <button 
-              className={`btn btn-sm ${selectedRange === '7days' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setDateRange('7days')}
+            <button
+              className={`btn btn-sm ${selectedRange === "7days" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setDateRange("7days")}
             >
               7 dni
             </button>
-            <button 
-              className={`btn btn-sm ${selectedRange === '30days' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setDateRange('30days')}
+            <button
+              className={`btn btn-sm ${selectedRange === "30days" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setDateRange("30days")}
             >
               30 dni
             </button>
-            <button 
-              className={`btn btn-sm ${selectedRange === 'quarter' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setDateRange('quarter')}
+            <button
+              className={`btn btn-sm ${selectedRange === "quarter" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setDateRange("quarter")}
             >
               Kwartał
             </button>
           </div>
         </div>
       </div>
-      
+
       <div className="card-body">
         <div className="row align-items-center">
           <div className="col-lg-6">
@@ -232,7 +238,10 @@ const StaffPerformanceCard = () => {
                 <div className="text-muted">Wskaźnik ukończonych zadań</div>
                 <div className="h1">
                   {loading ? (
-                    <div className="spinner-border spinner-border-sm text-primary" role="status"></div>
+                    <div
+                      className="spinner-border spinner-border-sm text-primary"
+                      role="status"
+                    ></div>
                   ) : (
                     <span className={`text-${getCompletionRateColor(completionRate)}`}>
                       {completionRate !== null ? completionRate : 0}%
@@ -240,14 +249,15 @@ const StaffPerformanceCard = () => {
                   )}
                 </div>
                 <div>
-                  Ukończone zadania: {loading ? "..." : (totalCompleted !== null ? totalCompleted : 0)}
+                  Ukończone zadania:{" "}
+                  {loading ? "..." : totalCompleted !== null ? totalCompleted : 0}
                 </div>
               </div>
             </div>
             {!loading && completionRate !== null && (
               <div className="mt-3">
                 <div className="progress progress-sm">
-                  <div 
+                  <div
                     className={`progress-bar bg-${getCompletionRateColor(completionRate)}`}
                     style={{ width: `${completionRate}%` }}
                   ></div>
@@ -255,14 +265,14 @@ const StaffPerformanceCard = () => {
               </div>
             )}
           </div>
-          
+
           <div className="col-lg-6 mt-3 mt-lg-0">
             <div className="mb-2">Niestandardowy zakres:</div>
             <div className="d-flex gap-2">
               <div>
                 <label className="form-label small text-muted mb-1">Od</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   className="form-control form-control-sm"
                   value={startDate}
                   onChange={handleStartDateChange}
@@ -270,8 +280,8 @@ const StaffPerformanceCard = () => {
               </div>
               <div>
                 <label className="form-label small text-muted mb-1">Do</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   className="form-control form-control-sm"
                   value={endDate}
                   onChange={handleEndDateChange}
@@ -281,10 +291,12 @@ const StaffPerformanceCard = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="card-footer">
         <div className="d-flex justify-content-between">
-          <span className="text-muted">Dane za okres: {startDate} do {endDate}</span>
+          <span className="text-muted">
+            Dane za okres: {startDate} do {endDate}
+          </span>
         </div>
       </div>
     </div>

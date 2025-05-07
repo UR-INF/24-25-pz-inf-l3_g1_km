@@ -32,7 +32,7 @@ const ReportsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const [filterReportType, setFilterReportType] = useState("ALL");
-  
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<number | null>(null);
 
@@ -71,7 +71,7 @@ const ReportsTable = () => {
 
   const handleConfirmDelete = async () => {
     if (reportToDelete === null) return;
-    
+
     try {
       const response = await api.delete(`/reports/saved/${reportToDelete}`);
 
@@ -79,13 +79,16 @@ const ReportsTable = () => {
         showNotification("success", "Raport został pomyślnie usunięty");
         fetchReports();
       } else {
-        showNotification("error", response.data.message || "Wystąpił błąd podczas usuwania raportu");
+        showNotification(
+          "error",
+          response.data.message || "Wystąpił błąd podczas usuwania raportu",
+        );
       }
     } catch (error: any) {
       console.error("Błąd podczas usuwania raportu:", error);
       showNotification(
         "error",
-        error.response?.data?.message || "Wystąpił błąd podczas usuwania raportu"
+        error.response?.data?.message || "Wystąpił błąd podczas usuwania raportu",
       );
     } finally {
       handleCloseDeleteModal();
@@ -139,7 +142,7 @@ const ReportsTable = () => {
 
   const tableRowStyle: React.CSSProperties = {
     cursor: "pointer",
-    transition: "background-color 0.2s"
+    transition: "background-color 0.2s",
   };
 
   const handleClickNewReport = (e: React.MouseEvent) => {
@@ -149,7 +152,7 @@ const ReportsTable = () => {
 
   const getReportNameToDelete = () => {
     if (reportToDelete === null) return "";
-    const report = safeReports.find(rep => rep.id === reportToDelete);
+    const report = safeReports.find((rep) => rep.id === reportToDelete);
     return report ? report.reportFile : "";
   };
 
@@ -158,11 +161,19 @@ const ReportsTable = () => {
       <div className="card-header">
         <h3 className="card-title">Zapisane raporty</h3>
         <div className="card-actions">
-          <button
-            className="btn btn-outline-primary btn-sm"
-            onClick={handleClickNewReport}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <button className="btn btn-outline-primary btn-sm" onClick={handleClickNewReport}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="icon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M14 3v4a1 1 0 0 0 1 1h4" />
               <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
@@ -232,9 +243,7 @@ const ReportsTable = () => {
         <div className="card-body">
           <div className="text-center my-5">
             <div className="h3">Brak raportów</div>
-            <p className="text-muted">
-              Nie znaleziono żadnych raportów dla wybranych kryteriów.
-            </p>
+            <p className="text-muted">Nie znaleziono żadnych raportów dla wybranych kryteriów.</p>
           </div>
         </div>
       ) : (
@@ -259,7 +268,9 @@ const ReportsTable = () => {
                 >
                   <td>{report.reportFile}</td>
                   <td>
-                    <span className={`text-white badge ${report.reportType === "EMPLOYEE_STATISTICS" ? "bg-blue" : "bg-green"}`}>
+                    <span
+                      className={`text-white badge ${report.reportType === "EMPLOYEE_STATISTICS" ? "bg-blue" : "bg-green"}`}
+                    >
                       {getReportTypeDisplay(report.reportType)}
                     </span>
                   </td>
@@ -269,16 +280,16 @@ const ReportsTable = () => {
                       <span
                         className="avatar shadow avatar-sm me-2"
                         style={{
-                          backgroundImage: report.createdBy?.avatarUrl ? `url(${report.createdBy.avatarUrl})` : "none",
+                          backgroundImage: report.createdBy?.avatarUrl
+                            ? `url(${report.createdBy.avatarUrl})`
+                            : "none",
                         }}
                       ></span>
                       <div className="flex-fill">
                         <div className="font-weight-medium">
                           {report.createdBy?.firstName} {report.createdBy?.lastName}
                         </div>
-                        <div className="text-muted small">
-                          {report.createdBy?.role?.name || ""}
-                        </div>
+                        <div className="text-muted small">{report.createdBy?.role?.name || ""}</div>
                       </div>
                     </div>
                   </td>
@@ -292,7 +303,18 @@ const ReportsTable = () => {
                         }}
                         title="Podgląd raportu"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="icon me-1" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon me-1"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                           <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
                           <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
@@ -304,7 +326,18 @@ const ReportsTable = () => {
                         onClick={(e) => handleDeleteClick(report.id, e)}
                         title="Usuń raport"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="icon me-1" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon me-1"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                           <path d="M4 7l16 0" />
                           <path d="M10 11l0 6" />
@@ -393,7 +426,7 @@ const ReportsTable = () => {
           </ul>
         )}
       </div>
-      
+
       {/* Modal potwierdzenia usunięcia */}
       <DeleteConfirmationModal
         show={showDeleteModal}

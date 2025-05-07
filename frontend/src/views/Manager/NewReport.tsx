@@ -1,6 +1,5 @@
 import CreateReportForm from "../../components/CreateReportForm";
 
-
 const NewReport = () => {
   return (
     <div className="page-wrapper">

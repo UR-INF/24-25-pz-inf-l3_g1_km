@@ -11,10 +11,10 @@ const MaintenanceIssuesTable = () => {
   const [startDate, setStartDate] = useState(() => {
     const date = new Date();
     date.setMonth(date.getMonth() - 3); // Domyślnie ostatnie 3 miesiące
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   });
   const [endDate, setEndDate] = useState(() => {
-    return new Date().toISOString().split('T')[0];
+    return new Date().toISOString().split("T")[0];
   });
   const [currentTab, setCurrentTab] = useState("rooms");
 
@@ -64,7 +64,7 @@ const MaintenanceIssuesTable = () => {
       const params = new URLSearchParams();
       params.append("startDate", startDate);
       params.append("endDate", endDate);
-      
+
       const response = await api.get(`/reports/maintenance-issues?${params}`);
       setIssuesByRoom(response.data.issuesByRoom || []);
       setIssuesByFloor(response.data.issuesByFloor || []);
@@ -76,32 +76,36 @@ const MaintenanceIssuesTable = () => {
     }
   };
 
-  if (loading) return (
-    <div className="card">
-      <div className="card-body d-flex justify-content-center align-items-center" style={{ minHeight: "320px" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Ładowanie...</span>
+  if (loading)
+    return (
+      <div className="card">
+        <div
+          className="card-body d-flex justify-content-center align-items-center"
+          style={{ minHeight: "320px" }}
+        >
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Ładowanie...</span>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 
   return (
     <div className="card">
       <div className="card-header">
         <ul className="nav nav-tabs card-header-tabs">
           <li className="nav-item">
-            <button 
-              className={`nav-link ${currentTab === 'rooms' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('rooms')}
+            <button
+              className={`nav-link ${currentTab === "rooms" ? "active" : ""}`}
+              onClick={() => setCurrentTab("rooms")}
             >
               Problemy według pokoju
             </button>
           </li>
           <li className="nav-item">
-            <button 
-              className={`nav-link ${currentTab === 'floors' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('floors')}
+            <button
+              className={`nav-link ${currentTab === "floors" ? "active" : ""}`}
+              onClick={() => setCurrentTab("floors")}
             >
               Problemy według piętra
             </button>
@@ -113,11 +117,13 @@ const MaintenanceIssuesTable = () => {
         <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center">
             <h4 className="m-0">
-              {currentTab === 'rooms' ? 'Częstotliwość zgłoszeń według pokoju' : 'Częstotliwość zgłoszeń według piętra'}
+              {currentTab === "rooms"
+                ? "Częstotliwość zgłoszeń według pokoju"
+                : "Częstotliwość zgłoszeń według piętra"}
             </h4>
           </div>
         </div>
-        
+
         <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center">
           <div className="btn-group">
             <button
@@ -145,7 +151,7 @@ const MaintenanceIssuesTable = () => {
               90 dni
             </button>
           </div>
-          
+
           <div className="d-flex flex-wrap gap-2 align-items-center">
             <div className="d-flex align-items-center">
               <span className="me-2">Od:</span>
@@ -176,7 +182,7 @@ const MaintenanceIssuesTable = () => {
       </div>
 
       <div className="table-responsive">
-        {currentTab === 'rooms' ? (
+        {currentTab === "rooms" ? (
           <table className="table card-table table-vcenter datatable">
             <thead>
               <tr>
@@ -195,8 +201,11 @@ const MaintenanceIssuesTable = () => {
                     <td>
                       <div className="d-flex align-items-center">
                         <span className="me-2">{room.issue_count}</span>
-                        <div className="progress progress-sm flex-grow-1" style={{ width: '100px' }}>
-                          <div 
+                        <div
+                          className="progress progress-sm flex-grow-1"
+                          style={{ width: "100px" }}
+                        >
+                          <div
                             className={`progress-bar bg-${getIssueCountColor(room.issue_count)}`}
                             style={{ width: `${getPercentageWidth(room.issue_count)}%` }}
                           ></div>
@@ -204,9 +213,7 @@ const MaintenanceIssuesTable = () => {
                       </div>
                     </td>
                     <td>
-                      <button className="btn btn-sm btn-outline-primary">
-                        Pokaż szczegóły
-                      </button>
+                      <button className="btn btn-sm btn-outline-primary">Pokaż szczegóły</button>
                     </td>
                   </tr>
                 ))
@@ -239,8 +246,11 @@ const MaintenanceIssuesTable = () => {
                     <td>
                       <div className="d-flex align-items-center">
                         <span className="me-2">{floor.issues_per_room}</span>
-                        <div className="progress progress-sm flex-grow-1" style={{ width: '100px' }}>
-                          <div 
+                        <div
+                          className="progress progress-sm flex-grow-1"
+                          style={{ width: "100px" }}
+                        >
+                          <div
                             className={`progress-bar bg-${getIssueRateColor(floor.issues_per_room)}`}
                             style={{ width: `${Math.min(floor.issues_per_room * 20, 100)}%` }}
                           ></div>
@@ -278,7 +288,7 @@ const getIssueRateColor = (rate) => {
 
 const getPercentageWidth = (count) => {
   const max = 10; // Załóżmy, że 10 lub więcej zgłoszeń to 100%
-  return Math.min(count / max * 100, 100);
+  return Math.min((count / max) * 100, 100);
 };
 
 export default MaintenanceIssuesTable;

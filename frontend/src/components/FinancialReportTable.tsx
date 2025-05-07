@@ -13,7 +13,7 @@ const FinancialReportTable = () => {
       total_completed_reservations: 0,
       invoice_coverage_percentage: 0,
       company_invoices: 0,
-      individual_invoices: 0
+      individual_invoices: 0,
     },
     financialSummary: {
       total_completed_reservations: 0,
@@ -23,14 +23,14 @@ const FinancialReportTable = () => {
       lowest_room_rate: 0,
       avg_room_rate: 0,
       avg_daily_rate: 0,
-      avg_revenue_per_day_of_period: 0
-    }
+      avg_revenue_per_day_of_period: 0,
+    },
   });
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState("month");
   const [dateRange, setDateRange] = useState({
     startDate: getDefaultStartDate(),
-    endDate: new Date().toISOString().split("T")[0]
+    endDate: new Date().toISOString().split("T")[0],
   });
   const [comparisonPeriod, setComparisonPeriod] = useState(null);
   const [comparisonData, setComparisonData] = useState(null);
@@ -67,27 +67,23 @@ const FinancialReportTable = () => {
   const fetchReportData = async () => {
     try {
       setLoading(true);
-      
+
       // Tworzenie parametrów do zapytania
       const params = new URLSearchParams();
       params.append("period", period);
       params.append("startDate", dateRange.startDate);
       params.append("endDate", dateRange.endDate);
-      
+
       console.log("Pobieranie danych z parametrami:", params.toString());
 
       const response = await api.get(`/reports/financial?${params.toString()}`);
-      
+
       console.log("Otrzymane dane:", response.data);
       setReportData(response.data);
-      
+
       if (showComparison && !comparisonPeriod) {
         // Set default comparison period
-        const compDates = getComparisonDateRange(
-          dateRange.startDate, 
-          dateRange.endDate, 
-          period
-        );
+        const compDates = getComparisonDateRange(dateRange.startDate, dateRange.endDate, period);
         setComparisonPeriod(compDates);
       }
     } catch (err) {
@@ -100,18 +96,18 @@ const FinancialReportTable = () => {
 
   const fetchComparisonData = async () => {
     if (!comparisonPeriod) return;
-    
+
     try {
       // Tworzenie parametrów do zapytania porównawczego
       const params = new URLSearchParams();
       params.append("period", period);
       params.append("startDate", comparisonPeriod.startDate);
       params.append("endDate", comparisonPeriod.endDate);
-      
+
       console.log("Pobieranie danych porównawczych z parametrami:", params.toString());
-      
+
       const response = await api.get(`/reports/financial?${params.toString()}`);
-      
+
       setComparisonData(response.data);
     } catch (err) {
       console.error("Błąd podczas pobierania danych porównawczych:", err);
@@ -125,16 +121,16 @@ const FinancialReportTable = () => {
     const end = new Date(endDate);
     const diff = end.getTime() - start.getTime();
     const daysDiff = diff / (1000 * 3600 * 24);
-    
+
     const compStart = new Date(start);
     const compEnd = new Date(end);
-    
+
     compStart.setDate(compStart.getDate() - daysDiff - 1);
     compEnd.setDate(compEnd.getDate() - daysDiff - 1);
-    
+
     return {
       startDate: compStart.toISOString().split("T")[0],
-      endDate: compEnd.toISOString().split("T")[0]
+      endDate: compEnd.toISOString().split("T")[0],
     };
   }
 
@@ -178,7 +174,7 @@ const FinancialReportTable = () => {
     // Formatowanie dat do formatu YYYY-MM-DD
     setDateRange({
       startDate: start.toISOString().split("T")[0],
-      endDate: today.toISOString().split("T")[0]
+      endDate: today.toISOString().split("T")[0],
     });
     setSelectedRange(range);
   };
@@ -186,13 +182,10 @@ const FinancialReportTable = () => {
   const toggleComparison = () => {
     const newShowComparison = !showComparison;
     setShowComparison(newShowComparison);
-    
+
     // If enabling comparison and no comparison period set yet
     if (newShowComparison && !comparisonPeriod) {
-      const compDates = getComparisonDateRange(
-        dateRange.startDate, 
-        dateRange.endDate
-      );
+      const compDates = getComparisonDateRange(dateRange.startDate, dateRange.endDate);
       setComparisonPeriod(compDates);
     }
   };
@@ -204,7 +197,7 @@ const FinancialReportTable = () => {
   const handleDateChange = (e, field) => {
     setDateRange({
       ...dateRange,
-      [field]: e.target.value
+      [field]: e.target.value,
     });
     setSelectedRange("custom");
   };
@@ -212,7 +205,7 @@ const FinancialReportTable = () => {
   const handleComparisonDateChange = (e, field) => {
     setComparisonPeriod({
       ...comparisonPeriod,
-      [field]: e.target.value
+      [field]: e.target.value,
     });
   };
 
@@ -223,11 +216,15 @@ const FinancialReportTable = () => {
     setComparisonPeriod(null);
   };
 
-  const formatCurrency = (value) => 
-    new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(Number(value) || 0);
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(
+      Number(value) || 0,
+    );
 
-  const formatPercent = (value) => 
-    new Intl.NumberFormat('pl-PL', { style: 'percent', minimumFractionDigits: 2 }).format(Number(value) / 100 || 0);
+  const formatPercent = (value) =>
+    new Intl.NumberFormat("pl-PL", { style: "percent", minimumFractionDigits: 2 }).format(
+      Number(value) / 100 || 0,
+    );
 
   const getPercentChange = (current, previous) => {
     if (!previous || previous === 0) return null;
@@ -238,12 +235,16 @@ const FinancialReportTable = () => {
   const renderPercentChange = (current, previous) => {
     const change = getPercentChange(current, previous);
     if (change === null) return "-";
-    
+
     const formattedChange = change.toFixed(2) + "%";
     const className = change >= 0 ? "text-success" : "text-danger";
     const icon = change >= 0 ? "↑" : "↓";
-    
-    return <span className={className}>{icon} {formattedChange}</span>;
+
+    return (
+      <span className={className}>
+        {icon} {formattedChange}
+      </span>
+    );
   };
 
   if (loading && !reportData.revenueByPeriod?.length) {
@@ -259,28 +260,28 @@ const FinancialReportTable = () => {
 
   const formatPeriodLabel = (periodValue) => {
     // Format the period label based on the type (week, month, quarter, day)
-    if (periodValue?.includes('-W')) {
+    if (periodValue?.includes("-W")) {
       // Weekly format (2024-W12)
-      const [year, week] = periodValue.split('-W');
+      const [year, week] = periodValue.split("-W");
       return `Tydzień ${week}, ${year}`;
-    } else if (periodValue?.includes('-Q')) {
+    } else if (periodValue?.includes("-Q")) {
       // Quarterly format (2024-Q1)
-      const [year, quarter] = periodValue.split('-Q');
+      const [year, quarter] = periodValue.split("-Q");
       return `${quarter} kwartał ${year}`;
     } else if (periodValue?.match(/^\d{4}-\d{2}$/)) {
       // Monthly format (2024-03)
-      const [year, month] = periodValue.split('-');
+      const [year, month] = periodValue.split("-");
       const date = new Date(year, month - 1);
-      return date.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+      return date.toLocaleDateString("pl-PL", { month: "long", year: "numeric" });
     } else {
       // Daily or other format
       try {
         const date = new Date(periodValue);
         if (!isNaN(date)) {
-          return date.toLocaleDateString('pl-PL');
+          return date.toLocaleDateString("pl-PL");
         }
       } catch (e) {}
-      
+
       // Return as is if not recognized
       return periodValue || "";
     }
@@ -336,11 +337,7 @@ const FinancialReportTable = () => {
         <div className="d-flex flex-wrap gap-3 mb-3">
           <div>
             <label className="form-label">Grupowanie</label>
-            <select
-              className="form-select"
-              value={period}
-              onChange={handlePeriodChange}
-            >
+            <select className="form-select" value={period} onChange={handlePeriodChange}>
               <option value="day">Dziennie</option>
               <option value="week">Tygodniowo</option>
               <option value="month">Miesięcznie</option>
@@ -382,12 +379,9 @@ const FinancialReportTable = () => {
               </label>
             </div>
           </div>
-          
+
           <div className="d-flex align-items-end">
-            <button 
-              className="btn btn-outline-secondary" 
-              onClick={handleResetFilters}
-            >
+            <button className="btn btn-outline-secondary" onClick={handleResetFilters}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="icon icon-tabler icon-tabler-refresh"
@@ -443,9 +437,7 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Całkowity przychód</div>
                 </div>
-                <div className="h1 mb-0">
-                  {formatCurrency(finSummary.total_revenue)}
-                </div>
+                <div className="h1 mb-0">{formatCurrency(finSummary.total_revenue)}</div>
                 {showComparison && comparisonData && comparisonData.financialSummary && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
@@ -453,7 +445,7 @@ const FinancialReportTable = () => {
                     </div>
                     {renderPercentChange(
                       finSummary.total_revenue,
-                      comparisonData.financialSummary.total_revenue
+                      comparisonData.financialSummary.total_revenue,
                     )}
                   </div>
                 )}
@@ -467,17 +459,16 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Liczba rezerwacji</div>
                 </div>
-                <div className="h1 mb-0">
-                  {finSummary.total_completed_reservations || 0}
-                </div>
+                <div className="h1 mb-0">{finSummary.total_completed_reservations || 0}</div>
                 {showComparison && comparisonData && comparisonData.financialSummary && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
-                      Poprzednio: {comparisonData.financialSummary.total_completed_reservations || 0}
+                      Poprzednio:{" "}
+                      {comparisonData.financialSummary.total_completed_reservations || 0}
                     </div>
                     {renderPercentChange(
                       finSummary.total_completed_reservations,
-                      comparisonData.financialSummary.total_completed_reservations
+                      comparisonData.financialSummary.total_completed_reservations,
                     )}
                   </div>
                 )}
@@ -491,9 +482,7 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Średnia stawka dzienna</div>
                 </div>
-                <div className="h1 mb-0">
-                  {formatCurrency(finSummary.avg_daily_rate)}
-                </div>
+                <div className="h1 mb-0">{formatCurrency(finSummary.avg_daily_rate)}</div>
                 {showComparison && comparisonData && comparisonData.financialSummary && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
@@ -501,7 +490,7 @@ const FinancialReportTable = () => {
                     </div>
                     {renderPercentChange(
                       finSummary.avg_daily_rate,
-                      comparisonData.financialSummary.avg_daily_rate
+                      comparisonData.financialSummary.avg_daily_rate,
                     )}
                   </div>
                 )}
@@ -515,9 +504,7 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Liczba sprzedanych noclegów</div>
                 </div>
-                <div className="h1 mb-0">
-                  {finSummary.total_nights_sold || 0}
-                </div>
+                <div className="h1 mb-0">{finSummary.total_nights_sold || 0}</div>
                 {showComparison && comparisonData && comparisonData.financialSummary && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
@@ -525,7 +512,7 @@ const FinancialReportTable = () => {
                     </div>
                     {renderPercentChange(
                       finSummary.total_nights_sold,
-                      comparisonData.financialSummary.total_nights_sold
+                      comparisonData.financialSummary.total_nights_sold,
                     )}
                   </div>
                 )}
@@ -552,7 +539,7 @@ const FinancialReportTable = () => {
               {revPeriod && revPeriod.length > 0 ? (
                 revPeriod.map((item, index) => {
                   const compItem = showComparison && comparisonData?.revenueByPeriod?.[index];
-                  
+
                   return (
                     <tr key={index}>
                       <td>{formatPeriodLabel(item.period)}</td>
@@ -562,7 +549,7 @@ const FinancialReportTable = () => {
                         <td>
                           {compItem ? (
                             <>
-                              {formatCurrency(compItem.total_revenue)} {" "}
+                              {formatCurrency(compItem.total_revenue)}{" "}
                               {renderPercentChange(item.total_revenue, compItem.total_revenue)}
                             </>
                           ) : (
@@ -634,9 +621,7 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Liczba faktur</div>
                 </div>
-                <div className="h1 mb-0">
-                  {invStats.total_invoices || 0}
-                </div>
+                <div className="h1 mb-0">{invStats.total_invoices || 0}</div>
                 {showComparison && comparisonData && comparisonData.invoiceStatistics && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
@@ -644,7 +629,7 @@ const FinancialReportTable = () => {
                     </div>
                     {renderPercentChange(
                       invStats.total_invoices,
-                      comparisonData.invoiceStatistics.total_invoices
+                      comparisonData.invoiceStatistics.total_invoices,
                     )}
                   </div>
                 )}
@@ -664,11 +649,14 @@ const FinancialReportTable = () => {
                 {showComparison && comparisonData && comparisonData.invoiceStatistics && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
-                      Poprzednio: {formatPercent(comparisonData.invoiceStatistics.invoice_coverage_percentage || 0)}
+                      Poprzednio:{" "}
+                      {formatPercent(
+                        comparisonData.invoiceStatistics.invoice_coverage_percentage || 0,
+                      )}
                     </div>
                     {renderPercentChange(
                       invStats.invoice_coverage_percentage,
-                      comparisonData.invoiceStatistics.invoice_coverage_percentage
+                      comparisonData.invoiceStatistics.invoice_coverage_percentage,
                     )}
                   </div>
                 )}
@@ -682,9 +670,7 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Faktury dla firm</div>
                 </div>
-                <div className="h1 mb-0">
-                  {invStats.company_invoices || 0}
-                </div>
+                <div className="h1 mb-0">{invStats.company_invoices || 0}</div>
                 {showComparison && comparisonData && comparisonData.invoiceStatistics && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
@@ -692,7 +678,7 @@ const FinancialReportTable = () => {
                     </div>
                     {renderPercentChange(
                       invStats.company_invoices,
-                      comparisonData.invoiceStatistics.company_invoices
+                      comparisonData.invoiceStatistics.company_invoices,
                     )}
                   </div>
                 )}
@@ -706,9 +692,7 @@ const FinancialReportTable = () => {
                 <div className="d-flex align-items-center">
                   <div className="subheader">Faktury dla osób fizycznych</div>
                 </div>
-                <div className="h1 mb-0">
-                  {invStats.individual_invoices || 0}
-                </div>
+                <div className="h1 mb-0">{invStats.individual_invoices || 0}</div>
                 {showComparison && comparisonData && comparisonData.invoiceStatistics && (
                   <div className="d-flex align-items-center mt-1">
                     <div className="subheader me-2">
@@ -716,7 +700,7 @@ const FinancialReportTable = () => {
                     </div>
                     {renderPercentChange(
                       invStats.individual_invoices,
-                      comparisonData.invoiceStatistics.individual_invoices
+                      comparisonData.invoiceStatistics.individual_invoices,
                     )}
                   </div>
                 )}

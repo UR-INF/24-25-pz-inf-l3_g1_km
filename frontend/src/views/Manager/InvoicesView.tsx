@@ -1,7 +1,5 @@
 import InvoicesTable from "../../components/InvoicesTable";
 
-
-
 const InvoicesView = () => {
   return (
     <div className="page-wrapper">

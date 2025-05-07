@@ -20,37 +20,37 @@ const RoomStatusTable = () => {
     try {
       setLoading(true);
       const response = await api.get("/reports/room-status");
-      
+
       console.log("Dane z API:", response.data); // Dodane dla debugowania
-      
+
       // Wyodrębnienie potrzebnych danych
       const revenueData = response.data.revenuePerRoom || [];
       const maintenanceData = response.data.roomsNeedingMaintenance || [];
-      
+
       // Dodatkowy endpoint do pobrania statusów wszystkich pokojów
       const roomsResponse = await api.get("/rooms");
       const allRooms = roomsResponse.data || [];
-      
+
       console.log("Wszystkie pokoje:", allRooms);
-      
+
       // Utwórz mapę z room_id -> status dla wszystkich pokojów
       const roomStatusMap = allRooms.reduce((acc, room) => {
         acc[room.id] = room.status;
         return acc;
       }, {});
-      
+
       // Utwórz mapę dla pokojów wymagających konserwacji
       const maintenanceMap = maintenanceData.reduce((acc, room) => {
         acc[room.roomId || room.room_id] = {
           maintenanceIssue: room.maintenanceIssue || room.maintenance_issue,
           maintenanceStatus: room.maintenanceStatus || room.maintenance_status,
-          maintenanceRequestId: room.maintenanceRequestId || room.maintenance_request_id
+          maintenanceRequestId: room.maintenanceRequestId || room.maintenance_request_id,
         };
         return acc;
       }, {});
-      
+
       // Wzbogacenie danych o przychody i informacje o konserwacji
-      const enrichedData = revenueData.map(room => {
+      const enrichedData = revenueData.map((room) => {
         const roomId = room.roomId || room.room_id;
         return {
           room_id: roomId,
@@ -65,12 +65,12 @@ const RoomStatusTable = () => {
           revenue_per_day: room.revenuePerDay || room.revenue_per_day || 0,
           has_maintenance: !!maintenanceMap[roomId],
           maintenance_issue: maintenanceMap[roomId]?.maintenanceIssue,
-          maintenance_status: maintenanceMap[roomId]?.maintenanceStatus
+          maintenance_status: maintenanceMap[roomId]?.maintenanceStatus,
         };
       });
-      
+
       console.log("Wzbogacone dane:", enrichedData); // Dodane dla debugowania
-      
+
       setRoomsData(enrichedData);
     } catch (err) {
       console.error("Błąd podczas pobierania danych pokojów:", err);
@@ -89,16 +89,16 @@ const RoomStatusTable = () => {
   };
 
   // Unikalne piętra do filtrowania
-  const floors = Array.from(new Set(roomsData.map(room => room.floor))).sort();
+  const floors = Array.from(new Set(roomsData.map((room) => room.floor))).sort();
 
   const filteredData = roomsData
-    .filter(room => (room.room_number || "").toString().includes(search))
-    .filter(room => {
+    .filter((room) => (room.room_number || "").toString().includes(search))
+    .filter((room) => {
       if (filterStatus === "ALL") return true;
       if (filterStatus === "MAINTENANCE") return room.has_maintenance;
       return room.status === filterStatus;
     })
-    .filter(room => filterFloor === "ALL" || (room.floor || "").toString() === filterFloor);
+    .filter((room) => filterFloor === "ALL" || (room.floor || "").toString() === filterFloor);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const currentData = filteredData.slice(
@@ -106,8 +106,8 @@ const RoomStatusTable = () => {
     currentPage * itemsPerPage,
   );
 
-  const formatCurrency = (value) => 
-    new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(value || 0);
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(value || 0);
 
   if (loading) return <div>Ładowanie danych...</div>;
 
@@ -157,8 +157,10 @@ const RoomStatusTable = () => {
               onChange={(e) => setFilterFloor(e.target.value)}
             >
               <option value="ALL">Wszystkie piętra</option>
-              {floors.map(floor => (
-                <option key={floor} value={floor}>Piętro {floor}</option>
+              {floors.map((floor) => (
+                <option key={floor} value={floor}>
+                  Piętro {floor}
+                </option>
               ))}
             </select>
 
@@ -207,7 +209,10 @@ const RoomStatusTable = () => {
                       </span>
                     )}
                     {room.has_maintenance && (
-                      <span className="badge text-white bg-warning ms-1" title={room.maintenance_issue}>
+                      <span
+                        className="badge text-white bg-warning ms-1"
+                        title={room.maintenance_issue}
+                      >
                         Zgłoszenie konserwacji
                       </span>
                     )}
@@ -221,7 +226,9 @@ const RoomStatusTable = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="9" className="text-center">Brak danych do wyświetlenia</td>
+                <td colSpan="9" className="text-center">
+                  Brak danych do wyświetlenia
+                </td>
               </tr>
             )}
           </tbody>
@@ -230,7 +237,8 @@ const RoomStatusTable = () => {
 
       <div className="card-footer d-flex align-items-center">
         <p className="m-0 text-secondary">
-          Wyświetlono <span>{filteredData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> do{" "}
+          Wyświetlono{" "}
+          <span>{filteredData.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> do{" "}
           <span>{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> z{" "}
           <span>{filteredData.length}</span> wyników
         </p>

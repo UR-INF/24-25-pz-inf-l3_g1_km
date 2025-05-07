@@ -12,14 +12,14 @@ const RevenueChart = () => {
   const [selectedRange, setSelectedRange] = useState("12months");
   const [dateRange, setDateRange] = useState({
     startDate: getDefaultStartDate("12months"),
-    endDate: new Date().toISOString().split("T")[0]
+    endDate: new Date().toISOString().split("T")[0],
   });
   const [error, setError] = useState(null);
 
   // Helper function to get default start date based on range
   function getDefaultStartDate(range) {
     const date = new Date();
-    
+
     switch (range) {
       case "3months":
         date.setMonth(date.getMonth() - 3);
@@ -32,12 +32,12 @@ const RevenueChart = () => {
         break;
       case "year":
         date.setMonth(0); // January
-        date.setDate(1);  // 1st day of month
+        date.setDate(1); // 1st day of month
         break;
       default:
         date.setMonth(date.getMonth() - 12);
     }
-    
+
     return date.toISOString().split("T")[0];
   }
 
@@ -45,10 +45,10 @@ const RevenueChart = () => {
   const setDateRangePeriod = (range) => {
     const endDate = new Date().toISOString().split("T")[0];
     const startDate = getDefaultStartDate(range);
-    
+
     setDateRange({
       startDate: startDate,
-      endDate: endDate
+      endDate: endDate,
     });
     setSelectedRange(range);
   };
@@ -57,7 +57,7 @@ const RevenueChart = () => {
   const handleDateChange = (e, field) => {
     setDateRange({
       ...dateRange,
-      [field]: e.target.value
+      [field]: e.target.value,
     });
     setSelectedRange("custom");
   };
@@ -75,40 +75,41 @@ const RevenueChart = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const params = new URLSearchParams();
       params.append("period", period);
       params.append("startDate", dateRange.startDate);
       params.append("endDate", dateRange.endDate);
-      
+
       console.log("Pobieranie danych przychodów z parametrami:", params.toString());
-      
+
       const res = await api.get(`/reports/financial?${params.toString()}`);
       console.log("Otrzymane dane:", res.data);
-      
+
       if (!res.data || !res.data.revenueByPeriod) {
         console.error("Brak danych lub nieprawidłowa struktura odpowiedzi:", res.data);
         setError("Otrzymano nieprawidłowe dane z API");
         setLoading(false);
         return;
       }
-      
+
       const revenue = res.data.revenueByPeriod || [];
 
-      const labels = revenue.map(r => formatPeriodLabel(r.period, period));
-      const values = revenue.map(r => Number(r.total_revenue) || 0);
-      
+      const labels = revenue.map((r) => formatPeriodLabel(r.period, period));
+      const values = revenue.map((r) => Number(r.total_revenue) || 0);
+
       if (values.length >= 2) {
         const lastValue = values[values.length - 1] || 0;
         const prevValue = values[values.length - 2] || 1; // Unikaj dzielenia przez 0
-        const change = lastValue > 0 && prevValue > 0
-          ? Math.round(((lastValue - prevValue) / prevValue) * 100)
-          : 0;
+        const change =
+          lastValue > 0 && prevValue > 0
+            ? Math.round(((lastValue - prevValue) / prevValue) * 100)
+            : 0;
         setPercentChange(change);
       } else {
         setPercentChange(0);
       }
-          
+
       // Suma przychodów
       const total = values.reduce((sum, val) => sum + val, 0);
 
@@ -123,37 +124,37 @@ const RevenueChart = () => {
     }
   };
 
-  const formatCurrency = (value) => 
-    new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(value);
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(value);
 
   const formatPeriodLabel = (periodValue, periodType) => {
     if (!periodValue) return "";
-    
-    if (periodValue.includes('-W')) {
+
+    if (periodValue.includes("-W")) {
       // Weekly format (2024-W12)
-      const [year, week] = periodValue.split('-W');
+      const [year, week] = periodValue.split("-W");
       return `T${week}`;
-    } else if (periodValue.includes('-Q')) {
+    } else if (periodValue.includes("-Q")) {
       // Quarterly format (2024-Q1)
-      const [year, quarter] = periodValue.split('-Q');
+      const [year, quarter] = periodValue.split("-Q");
       return `Q${quarter}`;
     } else if (periodValue.match(/^\d{4}-\d{2}$/)) {
       // Monthly format (2024-03)
-      const [year, month] = periodValue.split('-');
+      const [year, month] = periodValue.split("-");
       const date = new Date(year, month - 1);
-      return date.toLocaleDateString('pl-PL', { month: 'short', year: 'numeric' });
+      return date.toLocaleDateString("pl-PL", { month: "short", year: "numeric" });
     } else {
       // Daily or other format
       try {
         const date = new Date(periodValue);
         if (!isNaN(date)) {
-          return date.toLocaleDateString('pl-PL', { 
-            day: '2-digit', 
-            month: periodType === 'day' ? '2-digit' : 'short'
+          return date.toLocaleDateString("pl-PL", {
+            day: "2-digit",
+            month: periodType === "day" ? "2-digit" : "short",
           });
         }
       } catch (e) {}
-      
+
       // Return as is if not recognized
       return periodValue;
     }
@@ -180,17 +181,21 @@ const RevenueChart = () => {
           </div>
         </div>
       </div>
-      
-      
 
       {loading ? (
-        <div className="card-body d-flex justify-content-center align-items-center" style={{ minHeight: "320px" }}>
+        <div
+          className="card-body d-flex justify-content-center align-items-center"
+          style={{ minHeight: "320px" }}
+        >
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Ładowanie...</span>
           </div>
         </div>
       ) : error ? (
-        <div className="card-body d-flex justify-content-center align-items-center" style={{ minHeight: "320px" }}>
+        <div
+          className="card-body d-flex justify-content-center align-items-center"
+          style={{ minHeight: "320px" }}
+        >
           <div className="text-danger">{error}</div>
         </div>
       ) : (
@@ -199,7 +204,10 @@ const RevenueChart = () => {
             <div className="position-absolute top-0 left-0 px-3 mt-1 w-75">
               <div className="row g-2">
                 <div className="col-auto">
-                  <div className="chart-sparkline chart-sparkline-square" style={{ minHeight: "41px" }}>
+                  <div
+                    className="chart-sparkline chart-sparkline-square"
+                    style={{ minHeight: "41px" }}
+                  >
                     <ApexChart
                       options={{
                         chart: {
@@ -228,7 +236,8 @@ const RevenueChart = () => {
                 <div className="col">
                   <div>Łączny przychód: {formatCurrency(totalRevenue || 0)}</div>
                   <div className={`text-${percentChange >= 0 ? "success" : "danger"}`}>
-                    {percentChange >= 0 ? "+" : ""}{percentChange}% w porównaniu z poprzednim okresem
+                    {percentChange >= 0 ? "+" : ""}
+                    {percentChange}% w porównaniu z poprzednim okresem
                   </div>
                 </div>
               </div>
@@ -244,86 +253,86 @@ const RevenueChart = () => {
                       sparkline: { enabled: false },
                       toolbar: { show: false },
                       zoom: { enabled: false },
-                      fontFamily: 'inherit',
-                      background: 'transparent',
+                      fontFamily: "inherit",
+                      background: "transparent",
                     },
-                    dataLabels: { 
-                      enabled: false 
+                    dataLabels: {
+                      enabled: false,
                     },
                     stroke: {
-                      curve: 'smooth',
+                      curve: "smooth",
                       width: 2,
                     },
                     fill: {
-                      type: 'gradient',
+                      type: "gradient",
                       gradient: {
                         shadeIntensity: 1,
                         opacityFrom: 0.7,
                         opacityTo: 0.2,
-                        stops: [0, 100]
-                      }
+                        stops: [0, 100],
+                      },
                     },
                     markers: {
                       size: 4,
-                      colors: ['#206bc4'],
-                      strokeColors: '#fff',
+                      colors: ["#206bc4"],
+                      strokeColors: "#fff",
                       strokeWidth: 2,
                       hover: {
                         size: 6,
-                      }
+                      },
                     },
                     xaxis: {
                       type: "category",
-                      labels: { 
+                      labels: {
                         show: true,
                         rotate: -45,
                         rotateAlways: false,
                         hideOverlappingLabels: true,
                         trim: true,
                         style: {
-                          fontFamily: 'inherit',
-                        }
+                          fontFamily: "inherit",
+                        },
                       },
-                      tickPlacement: 'on',
+                      tickPlacement: "on",
                       axisBorder: { show: false },
                       axisTicks: { show: false },
                       categories: chartLabels,
                     },
-                    yaxis: { 
-                      labels: { 
+                    yaxis: {
+                      labels: {
                         show: true,
                         formatter: (value) => formatCurrency(value),
                         style: {
-                          fontFamily: 'inherit',
-                        }
+                          fontFamily: "inherit",
+                        },
                       },
                       tickAmount: 5,
                     },
-                    grid: { 
+                    grid: {
                       strokeDashArray: 4,
                       padding: {
                         top: 0,
                         right: 0,
                         bottom: 0,
-                        left: 0
+                        left: 0,
                       },
                     },
-                    tooltip: { 
+                    tooltip: {
                       enabled: true,
                       theme: "light",
                       x: {
-                        show: true
+                        show: true,
                       },
                       y: {
-                        formatter: (value) => formatCurrency(value)
+                        formatter: (value) => formatCurrency(value),
                       },
                       marker: {
-                        show: true
+                        show: true,
                       },
                       custom: ({ series, seriesIndex, dataPointIndex, w }) => {
                         const value = series[seriesIndex][dataPointIndex];
                         const label = w.globals.labels[dataPointIndex];
-                        
+
                         return `
                           <div class="apexcharts-tooltip-box" 
                                style="background-color: #f1f5f9; color: #333; border-radius: 3px; padding: 8px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
@@ -338,14 +347,16 @@ const RevenueChart = () => {
                             </div>
                           </div>
                         `;
-                      }
+                      },
                     },
                     colors: ["#206bc4"],
                   }}
-                  series={[{ 
-                    name: "Przychód", 
-                    data: chartData 
-                  }]}
+                  series={[
+                    {
+                      name: "Przychód",
+                      data: chartData,
+                    },
+                  ]}
                   type="area"
                   height={320}
                 />
@@ -364,11 +375,16 @@ const RevenueChart = () => {
 
 const getPeriodName = (period) => {
   switch (period) {
-    case "day": return "dzienny";
-    case "week": return "tygodniowy";
-    case "month": return "miesięczny";
-    case "quarter": return "kwartalny";
-    default: return "miesięczny";
+    case "day":
+      return "dzienny";
+    case "week":
+      return "tygodniowy";
+    case "month":
+      return "miesięczny";
+    case "quarter":
+      return "kwartalny";
+    default:
+      return "miesięczny";
   }
 };
 

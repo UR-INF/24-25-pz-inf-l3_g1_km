@@ -10,14 +10,14 @@ const RoomStatusCard = () => {
     const fetchRoomStatus = async () => {
       try {
         const response = await api.get("/reports/room-status");
-        
+
         // Oblicz procent zajętości na podstawie danych
         const statusData = response.data.roomStatus || [];
-        const occupiedRooms = statusData.find(s => s.status === "OCCUPIED")?.count || 0;
+        const occupiedRooms = statusData.find((s) => s.status === "OCCUPIED")?.count || 0;
         const totalRooms = statusData.reduce((sum, item) => sum + item.count, 0);
-        
+
         setOccupancyRate(Math.round((occupiedRooms / totalRooms) * 100));
-        
+
         // Liczba pokojów wymagających konserwacji
         const maintenance = response.data.roomsNeedingMaintenance || [];
         setMaintenanceRooms(maintenance.length);
@@ -40,7 +40,9 @@ const RoomStatusCard = () => {
           </div>
           <div className="h1 mb-3">{occupancyRate !== null ? `${occupancyRate}%` : "..."}</div>
           <div className="d-flex mb-2">
-            <div>Pokoje wymagające serwisu: {maintenanceRooms !== null ? maintenanceRooms : "..."}</div>
+            <div>
+              Pokoje wymagające serwisu: {maintenanceRooms !== null ? maintenanceRooms : "..."}
+            </div>
             <div className="ms-auto">
               <Link to="/Reports/RoomStatus" className="btn btn-primary">
                 Szczegóły
