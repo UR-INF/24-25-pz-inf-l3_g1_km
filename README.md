@@ -193,9 +193,6 @@ Podczas startu aplikacji seeder automatycznie wypełni bazę przykładowymi dany
 app.db.seed=false
 ```
 
-###### Opis bazy danych
-Szczegółowy opis struktury bazy danych, zawierający informacje na temat tabel, relacji między nimi oraz atrybutów, znajduje się w pliku 📄 [Opis bazy danych](uml/Opis_bazy_danych.pdf).
-
 ## Wykorzystane technologie
 - **Java 22** – główny język backendu
 - **Spring Boot** – framework do tworzenia REST API
