@@ -193,6 +193,9 @@ Podczas startu aplikacji seeder automatycznie wypełni bazę przykładowymi dany
 app.db.seed=false
 ```
 
+###### Kod DBML
+Kod DBML wykorzystany do stworzenia diagramu ERD bazy danych, znajduje się w pliku 📄 [Kod DBML](uml/ERD.txt).
+
 ## Wykorzystane technologie
 - **Java 22** – główny język backendu
 - **Spring Boot** – framework do tworzenia REST API
