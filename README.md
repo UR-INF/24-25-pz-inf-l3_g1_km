@@ -143,6 +143,8 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 ###### Diagram ERD
 ![Diagram ERD](uml/ERD.png)
 
+Kod DBML wykorzystany do stworzenia diagramu ERD bazy danych, znajduje się w pliku 📄 [Kod DBML](uml/ERD.txt).
+
 ###### Tworzenie struktury bazy danych
 
 Aplikacja wykorzystuje mechanizmy JPA oraz Hibernate do automatycznego tworzenia struktury bazy danych na podstawie modeli encji.
@@ -192,9 +194,6 @@ Podczas startu aplikacji seeder automatycznie wypełni bazę przykładowymi dany
 ```
 app.db.seed=false
 ```
-
-###### Kod DBML
-Kod DBML wykorzystany do stworzenia diagramu ERD bazy danych, znajduje się w pliku 📄 [Kod DBML](uml/ERD.txt).
 
 ## Wykorzystane technologie
 - **Java 22** – główny język backendu
