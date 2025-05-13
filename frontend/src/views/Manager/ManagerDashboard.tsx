@@ -21,11 +21,13 @@ const ManagerDashboard = () => {
             </div>
 
             <div className="col-auto ms-auto">
-              <Link to="/RecepcionistDashboard/Reservations/NewReservation">
-                <button type="button" className="btn btn-primary">
-                  <i className="ti ti-plus fs-2 me-2"></i>
-                  Stwórz nową rezerwację
-                </button>
+              <Link
+                type="button"
+                className="btn btn-primary"
+                to="/ManagerDashboard/Employees/Create"
+              >
+                <i className="ti ti-plus fs-2 me-2"></i>
+                Dodaj nowego pracownika
               </Link>
             </div>
           </div>
