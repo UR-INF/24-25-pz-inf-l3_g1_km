@@ -19,6 +19,14 @@ const InvoiceCountCard = () => {
     fetchInvoices();
   }, []);
 
+  const formatFakturyLabel = (count: number): string => {
+    if (count === 1) return "1 faktura";
+    if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+      return `${count} faktury`;
+    }
+    return `${count} faktur`;
+  };
+
   return (
     <div className="col-sm-6 col-lg-3">
       <div className="card card-sm">
@@ -31,7 +39,7 @@ const InvoiceCountCard = () => {
             </div>
             <div className="col">
               <div className="font-weight-medium">
-                {invoiceCount !== null ? `${invoiceCount} faktur` : "..."}
+                {invoiceCount !== null ? formatFakturyLabel(invoiceCount) : "..."}
               </div>
             </div>
             <div className="col-auto">

@@ -24,6 +24,14 @@ const CleaningCard = () => {
     fetchActiveCleaningTasks();
   }, []);
 
+  const formatZadaniaLabel = (count: number): string => {
+    if (count === 1) return "1 zadanie w toku";
+    if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+      return `${count} zadania w toku`;
+    }
+    return `${count} zadań w toku`;
+  };
+
   return (
     <div className="col-sm-6 col-lg-3">
       <div className="card card-sm">
@@ -36,7 +44,7 @@ const CleaningCard = () => {
             </div>
             <div className="col">
               <div className="font-weight-medium">
-                {activeTasksCount !== null ? `${activeTasksCount} zadań w toku` : "..."}
+                {activeTasksCount !== null ? formatZadaniaLabel(activeTasksCount) : "..."}
               </div>
             </div>
             <div className="col-auto">

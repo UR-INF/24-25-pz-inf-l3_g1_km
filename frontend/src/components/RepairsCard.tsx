@@ -19,6 +19,14 @@ const RepairsCard = () => {
     fetchPendingRepairs();
   }, []);
 
+  const formatNaprawyLabel = (count: number): string => {
+    if (count === 1) return "1 oczekująca naprawa";
+    if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+      return `${count} oczekujące naprawy`;
+    }
+    return `${count} oczekujących napraw`;
+  };
+
   return (
     <div className="col-sm-6 col-lg-3">
       <div className="card card-sm">
@@ -31,7 +39,7 @@ const RepairsCard = () => {
             </div>
             <div className="col">
               <div className="font-weight-medium">
-                {pendingCount !== null ? `${pendingCount} oczekujących napraw` : "..."}
+                {pendingCount !== null ? formatNaprawyLabel(pendingCount) : "..."}
               </div>
             </div>
             <div className="col-auto">
