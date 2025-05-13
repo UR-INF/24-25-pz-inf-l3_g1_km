@@ -33,7 +33,7 @@ const RoomStatusCard = () => {
           </div>
 
           <div
-            className={`h1 mb-3 ${
+            className={`h1 ${
               occupancyRate === null
                 ? ""
                 : occupancyRate < 50

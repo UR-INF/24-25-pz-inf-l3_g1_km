@@ -50,7 +50,7 @@ const EmployeeCountCard = () => {
     <div className="col-sm-6 col-lg-3">
       <div className="card card-sm">
         <div className="card-body">
-          <div className="d-flex justify-content-between align-items-center mb-2">
+          <div className="d-flex justify-content-between mb-2">
             <div>
               <div className="subheader">Pracowników</div>
               <div className="h1">{total}</div>
