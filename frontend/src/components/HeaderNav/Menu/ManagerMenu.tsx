@@ -27,7 +27,7 @@ const ManagerMenu = () => {
       <li className={getNavItemClass("/ManagerDashboard/Reports", location.pathname)}>
         <Link className="nav-link" to="/ManagerDashboard/Reports">
           <span className="nav-link-icon">
-            <i className="ti ti-file-text fs-2"></i>
+            <i className="ti ti-chart-bar fs-2"></i>
           </span>
           <span className="nav-link-title">Raporty</span>
         </Link>
@@ -36,7 +36,7 @@ const ManagerMenu = () => {
       <li className={getNavItemClass("/ManagerDashboard/Invoices", location.pathname)}>
         <Link className="nav-link" to="/ManagerDashboard/Invoices">
           <span className="nav-link-icon">
-            <i className="ti ti-file-text fs-2"></i>
+            <i className="ti ti-receipt fs-2"></i>
           </span>
           <span className="nav-link-title">Faktury</span>
         </Link>

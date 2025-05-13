@@ -45,24 +45,32 @@ const HeaderNav = () => {
   };
 
   return (
-    <header className="navbar navbar-expand">
+    <header className="navbar navbar-expand-lg">
       <div className="container-xl">
-        <div className="row flex-fill align-items-center">
-          <div className="col">
-            <ul className="navbar-nav">
-              <li className={getNavItemClass("/", location.pathname)}>
-                <Link className="nav-link" to="/">
-                  <span className="nav-link-icon">
-                    <i className="ti ti-home fs-2"></i>
-                  </span>
-                  <span className="nav-link-title">Dashboard</span>
-                </Link>
-              </li>
-              {renderMenuForRole()}
-            </ul>
-          </div>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar-menu"
+          aria-controls="navbar-menu"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon" />
+        </button>
+
+        <div className="collapse navbar-collapse" id="navbar-menu">
+          <ul className="navbar-nav me-auto">
+            <li className={getNavItemClass("/", location.pathname)}>
+              <Link className="nav-link" to="/">
+                <i className="ti ti-home fs-2 me-1" />
+                Dashboard
+              </Link>
+            </li>
+            {renderMenuForRole()}
+          </ul>
+          <UserDropdown handleLogout={handleLogout} />
         </div>
-        <UserDropdown handleLogout={handleLogout} />
       </div>
     </header>
   );

@@ -22,7 +22,7 @@ const RepairsCard = () => {
   return (
     <div className="col-sm-6 col-lg-3">
       <div className="card card-sm">
-        <div className="card-body">
+        <div className="card-body d-flex justify-content-between align-items-center">
           <div className="row align-items-center">
             <div className="col-auto">
               <span className="avatar bg-yellow-lt text-yellow">

@@ -32,7 +32,7 @@ app.setAppUserModelId("Hotel Task Manager");
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "hotel.ico"),
-    width: 1000,
+    width: 1200,
     height: 700,
     minWidth: 550,
     minHeight: 400,
