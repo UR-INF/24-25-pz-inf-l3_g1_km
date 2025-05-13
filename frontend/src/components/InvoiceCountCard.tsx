@@ -31,7 +31,7 @@ const InvoiceCountCard = () => {
             </div>
             <div className="col">
               <div className="font-weight-medium">
-                {invoiceCount !== null ? `${invoiceCount} wystawionych faktur` : "..."}
+                {invoiceCount !== null ? `${invoiceCount} faktur` : "..."}
               </div>
             </div>
             <div className="col-auto">
