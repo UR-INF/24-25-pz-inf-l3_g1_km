@@ -33,7 +33,7 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
           <div className="mt-1 small text-secondary">{getRoleNameInPolish(userRoleName)}</div>
         </div>
       </a>
-      <div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+      <div className="dropdown-menu dropdown-menu-end">
         <Link className="dropdown-item" to="/Settings">
           Ustawienia
         </Link>
