@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import ApexChart from "react-apexcharts";
 import dayjs from "dayjs";
 import { api } from "../services/api";
+import { useTheme } from "../contexts/theme";
 
 const ReservationsPlot = () => {
   const [chartData, setChartData] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
   const [radialValue, setRadialValue] = useState<number>(0);
+  const { currentTheme } = useTheme();
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -104,6 +106,7 @@ const ReservationsPlot = () => {
               },
               yaxis: { labels: { show: false }, max: maxChartValue },
               grid: { strokeDashArray: 4 },
+              tooltip: { theme: currentTheme },
               colors: ["#206bc4"],
               labels: chartLabels,
             }}

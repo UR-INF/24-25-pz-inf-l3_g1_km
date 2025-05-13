@@ -17,7 +17,7 @@ const CleaningCard = () => {
         setActiveTasksCount(notCompletedTasks.length);
       } catch (error: any) {
         console.error("Błąd podczas pobierania zadań sprzątania:", error);
-        setActiveTasksCount(0); // fallback
+        setActiveTasksCount(0);
       }
     };
 
@@ -26,19 +26,24 @@ const CleaningCard = () => {
 
   return (
     <div className="col-sm-6 col-lg-3">
-      <div className="card">
+      <div className="card card-sm">
         <div className="card-body">
-          <div className="d-flex align-items-center">
-            <div className="subheader">Otwarte zgłoszenia sprzątania</div>
-          </div>
-          <div className="h1 mb-3">{activeTasksCount !== null ? activeTasksCount : "..."}</div>
-          <div className="d-flex">
-            <div>
-              <Link to="/RecepcionistDashboard/Orders/Cleaning" className="btn btn-primary">
+          <div className="row align-items-center">
+            <div className="col-auto">
+              <span className="avatar bg-cyan-lt text-cyan">
+                <i className="ti ti-trash fs-1" />
+              </span>
+            </div>
+            <div className="col">
+              <div className="font-weight-medium">
+                {activeTasksCount !== null ? `${activeTasksCount} zadań w toku` : "..."}
+              </div>
+            </div>
+            <div className="col-auto">
+              <Link to="/RecepcionistDashboard/Orders/Cleaning" className="btn btn-sm btn-cyan">
                 Zobacz
               </Link>
             </div>
-            <div className="ms-auto"></div>
           </div>
         </div>
       </div>

@@ -2,18 +2,21 @@ import ReservationCard from "../../components/ReservationCard";
 import RoomsCard from "../../components/RoomsCard";
 import RepairsCard from "../../components/RepairsCard";
 import CleaningCard from "../../components/CleaningCard";
-import ReservationsPlot from "../../components/ReservationsPlot";
-import RepairTable from "../../components/RepairTable";
 import { Link } from "react-router";
+import RoomStatusCard from "../../components/RoomStatusCard";
+import RevenueChart from "../../components/RevenueChart";
+import EmployeeCountCard from "../../components/EmployeeCountCard";
+import InvoiceCountCard from "../../components/InvoiceCountCard";
+import ReportCountCard from "../../components/ReportCountCard";
 
-const ReceptionistDashboard = () => {
+const ManagerDashboard = () => {
   return (
     <div className="page-wrapper">
       <div className="page-header">
         <div className="container-xl">
           <div className="row g-2 align-items-center">
             <div className="col">
-              <div className="page-pretitle">Przegląd obowiązków</div>
+              <div className="page-pretitle">Zarządzanie hotelem</div>
               <h1 className="page-title">Podsumowanie</h1>
             </div>
 
@@ -33,17 +36,18 @@ const ReceptionistDashboard = () => {
         <div className="container-xl">
           <div className="row row-deck row-cards">
             <ReservationCard />
+            <RoomStatusCard />
+            <EmployeeCountCard />
             <RoomsCard />
             <RepairsCard />
             <CleaningCard />
+            <ReportCountCard />
+            <InvoiceCountCard />
+            <div className="col-lg-12">
+              <RevenueChart />
+            </div>
             {/* <div className="col-lg-12">
               <ReservationsPlot />
-            </div> */}
-            {/* <div className="col-lg-12">
-              <RepairTable />
-            </div>
-            <div className="col-lg-12">
-              <CleaningTable />
             </div> */}
           </div>
         </div>
@@ -52,4 +56,4 @@ const ReceptionistDashboard = () => {
   );
 };
 
-export default ReceptionistDashboard;
+export default ManagerDashboard;

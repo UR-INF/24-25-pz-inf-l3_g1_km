@@ -25,10 +25,8 @@ import AddRooms from "./views/Manager/AddRooms";
 import ModifyRooms from "./views/Manager/ModifyRooms";
 import ReportsView from "./views/Manager/ReportsView";
 import ReportPage from "./components/ReportPdfViewer";
-import CreateReportForm from "./components/CreateReportForm";
 import NewReport from "./views/Manager/NewReport";
 import InvoicesView from "./views/Manager/InvoicesView";
-//import HousekeeperCleaningTasks from "./views/Housekeeper/HousekeeperCleaningTasks";
 
 // prettier-ignore
 const protectedRoutes = [

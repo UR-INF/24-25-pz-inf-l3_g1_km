@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 import { api } from "../services/api";
 
 const RoomStatusCard = () => {
   const [occupancyRate, setOccupancyRate] = useState<number | null>(null);
-  const [maintenanceRooms, setMaintenanceRooms] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchRoomStatus = async () => {
@@ -17,14 +15,9 @@ const RoomStatusCard = () => {
         const totalRooms = statusData.reduce((sum, item) => sum + item.count, 0);
 
         setOccupancyRate(Math.round((occupiedRooms / totalRooms) * 100));
-
-        // Liczba pokojów wymagających konserwacji
-        const maintenance = response.data.roomsNeedingMaintenance || [];
-        setMaintenanceRooms(maintenance.length);
       } catch (error: any) {
         console.error("Błąd podczas pobierania statusu pokojów:", error);
         setOccupancyRate(0);
-        setMaintenanceRooms(0);
       }
     };
 
@@ -38,17 +31,40 @@ const RoomStatusCard = () => {
           <div className="d-flex align-items-center">
             <div className="subheader">Aktualne obłożenie</div>
           </div>
-          <div className="h1 mb-3">{occupancyRate !== null ? `${occupancyRate}%` : "..."}</div>
-          <div className="d-flex mb-2">
-            <div>
-              Pokoje wymagające serwisu: {maintenanceRooms !== null ? maintenanceRooms : "..."}
-            </div>
-            {/* <div className="ms-auto">
-              <Link to="/Reports/RoomStatus" className="btn btn-primary">
-                Szczegóły
-              </Link>
-            </div> */}
+
+          <div
+            className={`h1 mb-3 ${
+              occupancyRate === null
+                ? ""
+                : occupancyRate < 50
+                  ? "text-danger"
+                  : occupancyRate < 80
+                    ? "text-warning"
+                    : "text-success"
+            }`}
+          >
+            {occupancyRate !== null ? `${occupancyRate}%` : "..."}
           </div>
+
+          {occupancyRate !== null && (
+            <>
+              <div className="mb-2">Poziom obłożenia</div>
+
+              <div className="progress progress-sm">
+                <div
+                  className="progress-bar bg-primary"
+                  style={{ width: `${occupancyRate}%` }}
+                  role="progressbar"
+                  aria-valuenow={occupancyRate}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${occupancyRate}% obłożenia`}
+                >
+                  <span className="visually-hidden">{occupancyRate}% Complete</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

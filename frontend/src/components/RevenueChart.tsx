@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ApexChart from "react-apexcharts";
 import { api } from "../services/api";
+import { useTheme } from "../contexts/theme";
 
 const RevenueChart = () => {
   const [chartData, setChartData] = useState([]);
@@ -159,6 +160,7 @@ const RevenueChart = () => {
       return periodValue;
     }
   };
+  const { currentTheme } = useTheme();
 
   return (
     <div className="card">
@@ -243,7 +245,7 @@ const RevenueChart = () => {
               </div>
             </div>
 
-            <div id="chart-revenue-activity" style={{ minHeight: "320px", marginTop: "70px" }}>
+            <div id="chart-revenue-activity" style={{ minHeight: "320px", marginTop: "50px" }}>
               {chartData.length > 0 ? (
                 <ApexChart
                   options={{
@@ -252,7 +254,7 @@ const RevenueChart = () => {
                       height: 320,
                       sparkline: { enabled: false },
                       toolbar: { show: false },
-                      zoom: { enabled: false },
+                      zoom: { enabled: true },
                       fontFamily: "inherit",
                       background: "transparent",
                     },
@@ -291,6 +293,7 @@ const RevenueChart = () => {
                         trim: true,
                         style: {
                           fontFamily: "inherit",
+                          colors: "var(--tblr-gray-500)",
                         },
                       },
                       tickPlacement: "on",
@@ -304,6 +307,7 @@ const RevenueChart = () => {
                         formatter: (value) => formatCurrency(value),
                         style: {
                           fontFamily: "inherit",
+                          colors: "var(--tblr-gray-500)",
                         },
                       },
                       tickAmount: 5,
@@ -312,14 +316,14 @@ const RevenueChart = () => {
                       strokeDashArray: 4,
                       padding: {
                         top: 0,
-                        right: 0,
-                        bottom: 0,
-                        left: 0,
+                        right: 10,
+                        bottom: 10,
+                        left: 10,
                       },
                     },
                     tooltip: {
                       enabled: true,
-                      theme: "light",
+                      theme: currentTheme,
                       x: {
                         show: true,
                       },
@@ -334,16 +338,9 @@ const RevenueChart = () => {
                         const label = w.globals.labels[dataPointIndex];
 
                         return `
-                          <div class="apexcharts-tooltip-box" 
-                               style="background-color: #f1f5f9; color: #333; border-radius: 3px; padding: 8px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
-                            <div class="apexcharts-tooltip-title" 
-                                 style="font-weight: 500; color: #64748b; font-size: 13px; margin-bottom: 5px;">
-                              ${label}
-                            </div>
+                          <div class="apexcharts-tooltip-box"">
                             <div class="apexcharts-tooltip-value" style="display: flex; align-items: center;">
-                              <span style="color: #206bc4; margin-right: 5px;">●</span>
-                              <span style="font-weight: 500; color: #64748b; margin-right: 5px;">Przychód:</span>
-                              <span style="font-weight: 600; color: #333;">${formatCurrency(value)}</span>
+                              <span class="text-primary me-1">●</span> Przychód: <strong class="ms-1">${formatCurrency(value)}</strong>
                             </div>
                           </div>
                         `;

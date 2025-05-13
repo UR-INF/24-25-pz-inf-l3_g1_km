@@ -1,7 +1,7 @@
 import DashboardAlert from "../components/DashboardAlert.tsx";
 import { useUser, RoleName } from "../contexts/user";
 import ReceptionistDashboard from "./Receptionist/ReceptionistDashboard.tsx";
-// import ManagerDashboard from "./ManagerDashboard.tsx";
+import ManagerDashboard from "./Manager/ManagerDashboard.tsx";
 import HousekeeperDashboard from "./Housekeeper/HousekeeperDashboard.tsx";
 import MaintenanceDashboard from "./Maintenance/MaintenanceDashboard.tsx";
 
@@ -29,8 +29,8 @@ const RoleBasedDashboardView = () => {
 
   // Renderowanie odpowiedniego dashboardu w zależności od roli
   switch (userRoleName) {
-    // case RoleName.MANAGER:
-    //   return <ManagerDashboard />;
+    case RoleName.MANAGER:
+      return <ManagerDashboard />;
     case RoleName.RECEPTIONIST:
       return <ReceptionistDashboard />;
     case RoleName.HOUSEKEEPER:
