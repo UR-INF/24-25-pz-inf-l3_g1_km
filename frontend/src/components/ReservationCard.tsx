@@ -147,7 +147,7 @@ const ReservationCard = () => {
             </div>
           </div>
         </div>
-        <div style={{ height: 80, marginTop: -30 }}>
+        <div className="card-chart">
           <ApexChart
             type="area"
             height="100%"
