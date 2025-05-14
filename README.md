@@ -27,10 +27,9 @@ System powinien składać się z kilku niezależnych modułów, które pozwalaj�
 
 ## Integracja z bazą danych
 
-- System powinien być oparty na bazie danych, która pozwala na **szybki dostęp do informacji** o użytkownikach, zadaniach, zgłoszeniach i raportach.
-- Domyślnie aplikacja współpracuje z **MariaDB** jako główną relacyjną bazą danych.
-- Struktura bazy danych tworzona jest automatycznie przy pierwszym uruchomieniu dzięki mechanizmowi JPA/Hibernate.
-- **Przykładowe dane** mogą być opcjonalnie załadowane do bazy.
+- Domyślnie aplikacja powinna współpracować z **MariaDB** jako główną relacyjną bazą danych.
+- Struktura bazy danych powinna być tworzona automatycznie przy pierwszym uruchomieniu dzięki mechanizmowi JPA/Hibernate.
+- **Przykładowe dane** powinny być opcjonalnie załadowane do bazy danych.
 
 ## Bezpieczeństwo i dostęp użytkowników
 
@@ -137,13 +136,13 @@ Interesariuszami aplikacji Hotel Task Manager są właściciele mniejszych hotel
 ### Przeglądanie statystyk zespołu
 ![Diagram sekwencji - Przeglądanie statystyk zespołu](uml/sequenceDiagram_searchStatistics.png)
 - ###### [Diagram klas]
-  Wstawić rys. diagramu UML
+![Diagram klas](uml/classesDiagram.png)
 
 ## Baza danych
 ###### Diagram ERD
-![Diagram ERD](uml/ERD.png)
+![Diagram ERD](schema/erd.png)
 
-Kod DBML wykorzystany do stworzenia diagramu ERD bazy danych, znajduje się w pliku 📄 [Kod DBML](uml/ERD.txt).
+Kod Database Markup Language wykorzystany do stworzenia diagramu ERD bazy danych, znajduje się w pliku [schema/erd.dbml](schema/erd.dbml).
 
 ###### Tworzenie struktury bazy danych
 
