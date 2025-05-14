@@ -9,8 +9,6 @@ type Options = {
   onUnauthorized: () => void;
 };
 
-// TODO dokumentacja
-
 export const setupAuthInterceptor = (api: AxiosInstance, { onUnauthorized }: Options) => {
   api.interceptors.response.use(
     (response: AxiosResponse) => response,
