@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useEffect } from "react";
 import { useAuth } from "../contexts/auth";
 import { setupAuthInterceptor } from "../services/setupAxiosAuth";

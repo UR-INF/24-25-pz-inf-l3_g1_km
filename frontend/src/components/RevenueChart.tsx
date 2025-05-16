@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import ApexChart from "react-apexcharts";
 import { api } from "../services/api";

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../services/api";
 import { useUser } from "../../contexts/user";

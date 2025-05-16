@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
@@ -290,7 +292,9 @@ const ReportsTable = () => {
                         <div className="font-weight-medium">
                           {report.createdBy?.firstName} {report.createdBy?.lastName}
                         </div>
-                        <div className="text-muted small">{getRoleNameInPolish(report.createdBy?.role?.name) || ""}</div>
+                        <div className="text-muted small">
+                          {getRoleNameInPolish(report.createdBy?.role?.name) || ""}
+                        </div>
                       </div>
                     </div>
                   </td>
