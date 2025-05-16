@@ -40,7 +40,7 @@ function createWindow() {
     minWidth: 550,
     minHeight: 400,
     frame: false,
-    titleBarStyle: "hidden", // macOS
+    titleBarStyle: "hidden",
     webPreferences: {
       webSecurity: false,
       preload: path.join(__dirname, "preload.mjs"),

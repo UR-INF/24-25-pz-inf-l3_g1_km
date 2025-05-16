@@ -67,7 +67,7 @@ const Titlebar = () => {
 
         <div className="navbar-brand d-flex align-items-center justify-content-center gap-2">
           <img
-            src="/hotel.png"
+            src={new URL("../../public/hotel.png", import.meta.url).toString()}
             alt="Logo"
             style={{
               backgroundColor: "var(--tblr-body-bg)",

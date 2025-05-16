@@ -1,27 +1,16 @@
-import { AxiosError, AxiosResponse } from "axios";
-import { createAxiosInstance } from "./api";
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
-let isInterceptorRegistered = false;
-
-/**
- * Opcje przekazywane do interceptora autoryzacyjnego.
- *
- * @property {() => void} onUnauthorized - Funkcja wywoływana przy błędzie 401 (unauthorized).
- */
 type Options = {
   onUnauthorized: () => void;
 };
 
-/**
- * Konfiguruje interceptor odpowiedzi HTTP, który obsługuje błędy autoryzacji (401).
- *
- * @param {Options} param0 - Obiekt opcji zawierający funkcję obsługi błędu 401.
- * @returns {Promise<void>} - Obietnica zakończenia konfiguracji interceptora.
- */
-export const setupAuthInterceptor = async ({ onUnauthorized }: Options): Promise<void> => {
-  if (isInterceptorRegistered) return;
+let isInterceptorRegistered = false;
 
-  const api = await createAxiosInstance();
+export const setupAuthInterceptor = async (
+  api: AxiosInstance,
+  { onUnauthorized }: Options,
+): Promise<void> => {
+  if (isInterceptorRegistered) return;
 
   api.interceptors.response.use(
     (response: AxiosResponse) => response,

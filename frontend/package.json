@@ -1,6 +1,8 @@
 {
   "name": "hotel-task-manager",
   "productName": "Hotel Task Manager",
+  "author": "Krzysztof Motas, Patryk Jarosiewicz, Konrad Pluta, Jakub Orczyk",
+  "description": "Aplikacja do zarządzania zadaniami w hotelu",
   "private": true,
   "version": "1.0.0",
   "type": "module",
