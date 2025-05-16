@@ -4,6 +4,7 @@ declare global {
   interface Window {
     electronAPI?: {
       getConfig?: () => Promise<{ API_URL?: string }>;
+      setConfig?: (data: { API_URL?: string }) => Promise<boolean>;
     };
   }
 }
@@ -56,6 +57,13 @@ async function createAxiosInstance(): Promise<AxiosInstance> {
   });
 
   return axiosInstance;
+}
+
+/**
+ * Funkcja do resetowania instancji axios.
+ */
+export function resetAxiosInstance() {
+  axiosInstance = null;
 }
 
 /**

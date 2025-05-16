@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigationHistory } from "../hooks/useNavigationHistory";
 import { useTheme } from "../contexts/theme";
+import AdminConfigModal from "./AdminConfigModal";
 
 const Titlebar = () => {
   const handleMinimize = () => window.ipcRenderer.send("window:minimize");
@@ -10,6 +11,7 @@ const Titlebar = () => {
   const { currentTheme, toggleTheme } = useTheme();
 
   const { goBack, goForward, canGoBack, canGoForward } = useNavigationHistory();
+  const [adminVisible, setAdminVisible] = useState(false);
 
   return (
     <header
@@ -104,6 +106,16 @@ const Titlebar = () => {
                 className="nav-link px-1 btn btn-link"
                 title="Otwórz narzędzia deweloperskie"
               >
+                <i className="ti ti-code fs-2"></i>
+              </button>
+            </li>
+
+            <li className="nav-item">
+              <button
+                onClick={() => setAdminVisible(true)}
+                className="nav-link px-1 btn btn-link text-danger"
+                title="Otwórz panel administracyjny"
+              >
                 <i className="ti ti-settings fs-2"></i>
               </button>
             </li>
@@ -140,6 +152,8 @@ const Titlebar = () => {
           </ul>
         </div>
       </div>
+
+      <AdminConfigModal show={adminVisible} onClose={() => setAdminVisible(false)} />
     </header>
   );
 };
