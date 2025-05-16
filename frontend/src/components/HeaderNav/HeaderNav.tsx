@@ -11,7 +11,7 @@ import HousekeeperMenu from "./Menu/HousekeeperMenu";
 import MaintenanceMenu from "./Menu/MaintenanceMenu";
 
 const HeaderNav = () => {
-  const { userRoleName } = useUser();
+  const { userRoleName, userId } = useUser();
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,7 +67,7 @@ const HeaderNav = () => {
                 Dashboard
               </Link>
             </li>
-            {renderMenuForRole()}
+            {Boolean(userId) && renderMenuForRole()}
           </ul>
           <UserDropdown handleLogout={handleLogout} />
         </div>

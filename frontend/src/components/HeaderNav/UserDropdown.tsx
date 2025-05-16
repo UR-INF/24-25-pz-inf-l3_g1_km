@@ -8,7 +8,7 @@ interface UserDropdownProps {
 }
 
 const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
-  const { userFirstName, userLastName, userRoleName, userAvatarUrl } = useUser();
+  const { userFirstName, userLastName, userRoleName, userAvatarUrl, userId } = useUser();
   const location = useLocation();
 
   return (
@@ -19,24 +19,35 @@ const UserDropdown = ({ handleLogout }: UserDropdownProps) => {
         data-bs-toggle="dropdown"
         aria-label="Otwórz menu użytkownika"
       >
-        <span
-          className="avatar shadow avatar-sm"
-          style={{
-            backgroundImage: `url(${userAvatarUrl})`,
-          }}
-        ></span>
+        {userAvatarUrl && (
+          <span
+            className="avatar shadow avatar-sm"
+            style={{
+              backgroundImage: `url(${userAvatarUrl})`,
+            }}
+          ></span>
+        )}
 
         <div className="ps-2">
-          <div>
-            {userFirstName} {userLastName}
-          </div>
-          <div className="mt-1 small text-secondary">{getRoleNameInPolish(userRoleName)}</div>
+          {(Boolean(userId) && userFirstName && userLastName && (
+            <div>
+              {userFirstName} {userLastName}
+            </div>
+          )) || <div>Brak danych</div>}
+
+          {Boolean(userId) && (
+            <div className="mt-1 small text-secondary">
+              {userRoleName ? getRoleNameInPolish(userRoleName) : "Brak roli"}
+            </div>
+          )}
         </div>
       </a>
       <div className="dropdown-menu dropdown-menu-end">
-        <Link className="dropdown-item" to="/Settings">
-          Ustawienia
-        </Link>
+        {Boolean(userId) && (
+          <Link className="dropdown-item" to="/Settings">
+            Ustawienia
+          </Link>
+        )}
 
         <a href="#" className="dropdown-item text-danger" onClick={handleLogout}>
           Wyloguj się
