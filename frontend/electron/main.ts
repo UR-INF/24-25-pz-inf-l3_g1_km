@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from "electron";
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import fs from "node:fs";
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,13 +23,15 @@ export const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
+const configTemplatePath = path.join(process.env.APP_ROOT!, "electron", "config.default.json");
+const userConfigPath = path.join(app.getPath("userData"), "config.json");
+
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, "public")
   : RENDERER_DIST;
 
 let win: BrowserWindow | null;
 
-app.setAppUserModelId("Hotel Task Manager");
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "hotel.ico"),
@@ -72,6 +75,26 @@ function createWindow() {
     shell.openExternal(url);
   });
 
+  ipcMain.handle("config:get", () => {
+    try {
+      const raw = fs.readFileSync(userConfigPath, "utf-8");
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error("Nie udało się odczytać config.json:", e);
+      return { API_URL: "http://localhost:8080" };
+    }
+  });
+
+  ipcMain.handle("config:set", (_, newConfig) => {
+    try {
+      fs.writeFileSync(userConfigPath, JSON.stringify(newConfig, null, 2), "utf-8");
+      return true;
+    } catch (e) {
+      console.error("Nie udało się zapisać config.json:", e);
+      return false;
+    }
+  });
+
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
@@ -98,6 +121,18 @@ app.on("activate", () => {
   }
 });
 
+app.setAppUserModelId("Hotel Task Manager");
 app.setName("Hotel Task Manager");
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+
+  if (!fs.existsSync(userConfigPath)) {
+    try {
+      fs.copyFileSync(configTemplatePath, userConfigPath);
+      console.log("Skopiowano config.default.json do userData jako config.json");
+    } catch (err) {
+      console.error("Błąd kopiowania config.json:", err);
+    }
+  }
+});

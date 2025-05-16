@@ -19,5 +19,7 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   }
 });
 electron.contextBridge.exposeInMainWorld("electronAPI", {
-  focusWindow: () => electron.ipcRenderer.send("focus-window")
+  focusWindow: () => electron.ipcRenderer.send("focus-window"),
+  getConfig: () => electron.ipcRenderer.invoke("config:get"),
+  setConfig: (data) => electron.ipcRenderer.invoke("config:set", data)
 });

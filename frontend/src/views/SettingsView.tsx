@@ -1,7 +1,7 @@
 import { RoleName, useUser } from "../contexts/user";
 import { getRoleNameInPolish } from "../utils/roleUtils";
 import { api } from "../services/api";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNotification } from "../contexts/notification";
 import { validateEmailFormat } from "../utils/regexUtils";
 import { useTheme } from "../contexts/theme";

@@ -22,4 +22,6 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
 
 contextBridge.exposeInMainWorld("electronAPI", {
   focusWindow: () => ipcRenderer.send("focus-window"),
+  getConfig: () => ipcRenderer.invoke("config:get"),
+  setConfig: (data: any) => ipcRenderer.invoke("config:set", data),
 });
