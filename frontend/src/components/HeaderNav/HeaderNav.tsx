@@ -16,12 +16,16 @@ const HeaderNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showNotification } = useNotification();
+  const { state } = useAuth();
 
   const handleLogout = () => {
     logout();
-    navigate("/login", { replace: true });
 
-    showNotification("info", "Pomyślnie wylogowano z systemu!");
+    // odczekaj aż reducer zaktualizuje stan
+    setTimeout(() => {
+      navigate("/login", { replace: true });
+      showNotification("info", "Pomyślnie wylogowano z systemu!");
+    }, 50);
   };
 
   const renderMenuForRole = () => {

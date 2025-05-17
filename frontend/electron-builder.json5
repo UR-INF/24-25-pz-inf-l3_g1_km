@@ -13,6 +13,7 @@
     artifactName: "${productName}-Mac-${version}-Installer.${ext}",
   },
   win: {
+    icon: "resources/hotel.ico",
     target: [
       {
         target: "nsis",
@@ -31,4 +32,11 @@
     target: ["AppImage"],
     artifactName: "${productName}-Linux-${version}.${ext}",
   },
+  extraResources: [
+    {
+      from: "resources",
+      to: "resources",
+      filter: ["**/*"],
+    },
+  ],
 }

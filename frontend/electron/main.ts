@@ -39,8 +39,10 @@ function createWindow() {
     height: 700,
     minWidth: 550,
     minHeight: 400,
+
     frame: false,
     titleBarStyle: "hidden",
+
     webPreferences: {
       webSecurity: false,
       preload: path.join(__dirname, "preload.mjs"),
