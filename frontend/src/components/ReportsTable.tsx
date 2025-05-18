@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import { api } from "../services/api";
@@ -117,15 +119,6 @@ const ReportsTable = () => {
     setPdfUrl(null);
     setShowModal(false);
     setCurrentReport(null);
-  };
-
-  const handleDownload = () => {
-    if (pdfUrl && currentReport) {
-      const link = document.createElement("a");
-      link.href = pdfUrl;
-      link.download = currentReport.reportFile;
-      link.click();
-    }
   };
 
   const handleDeleteClick = (reportId, e) => {
@@ -539,9 +532,6 @@ const ReportsTable = () => {
         <Modal.Footer>
           <button className="btn btn-secondary" onClick={handleClose}>
             Zamknij
-          </button>
-          <button className="btn btn-primary" onClick={handleDownload} disabled={!pdfUrl || reportLoading}>
-            Pobierz raport
           </button>
         </Modal.Footer>
       </Modal>

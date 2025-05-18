@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal } from "react-bootstrap"; // Importujemy Modal z react-bootstrap
+import { Modal } from "react-bootstrap";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 import { useNavigate } from "react-router";
@@ -9,7 +9,6 @@ const CreateReportForm = () => {
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   
-  // Stany dla modalu
   const [showModal, setShowModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
@@ -32,7 +31,6 @@ const CreateReportForm = () => {
     }));
   };
 
-  // Funkcja zamykająca modal i zwalniająca zasoby
   const handleClose = () => {
     if (pdfUrl) {
       URL.revokeObjectURL(pdfUrl);
@@ -49,7 +47,6 @@ const CreateReportForm = () => {
       let endpoint = "";
       let params = new URLSearchParams();
 
-      // Dodaj parametry dat
       params.append("startDate", formData.startDate);
       params.append("endDate", formData.endDate);
 
@@ -86,14 +83,12 @@ const CreateReportForm = () => {
 
       const blob = new Blob([response.data], { type: "application/pdf" });
       
-      // Sprawdzenie typu pliku
       if (blob.type !== "application/pdf") {
         throw new Error("Serwer zwrócił nieprawidłowy format pliku");
       }
 
       const url = URL.createObjectURL(blob);
       
-      // Ustawiamy URL i otwieramy modal
       setPdfUrl(url);
       setShowModal(true);
 
@@ -110,7 +105,6 @@ const CreateReportForm = () => {
     }
   };
 
-  // Funkcja pobierania raportu
   const handleDownload = () => {
     if (pdfUrl) {
       const link = document.createElement("a");

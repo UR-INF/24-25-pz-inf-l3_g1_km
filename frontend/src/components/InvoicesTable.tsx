@@ -25,8 +25,8 @@ const InvoicesTable = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [loadingPdf, setLoadingPdf] = useState(false);
-  const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [invoiceToDelete, setInvoiceToDelete] = useState<number | null>(null);
@@ -41,7 +41,7 @@ const InvoicesTable = () => {
         URL.revokeObjectURL(pdfUrl);
       }
     };
-  }, []);
+  }, [pdfUrl]);
 
   const fetchInvoices = async () => {
     try {
@@ -57,30 +57,42 @@ const InvoicesTable = () => {
     }
   };
 
-  const handleShowInvoice = async (invoiceId: number) => {
+  const viewInvoice = async (invoice: Invoice) => {
     try {
       setLoadingPdf(true);
-      setSelectedInvoiceId(invoiceId);
-
-      const pdfResponse = await api.get(`/invoices/${invoiceId}/pdf`, {}, { responseType: "blob" });
-      const blob = pdfResponse.data;
-
-      if (blob.type !== "application/pdf") {
-        showNotification("error", "Serwer zwrócił błąd zamiast PDF.");
-        return;
-      }
-
-      if (blob.size === 0) {
-        showNotification("error", "Pobrano pusty plik PDF.");
-        return;
-      }
-
-      const url = URL.createObjectURL(blob);
-      setPdfUrl(url);
+      setCurrentInvoice(invoice);
       setShowModal(true);
+
+      console.log(`Pobieranie faktury o ID: ${invoice.id}`);
+
+      const response = await api.get(
+        `/invoices/${invoice.id}/pdf`,
+        {},
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        }
+      );
+
+      if (!response.data) {
+        console.error("Otrzymano pustą odpowiedź");
+        showNotification("error", "Otrzymano pustą odpowiedź z serwera");
+        return;
+      }
+
+      const blob = response.data;
+      let pdfBlob = blob;
+      if (!blob.type || blob.type !== "application/pdf") {
+        pdfBlob = new Blob([blob], { type: "application/pdf" });
+      }
+
+      const url = URL.createObjectURL(pdfBlob);
+      setPdfUrl(url);
     } catch (error) {
-      console.error("Błąd podczas pobierania faktury:", error);
-      showNotification("error", "Wystąpił błąd podczas pobierania faktury.");
+      console.error("Błąd podczas pobierania PDF:", error);
+      showNotification("error", "Nie udało się pobrać faktury");
     } finally {
       setLoadingPdf(false);
     }
@@ -90,17 +102,13 @@ const InvoicesTable = () => {
     if (pdfUrl) {
       URL.revokeObjectURL(pdfUrl);
     }
-    setShowModal(false);
     setPdfUrl(null);
-    setSelectedInvoiceId(null);
+    setShowModal(false);
+    setCurrentInvoice(null);
   };
 
-  const handleClickNewInvoice = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate("/ManagerDashboard/CreateInvoice");
-  };
-
-  const handleDeleteClick = (invoiceId: number) => {
+  const handleDeleteClick = (invoiceId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
     setInvoiceToDelete(invoiceId);
     setShowDeleteModal(true);
   };
@@ -110,24 +118,98 @@ const InvoicesTable = () => {
     setInvoiceToDelete(null);
   };
 
+  const findReservationWithInvoice = async (invoiceId) => {
+    try {
+      const response = await api.get("/reservations");
+      const allReservations = response.data;
+      
+      const reservationWithInvoice = allReservations.find(reservation => {
+        if (reservation.invoice && reservation.invoice.id === invoiceId) {
+          return true;
+        }
+        if (reservation.invoiceId === invoiceId) {
+          return true;
+        }
+        return false;
+      });
+      
+      return reservationWithInvoice || null;
+    } catch (error) {
+      console.error("Błąd podczas szukania rezerwacji z fakturą:", error);
+      return null;
+    }
+  };
+
   const handleConfirmDelete = async () => {
     if (invoiceToDelete === null) return;
+    
+    console.log(`Przygotowanie do usunięcia faktury ID: ${invoiceToDelete}`);
 
     try {
-      const response = await api.delete(`/invoices/${invoiceToDelete}`);
-
-      if (response.status === 204) {
-        showNotification("success", "Faktura została pomyślnie usunięta");
-        fetchInvoices();
+      const reservationWithInvoice = await findReservationWithInvoice(invoiceToDelete);
+      
+      if (reservationWithInvoice) {
+        console.log(`Znaleziono rezerwację ${reservationWithInvoice.id} powiązaną z fakturą ${invoiceToDelete}`);
+        
+        try {
+          const updatedReservation = { ...reservationWithInvoice };
+          
+          if (updatedReservation.invoice) {
+            updatedReservation.invoice = null;
+          }
+          if (updatedReservation.invoiceId) {
+            updatedReservation.invoiceId = "";
+          }
+          
+          console.log("Aktualizacja rezerwacji - odłączanie faktury");
+          const updateResponse = await api.put(`/reservations/${reservationWithInvoice.id}`, updatedReservation);
+          console.log("Rezerwacja zaktualizowana, status:", updateResponse.status);
+          
+          await new Promise(r => setTimeout(r, 100));
+          
+          const checkResponse = await api.get(`/reservations/${reservationWithInvoice.id}`);
+          if (checkResponse.data.invoice && checkResponse.data.invoice.id === invoiceToDelete) {
+            console.error("Nie udało się odłączyć faktury od rezerwacji");
+            showNotification("error", "Nie udało się odłączyć faktury od rezerwacji");
+            return;
+          }
+          
+          if (checkResponse.data.invoiceId === invoiceToDelete) {
+            console.error("Nie udało się odłączyć faktury od rezerwacji");
+            showNotification("error", "Nie udało się odłączyć faktury od rezerwacji");
+            return;
+          }
+          
+          console.log("Faktura została pomyślnie odłączona od rezerwacji");
+        } catch (error) {
+          console.error("Błąd podczas aktualizacji rezerwacji:", error);
+          showNotification("error", "Wystąpił błąd podczas odłączania faktury od rezerwacji");
+          return;
+        }
       } else {
-        showNotification("error", "Wystąpił błąd podczas usuwania faktury");
+        console.log("Nie znaleziono rezerwacji z tą fakturą");
       }
-    } catch (error: any) {
-      console.error("Błąd podczas usuwania faktury:", error);
-      showNotification(
-        "error",
-        error.response?.data?.message || "Wystąpił błąd podczas usuwania faktury",
-      );
+      
+      console.log(`Usuwanie faktury ID: ${invoiceToDelete}`);
+      try {
+        const response = await api.delete(`/invoices/${invoiceToDelete}`);
+        
+        if (response.status === 204) {
+          console.log("Faktura została pomyślnie usunięta");
+          showNotification("success", "Faktura została pomyślnie usunięta");
+          await fetchInvoices();
+        } else {
+          console.log("Niestandardowy kod odpowiedzi przy usuwaniu faktury:", response.status);
+          showNotification("warning", "Odpowiedź serwera jest niejednoznaczna. Sprawdź, czy faktura została usunięta.");
+          await fetchInvoices();
+        }
+      } catch (error) {
+        console.error("Błąd podczas usuwania faktury:", error);
+        showNotification("error", "Nie udało się usunąć faktury");
+      }
+    } catch (error) {
+      console.error("Nieoczekiwany błąd:", error);
+      showNotification("error", "Wystąpił nieoczekiwany błąd podczas usuwania faktury");
     } finally {
       handleCloseDeleteModal();
     }
@@ -182,25 +264,17 @@ const InvoicesTable = () => {
     return invoice ? invoice.pdfFile.split("/").pop() || `faktura-${invoice.id}.pdf` : "";
   };
 
+  const tableRowStyle = {
+    cursor: "pointer",
+    transition: "background-color 0.2s",
+  };
+
   return (
     <div className="card">
       <div className="card-header">
         <h3 className="card-title">Faktury</h3>
-        {/* <div className="card-actions">
-          <button
-            className="btn btn-outline-primary btn-sm"
-            onClick={handleClickNewInvoice}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="icon" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-              <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-              <path d="M9 17h6" />
-              <path d="M9 13h6" />
-            </svg>
-            Nowa faktura
-          </button>
-        </div> */}
+        <div className="card-actions">
+        </div>
       </div>
 
       <div className="card-body border-bottom py-3">
@@ -268,46 +342,49 @@ const InvoicesTable = () => {
             </thead>
             <tbody>
               {currentData.map((invoice) => (
-                <tr key={invoice.id}>
+                <tr 
+                  key={invoice.id}
+                  style={tableRowStyle}
+                  onClick={() => viewInvoice(invoice)}
+                  className="hover-row"
+                >
                   <td>{invoice.pdfFile.split("/").pop() || `faktura-${invoice.id}.pdf`}</td>
                   <td>{formatDate(invoice.issueDate)}</td>
                   <td>{invoice.companyName}</td>
                   <td>{invoice.companyNip}</td>
                   <td>{invoice.companyAddress}</td>
-                  <td className="text-center">
+                  <td className="text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="btn-list">
                       <button
                         className="btn btn-primary"
-                        onClick={() => handleShowInvoice(invoice.id)}
-                        disabled={loadingPdf && selectedInvoiceId === invoice.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          viewInvoice(invoice);
+                        }}
+                        title="Podgląd faktury"
                       >
-                        {loadingPdf && selectedInvoiceId === invoice.id ? (
-                          "Ładowanie faktury..."
-                        ) : (
-                          <>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="icon me-1"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              strokeWidth="2"
-                              stroke="currentColor"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                              <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                              <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
-                            </svg>
-                            Pokaż fakturę
-                          </>
-                        )}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon me-1"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                          <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                          <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                        </svg>
+                        Pokaż fakturę
                       </button>
                       <button
                         className="btn btn-danger"
-                        onClick={() => handleDeleteClick(invoice.id)}
+                        onClick={(e) => handleDeleteClick(invoice.id, e)}
+                        title="Usuń fakturę"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -417,24 +494,32 @@ const InvoicesTable = () => {
         dialogClassName="modal-dialog-scrollable"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Faktura PDF</Modal.Title>
+          <Modal.Title>
+            Podgląd faktury
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "80vh" }}>
           <div className="embed-responsive" style={{ height: "99%" }}>
-            {pdfUrl ? (
+            {pdfUrl && (
               <iframe
                 className="embed-responsive-item w-100 h-100"
                 src={pdfUrl}
-                title="Faktura PDF"
+                title="Podgląd faktury PDF"
               ></iframe>
-            ) : (
-              <div className="text-center">
+            )}
+            {loadingPdf && (
+              <div className="text-center position-absolute top-50 start-50 translate-middle">
                 <div className="spinner-border text-primary" role="status"></div>
                 <p className="mt-2">Ładowanie faktury...</p>
               </div>
             )}
           </div>
         </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleCloseModal}>
+            Zamknij
+          </button>
+        </Modal.Footer>
       </Modal>
 
       <DeleteConfirmationModal
