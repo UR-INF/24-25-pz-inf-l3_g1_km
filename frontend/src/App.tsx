@@ -24,7 +24,6 @@ import ModifyEmployeeView from "./views/Manager/ModifyEmployeeView";
 import AddRooms from "./views/Manager/AddRooms";
 import ModifyRooms from "./views/Manager/ModifyRooms";
 import ReportsView from "./views/Manager/ReportsView";
-import ReportPage from "./components/ReportPdfViewer";
 import NewReport from "./views/Manager/NewReport";
 import InvoicesView from "./views/Manager/InvoicesView";
 
@@ -66,7 +65,6 @@ const protectedRoutes = [
   // { path: "/ManagerDashboard/Reports", element: <EmployeesView /> },
 
   { path: "/ManagerDashboard/Reports", element: <ReportsView /> },
-  { path: "/ManagerDashboard/ShowReport/:id", element: <ReportPage />},
   { path: "/ManagerDashboard/CreateReport", element: <NewReport />},
   { path: "/ManagerDashboard/Invoices", element: <InvoicesView />},
 

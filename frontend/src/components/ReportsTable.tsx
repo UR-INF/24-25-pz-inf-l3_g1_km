@@ -1,6 +1,5 @@
-// @ts-nocheck
-
 import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 import { useNavigate } from "react-router";
@@ -38,10 +37,23 @@ const ReportsTable = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<number | null>(null);
+  
+  const [showModal, setShowModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [currentReport, setCurrentReport] = useState<Report | null>(null);
+  const [reportLoading, setReportLoading] = useState(false);
 
   useEffect(() => {
     fetchReports();
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
 
   const fetchReports = async () => {
     try {
@@ -57,11 +69,66 @@ const ReportsTable = () => {
     }
   };
 
-  const viewReport = (report: Report) => {
-    navigate(`/ManagerDashboard/ShowReport/${report.id}`);
+  const viewReport = async (report) => {
+    try {
+      setReportLoading(true);
+      setCurrentReport(report);
+      setShowModal(true);
+
+      console.log(`Pobieranie raportu o ID: ${report.id}`);
+
+      const response = await api.get(
+        `/reports/saved/${report.id}`,
+        {},
+        {
+          responseType: "blob",
+          headers: {
+            Accept: "application/pdf",
+          },
+        },
+      );
+
+      if (!response.data) {
+        console.error("Otrzymano pustą odpowiedź");
+        showNotification("error", "Otrzymano pustą odpowiedź z serwera");
+        return;
+      }
+
+      const blob = response.data;
+      let pdfBlob = blob;
+      if (!blob.type || blob.type !== "application/pdf") {
+        pdfBlob = new Blob([blob], { type: "application/pdf" });
+      }
+
+      const url = URL.createObjectURL(pdfBlob);
+      setPdfUrl(url);
+    } catch (err) {
+      console.error("Błąd podczas pobierania PDF:", err);
+      showNotification("error", "Nie udało się pobrać raportu");
+    } finally {
+      setReportLoading(false);
+    }
   };
 
-  const handleDeleteClick = (reportId: number, e: React.MouseEvent) => {
+  const handleClose = () => {
+    if (pdfUrl) {
+      URL.revokeObjectURL(pdfUrl);
+    }
+    setPdfUrl(null);
+    setShowModal(false);
+    setCurrentReport(null);
+  };
+
+  const handleDownload = () => {
+    if (pdfUrl && currentReport) {
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = currentReport.reportFile;
+      link.click();
+    }
+  };
+
+  const handleDeleteClick = (reportId, e) => {
     e.stopPropagation();
     setReportToDelete(reportId);
     setShowDeleteModal(true);
@@ -87,7 +154,7 @@ const ReportsTable = () => {
           response.data.message || "Wystąpił błąd podczas usuwania raportu",
         );
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Błąd podczas usuwania raportu:", error);
       showNotification(
         "error",
@@ -132,7 +199,7 @@ const ReportsTable = () => {
     currentPage * itemsPerPage,
   );
 
-  const getReportTypeDisplay = (type: string) => {
+  const getReportTypeDisplay = (type) => {
     switch (type) {
       case "EMPLOYEE_STATISTICS":
         return "Statystyki pracowników";
@@ -143,12 +210,12 @@ const ReportsTable = () => {
     }
   };
 
-  const tableRowStyle: React.CSSProperties = {
+  const tableRowStyle = {
     cursor: "pointer",
     transition: "background-color 0.2s",
   };
 
-  const handleClickNewReport = (e: React.MouseEvent) => {
+  const handleClickNewReport = (e) => {
     e.preventDefault();
     navigate("/ManagerDashboard/CreateReport");
   };
@@ -439,11 +506,50 @@ const ReportsTable = () => {
         handleConfirm={handleConfirmDelete}
         message={`Ta operacja spowoduje trwałe usunięcie raportu "${getReportNameToDelete()}". Tej operacji nie można cofnąć.`}
       />
+
+      {/* Modal do wyświetlania raportu PDF */}
+      <Modal
+        show={showModal}
+        onHide={handleClose}
+        size="xl"
+        dialogClassName="modal-dialog-scrollable"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Podgląd raportu
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ height: "80vh" }}>
+          <div className="embed-responsive" style={{ height: "99%" }}>
+            {pdfUrl && (
+              <iframe
+                className="embed-responsive-item w-100 h-100"
+                src={pdfUrl}
+                title="Podgląd raportu PDF"
+              ></iframe>
+            )}
+            {reportLoading && (
+              <div className="text-center position-absolute top-50 start-50 translate-middle">
+                <div className="spinner-border text-primary" role="status"></div>
+                <p className="mt-2">Ładowanie raportu...</p>
+              </div>
+            )}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleClose}>
+            Zamknij
+          </button>
+          <button className="btn btn-primary" onClick={handleDownload} disabled={!pdfUrl || reportLoading}>
+            Pobierz raport
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
-export const formatDateTime = (dateTimeString: string) => {
+export const formatDateTime = (dateTimeString) => {
   if (!dateTimeString) return "-";
 
   try {
