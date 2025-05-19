@@ -73,7 +73,7 @@ const InvoicesTable = () => {
           headers: {
             Accept: "application/pdf",
           },
-        }
+        },
       );
 
       if (!response.data) {
@@ -122,8 +122,8 @@ const InvoicesTable = () => {
     try {
       const response = await api.get("/reservations");
       const allReservations = response.data;
-      
-      const reservationWithInvoice = allReservations.find(reservation => {
+
+      const reservationWithInvoice = allReservations.find((reservation) => {
         if (reservation.invoice && reservation.invoice.id === invoiceId) {
           return true;
         }
@@ -132,7 +132,7 @@ const InvoicesTable = () => {
         }
         return false;
       });
-      
+
       return reservationWithInvoice || null;
     } catch (error) {
       console.error("Błąd podczas szukania rezerwacji z fakturą:", error);
@@ -142,44 +142,49 @@ const InvoicesTable = () => {
 
   const handleConfirmDelete = async () => {
     if (invoiceToDelete === null) return;
-    
+
     console.log(`Przygotowanie do usunięcia faktury ID: ${invoiceToDelete}`);
 
     try {
       const reservationWithInvoice = await findReservationWithInvoice(invoiceToDelete);
-      
+
       if (reservationWithInvoice) {
-        console.log(`Znaleziono rezerwację ${reservationWithInvoice.id} powiązaną z fakturą ${invoiceToDelete}`);
-        
+        console.log(
+          `Znaleziono rezerwację ${reservationWithInvoice.id} powiązaną z fakturą ${invoiceToDelete}`,
+        );
+
         try {
           const updatedReservation = { ...reservationWithInvoice };
-          
+
           if (updatedReservation.invoice) {
             updatedReservation.invoice = null;
           }
           if (updatedReservation.invoiceId) {
             updatedReservation.invoiceId = "";
           }
-          
+
           console.log("Aktualizacja rezerwacji - odłączanie faktury");
-          const updateResponse = await api.put(`/reservations/${reservationWithInvoice.id}`, updatedReservation);
+          const updateResponse = await api.put(
+            `/reservations/${reservationWithInvoice.id}`,
+            updatedReservation,
+          );
           console.log("Rezerwacja zaktualizowana, status:", updateResponse.status);
-          
-          await new Promise(r => setTimeout(r, 100));
-          
+
+          await new Promise((r) => setTimeout(r, 100));
+
           const checkResponse = await api.get(`/reservations/${reservationWithInvoice.id}`);
           if (checkResponse.data.invoice && checkResponse.data.invoice.id === invoiceToDelete) {
             console.error("Nie udało się odłączyć faktury od rezerwacji");
             showNotification("error", "Nie udało się odłączyć faktury od rezerwacji");
             return;
           }
-          
+
           if (checkResponse.data.invoiceId === invoiceToDelete) {
             console.error("Nie udało się odłączyć faktury od rezerwacji");
             showNotification("error", "Nie udało się odłączyć faktury od rezerwacji");
             return;
           }
-          
+
           console.log("Faktura została pomyślnie odłączona od rezerwacji");
         } catch (error) {
           console.error("Błąd podczas aktualizacji rezerwacji:", error);
@@ -189,18 +194,21 @@ const InvoicesTable = () => {
       } else {
         console.log("Nie znaleziono rezerwacji z tą fakturą");
       }
-      
+
       console.log(`Usuwanie faktury ID: ${invoiceToDelete}`);
       try {
         const response = await api.delete(`/invoices/${invoiceToDelete}`);
-        
+
         if (response.status === 204) {
           console.log("Faktura została pomyślnie usunięta");
           showNotification("success", "Faktura została pomyślnie usunięta");
           await fetchInvoices();
         } else {
           console.log("Niestandardowy kod odpowiedzi przy usuwaniu faktury:", response.status);
-          showNotification("warning", "Odpowiedź serwera jest niejednoznaczna. Sprawdź, czy faktura została usunięta.");
+          showNotification(
+            "warning",
+            "Odpowiedź serwera jest niejednoznaczna. Sprawdź, czy faktura została usunięta.",
+          );
           await fetchInvoices();
         }
       } catch (error) {
@@ -273,8 +281,7 @@ const InvoicesTable = () => {
     <div className="card">
       <div className="card-header">
         <h3 className="card-title">Faktury</h3>
-        <div className="card-actions">
-        </div>
+        <div className="card-actions"></div>
       </div>
 
       <div className="card-body border-bottom py-3">
@@ -342,7 +349,7 @@ const InvoicesTable = () => {
             </thead>
             <tbody>
               {currentData.map((invoice) => (
-                <tr 
+                <tr
                   key={invoice.id}
                   style={tableRowStyle}
                   onClick={() => viewInvoice(invoice)}
@@ -494,9 +501,7 @@ const InvoicesTable = () => {
         dialogClassName="modal-dialog-scrollable"
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            Podgląd faktury
-          </Modal.Title>
+          <Modal.Title>Podgląd faktury</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "80vh" }}>
           <div className="embed-responsive" style={{ height: "99%" }}>

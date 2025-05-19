@@ -8,7 +8,7 @@ const CreateReportForm = () => {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
@@ -82,18 +82,17 @@ const CreateReportForm = () => {
       }
 
       const blob = new Blob([response.data], { type: "application/pdf" });
-      
+
       if (blob.type !== "application/pdf") {
         throw new Error("Serwer zwrócił nieprawidłowy format pliku");
       }
 
       const url = URL.createObjectURL(blob);
-      
+
       setPdfUrl(url);
       setShowModal(true);
 
       showNotification("success", "Raport został wygenerowany pomyślnie!");
-      
     } catch (error: any) {
       console.error("Błąd podczas generowania raportu:", error);
       showNotification(
@@ -220,9 +219,7 @@ const CreateReportForm = () => {
         dialogClassName="modal-dialog-scrollable"
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            Podgląd raportu
-          </Modal.Title>
+          <Modal.Title>Podgląd raportu</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "80vh" }}>
           <div className="embed-responsive" style={{ height: "99%" }}>

@@ -39,7 +39,7 @@ const ReportsTable = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<number | null>(null);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [currentReport, setCurrentReport] = useState<Report | null>(null);
@@ -508,9 +508,7 @@ const ReportsTable = () => {
         dialogClassName="modal-dialog-scrollable"
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            Podgląd raportu
-          </Modal.Title>
+          <Modal.Title>Podgląd raportu</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ height: "80vh" }}>
           <div className="embed-responsive" style={{ height: "99%" }}>
