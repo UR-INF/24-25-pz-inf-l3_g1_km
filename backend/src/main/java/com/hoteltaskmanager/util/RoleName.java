@@ -3,10 +3,13 @@ package com.hoteltaskmanager.util;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Klasa pomocnicza do tłumaczenia nazw ról pracowników na język polski.
+ */
 public class RoleName {
 
-    // Mapa tłumaczeń ról na język polski
     private static final Map<String, String> ROLE_MAP = new HashMap<>();
+
     static {
         ROLE_MAP.put("RECEPTIONIST", "Recepcjonista");
         ROLE_MAP.put("HOUSEKEEPER", "Pokojówka");
@@ -15,10 +18,11 @@ public class RoleName {
     }
 
     /**
-     * Funkcja zwracająca polski odpowiednik nazwy roli.
+     * Zwraca polski odpowiednik podanej nazwy roli.
+     * Jeśli rola jest nieznana lub nie została podana, zwraca "Nieznana rola".
      *
-     * @param roleName Nazwa roli jako String
-     * @return Polski odpowiednik nazwy roli lub "Nieznana rola"
+     * @param roleName Nazwa roli w języku angielskim (np. "MANAGER", "HOUSEKEEPER")
+     * @return Polski odpowiednik roli lub "Nieznana rola", jeśli brak tłumaczenia
      */
     public static String getRoleNameInPolish(String roleName) {
         if (roleName == null || roleName.isBlank()) {

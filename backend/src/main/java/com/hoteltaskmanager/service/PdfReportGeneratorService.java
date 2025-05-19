@@ -6,7 +6,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,9 +14,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static com.hoteltaskmanager.util.RoleName.getRoleNameInPolish;
 
+/**
+ * Serwis odpowiedzialny za generowanie i zapisywanie raportów PDF dla różnych aspektów działania hotelu.
+ * Obsługuje raporty personelu, finansowe, pokojów oraz raporty kompleksowe.
+ * Używa biblioteki iText do tworzenia dokumentów PDF z obsługą polskich znaków.
+ *
+ * Metody generujące raporty tworzą dokumenty w pamięci i zapisują je przy pomocy {@link ReportStorageService}.
+ *
+ * Obsługiwane raporty:
+ * <ul>
+ *     <li>Raport personelu (wydajność, zadania, efektywność sprzątania)</li>
+ *     <li>Raport finansowy (przychody, korelacje, fakturowanie)</li>
+ *     <li>Raport pokojów (statusy, konserwacje, przychód na pokój)</li>
+ *     <li>Raport kompleksowy (zbiorczy PDF zawierający wszystkie sekcje)</li>
+ * </ul>
+ *
+ * Czcionki są ładowane z pliku DejaVuSans.ttf z kodowaniem Unicode (IDENTITY_H), aby wspierać polskie znaki.
+ */
 @Service
 public class PdfReportGeneratorService {
 
