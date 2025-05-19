@@ -9,12 +9,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serwis generujący raporty zarządzania rezerwacjami w hotelu.
+ * Zawiera dane o zameldowaniach, wymeldowaniach, dostępności pokoi oraz wskaźnikach anulowania rezerwacji.
+ */
 @Service
 public class ReservationManagementReportService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Generuje kompleksowy raport dotyczący zarządzania rezerwacjami w danym przedziale czasowym.
+     * Raport zawiera dane o nadchodzących zameldowaniach i wymeldowaniach, prognozę dostępności pokoi,
+     * oraz analizę wskaźnika anulowania rezerwacji.
+     *
+     * @param startDate data początkowa zakresu analizowanego raportu (dot. anulowań)
+     * @param endDate   data końcowa zakresu analizowanego raportu (dot. anulowań)
+     * @return mapa zawierająca dane raportowe z kluczami:
+     *         <ul>
+     *             <li><b>upcomingCheckIns</b> - lista rezerwacji z zameldowaniami w ciągu 7 dni</li>
+     *             <li><b>upcomingCheckOuts</b> - lista rezerwacji z wymeldowaniami w ciągu 7 dni</li>
+     *             <li><b>roomAvailabilityForecast</b> - prognoza dostępności pokoi na 30 dni</li>
+     *             <li><b>cancellationRate</b> - ogólny wskaźnik anulowań w danym zakresie</li>
+     *             <li><b>cancellationsByMonth</b> - miesięczna statystyka anulowań</li>
+     *         </ul>
+     */
     public Map<String, Object> generateReservationManagementReport(LocalDate startDate, LocalDate endDate) {
         Map<String, Object> reportData = new HashMap<>();
 

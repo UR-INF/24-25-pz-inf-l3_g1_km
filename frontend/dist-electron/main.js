@@ -1,66 +1,102 @@
-import { app as t, BrowserWindow as l, ipcMain as n, shell as h } from "electron";
-import { fileURLToPath as u } from "node:url";
-import o from "node:path";
-import s from "node:fs";
-const d = o.dirname(u(import.meta.url));
-process.env.APP_ROOT = o.join(d, "..");
-const c = process.env.VITE_DEV_SERVER_URL, w = o.join(process.env.APP_ROOT, "dist-electron"), f = o.join(process.env.APP_ROOT, "dist"), g = o.join(process.env.APP_ROOT, "electron", "config.default.json"), r = o.join(t.getPath("userData"), "config.json");
-process.env.VITE_PUBLIC = c ? o.join(process.env.APP_ROOT, "public") : f;
-let e;
-function p() {
-  e = new l({
-    icon: o.join(process.env.VITE_PUBLIC, "hotel.ico"),
+import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+import fs from "node:fs";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+process.env.APP_ROOT = path.join(__dirname, "..");
+const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
+const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
+const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
+const configTemplatePath = path.join(process.env.APP_ROOT, "electron", "config.default.json");
+const userConfigPath = path.join(app.getPath("userData"), "config.json");
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
+let win;
+function createWindow() {
+  win = new BrowserWindow({
+    icon: path.join(process.env.VITE_PUBLIC, "hotel.ico"),
     width: 1200,
     height: 700,
     minWidth: 550,
     minHeight: 400,
-    frame: !1,
+    frame: false,
     titleBarStyle: "hidden",
     webPreferences: {
-      webSecurity: !1,
-      preload: o.join(d, "preload.mjs")
+      webSecurity: false,
+      preload: path.join(__dirname, "preload.mjs")
     }
-  }), n.on("window:minimize", () => e == null ? void 0 : e.minimize()), n.on("focus-window", () => {
-    e && (e.isMinimized() && e.restore(), e.show(), e.focus());
-  }), n.on("window:maximize", () => {
-    e != null && e.isMaximized() ? e == null || e.unmaximize() : e == null || e.maximize();
-  }), n.on("window:close", () => e == null ? void 0 : e.close()), n.on("window:devtools", () => {
-    e == null || e.webContents.openDevTools({ mode: "detach" });
-  }), n.on("open-external", (i, a) => {
-    h.openExternal(a);
-  }), n.handle("config:get", () => {
+  });
+  ipcMain.on("window:minimize", () => win == null ? void 0 : win.minimize());
+  ipcMain.on("focus-window", () => {
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
+    }
+  });
+  ipcMain.on("window:maximize", () => {
+    if (win == null ? void 0 : win.isMaximized()) {
+      win == null ? void 0 : win.unmaximize();
+    } else {
+      win == null ? void 0 : win.maximize();
+    }
+  });
+  ipcMain.on("window:close", () => win == null ? void 0 : win.close());
+  ipcMain.on("window:devtools", () => {
+    win == null ? void 0 : win.webContents.openDevTools({ mode: "detach" });
+  });
+  ipcMain.on("open-external", (_, url) => {
+    shell.openExternal(url);
+  });
+  ipcMain.handle("config:get", () => {
     try {
-      const i = s.readFileSync(r, "utf-8");
-      return JSON.parse(i);
-    } catch (i) {
-      return console.error("Nie udało się odczytać config.json:", i), { API_URL: "http://localhost:8080" };
+      const raw = fs.readFileSync(userConfigPath, "utf-8");
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error("Nie udało się odczytać config.json:", e);
+      return { API_URL: "http://localhost:8080" };
     }
-  }), n.handle("config:set", (i, a) => {
+  });
+  ipcMain.handle("config:set", (_, newConfig) => {
     try {
-      return s.writeFileSync(r, JSON.stringify(a, null, 2), "utf-8"), !0;
-    } catch (m) {
-      return console.error("Nie udało się zapisać config.json:", m), !1;
+      fs.writeFileSync(userConfigPath, JSON.stringify(newConfig, null, 2), "utf-8");
+      return true;
+    } catch (e) {
+      console.error("Nie udało się zapisać config.json:", e);
+      return false;
     }
-  }), c ? e.loadURL(c) : e.loadFile(o.join(f, "index.html"));
+  });
+  if (VITE_DEV_SERVER_URL) {
+    win.loadURL(VITE_DEV_SERVER_URL);
+  } else {
+    win.loadFile(path.join(RENDERER_DIST, "index.html"));
+  }
 }
-t.on("window-all-closed", () => {
-  process.platform !== "darwin" && (t.quit(), e = null);
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+    win = null;
+  }
 });
-t.on("activate", () => {
-  l.getAllWindows().length === 0 && p();
+app.on("activate", () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
 });
-t.setAppUserModelId("Hotel Task Manager");
-t.setName("Hotel Task Manager");
-t.whenReady().then(() => {
-  if (p(), !s.existsSync(r))
+app.setAppUserModelId("Hotel Task Manager");
+app.setName("Hotel Task Manager");
+app.whenReady().then(() => {
+  createWindow();
+  if (!fs.existsSync(userConfigPath)) {
     try {
-      s.copyFileSync(g, r), console.log("Skopiowano config.default.json do userData jako config.json");
-    } catch (i) {
-      console.error("Błąd kopiowania config.json:", i);
+      fs.copyFileSync(configTemplatePath, userConfigPath);
+      console.log("Skopiowano config.default.json do userData jako config.json");
+    } catch (err) {
+      console.error("Błąd kopiowania config.json:", err);
     }
+  }
 });
 export {
-  w as MAIN_DIST,
-  f as RENDERER_DIST,
-  c as VITE_DEV_SERVER_URL
+  MAIN_DIST,
+  RENDERER_DIST,
+  VITE_DEV_SERVER_URL
 };

@@ -9,12 +9,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serwis odpowiedzialny za generowanie raportu wydajności pracowników hotelu.
+ * Raport zawiera dane o liczbie zadań zrealizowanych przez pracowników,
+ * wskaźnikach sukcesu oraz średnim czasie realizacji zadań.
+ */
 @Service
 public class StaffPerformanceReportService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Generuje raport wydajności pracowników dla zadanego zakresu dat.
+     * Raport obejmuje:
+     * <ul>
+     *   <li>identyfikator i imię i nazwisko pracownika</li>
+     *   <li>nazwę roli pracownika</li>
+     *   <li>liczbę zadań sprzątania i konserwacji przypisanych do pracownika</li>
+     *   <li>sumaryczną liczbę zadań i liczbę ukończonych zadań</li>
+     *   <li>procentowy wskaźnik ukończenia zadań (success rate)</li>
+     *   <li>średni czas realizacji zadań wyrażony w godzinach</li>
+     * </ul>
+     *
+     * @param startDate data początkowa zakresu raportu (włącznie)
+     * @param endDate data końcowa zakresu raportu (włącznie)
+     * @return mapa z danymi raportu, gdzie kluczem jest "tasksByEmployee", a wartością lista map z danymi poszczególnych pracowników
+     */
     public Map<String, Object> generateStaffPerformanceReport(LocalDate startDate, LocalDate endDate) {
         Map<String, Object> reportData = new HashMap<>();
 

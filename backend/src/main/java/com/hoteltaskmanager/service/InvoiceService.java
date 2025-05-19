@@ -117,18 +117,24 @@ public class InvoiceService {
 
         document.add(new Paragraph("\n"));
 
-        PdfPTable table = new PdfPTable(5);
+        PdfPTable table = new PdfPTable(7);
         table.setWidthPercentage(100);
-        table.setWidths(new int[]{2, 1, 1, 2, 2});
+        table.setWidths(new int[]{2, 1, 1, 2, 2, 2, 2});
 
         table.addCell(new PdfPCell(new Phrase("Pokój", boldFont)));
         table.addCell(new PdfPCell(new Phrase("Dni", boldFont)));
         table.addCell(new PdfPCell(new Phrase("Osoby", boldFont)));
         table.addCell(new PdfPCell(new Phrase("Cena za dzień", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("Wartość", boldFont)));
+        table.addCell(new PdfPCell(new Phrase("Netto", boldFont)));
+        table.addCell(new PdfPCell(new Phrase("VAT 8%", boldFont)));
+        table.addCell(new PdfPCell(new Phrase("Brutto", boldFont)));
+
 
         long days = ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
-        double total = 0;
+
+        double totalBrutto = 0;
+        double totalNetto = 0;
+        double totalVat = 0;
 
         for (ReservationRoom rr : reservationRooms) {
             Room room = rr.getRoom();
@@ -137,23 +143,33 @@ public class InvoiceService {
 
             int maxGuests = room.getBedCount();
             BigDecimal pricePerGuest = pricePerNight.divide(BigDecimal.valueOf(maxGuests), 2, RoundingMode.HALF_UP);
-            BigDecimal roomTotal = pricePerGuest.multiply(BigDecimal.valueOf(guests)).multiply(BigDecimal.valueOf(days));
+            BigDecimal brutto = pricePerGuest.multiply(BigDecimal.valueOf(guests)).multiply(BigDecimal.valueOf(days));
 
+            BigDecimal netto = brutto.divide(BigDecimal.valueOf(1.08), 2, RoundingMode.HALF_UP);
+            BigDecimal vat = brutto.subtract(netto);
 
             table.addCell(new PdfPCell(new Phrase("Pokój " + room.getRoomNumber(), normalFont)));
             table.addCell(new PdfPCell(new Phrase(String.valueOf(days), normalFont)));
             table.addCell(new PdfPCell(new Phrase(String.valueOf(guests), normalFont)));
             table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", pricePerGuest), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", roomTotal), normalFont)));
+            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", netto), normalFont)));
+            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", vat), normalFont)));
+            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", brutto), normalFont)));
 
-            total += roomTotal.doubleValue();
+            totalNetto += netto.doubleValue();
+            totalVat += vat.doubleValue();
+            totalBrutto += brutto.doubleValue();
         }
+
 
         PdfPCell sumLabel = new PdfPCell(new Phrase("Razem", boldFont));
         sumLabel.setColspan(4);
         sumLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
         table.addCell(sumLabel);
-        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", total), boldFont)));
+        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalNetto), boldFont)));
+        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalVat), boldFont)));
+        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalBrutto), boldFont)));
+
 
         document.add(table);
 

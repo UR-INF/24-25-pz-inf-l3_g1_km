@@ -9,12 +9,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serwis odpowiedzialny za generowanie raportów finansowych na podstawie danych rezerwacji i faktur.
+ */
 @Service
 public class FinancialReportService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Generuje raport finansowy dla określonego okresu (dzień, tydzień, miesiąc, kwartał).
+     *
+     * Raport zawiera:
+     * <ul>
+     *     <li>Przychody według wybranego okresu</li>
+     *     <li>Korelację obłożenia z przychodami</li>
+     *     <li>Statystyki związane z wystawianiem faktur</li>
+     *     <li>Podsumowanie ogólne przychodów i obłożenia</li>
+     * </ul>
+     *
+     * @param period    Okres grupowania danych: "day", "week", "month", "quarter"
+     * @param startDate Data początkowa zakresu raportu
+     * @param endDate   Data końcowa zakresu raportu
+     * @return mapa zawierająca poszczególne sekcje raportu
+     */
     public Map<String, Object> generateFinancialReport(String period, LocalDate startDate, LocalDate endDate) {
         Map<String, Object> reportData = new HashMap<>();
 

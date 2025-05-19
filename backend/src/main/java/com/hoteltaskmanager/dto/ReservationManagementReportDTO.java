@@ -7,6 +7,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Data Transfer Object zawierający dane raportu zarządzania rezerwacjami.
+ * Raport obejmuje nadchodzące zameldowania i wymeldowania, prognozę dostępności pokoi,
+ * wskaźnik anulowania rezerwacji oraz analizę anulowań według miesięcy.
+ */
 @Data
 public class ReservationManagementReportDTO {
     private List<CheckInOut> upcomingCheckIns;
@@ -15,6 +20,9 @@ public class ReservationManagementReportDTO {
     private Map<String, Object> cancellationRate;
     private List<MonthlyCancellation> cancellationsByMonth;
 
+    /**
+     * Reprezentuje informacje o nadchodzącym zameldowaniu lub wymeldowaniu.
+     */
     @Data
     public static class CheckInOut {
         private Long reservationId;
@@ -28,6 +36,9 @@ public class ReservationManagementReportDTO {
         private String catering;
     }
 
+    /**
+     * Reprezentuje prognozę dostępności pokoi na konkretny dzień.
+     */
     @Data
     public static class DailyAvailability {
         private LocalDate date;
@@ -37,6 +48,9 @@ public class ReservationManagementReportDTO {
         private BigDecimal occupancyRate;
     }
 
+    /**
+     * Reprezentuje dane dotyczące anulacji rezerwacji w danym miesiącu.
+     */
     @Data
     public static class MonthlyCancellation {
         private String month;

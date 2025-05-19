@@ -22,6 +22,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Serwis odpowiedzialny za przechowywanie raportów w formacie PDF
+ * oraz zarządzanie ich metadanymi w bazie danych.
+ */
 @Service
 public class ReportStorageService {
 
@@ -34,6 +38,10 @@ public class ReportStorageService {
     @Value("${reports.storage.location:reports}")
     private String reportsStorageLocation;
 
+    /**
+     * Inicjalizuje katalog przechowywania raportów po uruchomieniu aplikacji.
+     * Tworzy katalog, jeśli nie istnieje.
+     */
     @PostConstruct
     public void init() {
         try {
@@ -48,12 +56,13 @@ public class ReportStorageService {
     }
 
     /**
-     * Zapisuje raport PDF i tworzy wpis w tabeli reports.
+     * Zapisuje raport w formacie PDF na dysku oraz tworzy odpowiedni wpis w bazie danych.
+     * Raport jest przypisywany do aktualnie zalogowanego użytkownika.
      *
-     * @param pdfData Strumień danych PDF
-     * @param reportType Typ raportu (EMPLOYEE_STATISTICS lub GENERAL_REPORT)
-     * @param reportPrefix Prefiks nazwy pliku
-     * @return Obiekt Report reprezentujący zapisany raport
+     * @param pdfData     dane raportu w formacie PDF
+     * @param reportType  typ raportu (np. EMPLOYEE_STATISTICS, GENERAL_REPORT)
+     * @param reportPrefix prefiks używany do nazwy pliku
+     * @return obiekt {@link Report} reprezentujący zapisany raport
      */
     public Report saveReport(ByteArrayInputStream pdfData, ReportType reportType, String reportPrefix) {
         try {
@@ -110,10 +119,10 @@ public class ReportStorageService {
     }
 
     /**
-     * Pobiera raport na podstawie identyfikatora.
+     * Pobiera zawartość pliku raportu jako tablicę bajtów na podstawie ID raportu.
      *
-     * @param reportId Identyfikator raportu
-     * @return Tablica bajtów zawierająca dane PDF
+     * @param reportId identyfikator raportu
+     * @return tablica bajtów reprezentująca zawartość pliku PDF
      */
     public byte[] getReportFile(Long reportId) {
         Report report = reportRepository.findById(reportId)
@@ -146,16 +155,18 @@ public class ReportStorageService {
     }
 
     /**
-     * Zwraca ścieżkę do lokalizacji przechowywania raportów.
+     * Zwraca ścieżkę do katalogu, w którym są przechowywane pliki raportów.
      *
-     * @return Ścieżka do katalogu z raportami
+     * @return ścieżka do katalogu raportów
      */
     public String getReportsStorageLocation() {
         return reportsStorageLocation;
     }
 
     /**
-     * Pobiera repozytorium raportów.
+     * Zwraca instancję repozytorium raportów.
+     *
+     * @return {@link ReportRepository}
      */
     public ReportRepository getReportRepository() {
         return reportRepository;

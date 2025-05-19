@@ -9,12 +9,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serwis odpowiedzialny za generowanie raportów efektywności zespołu sprzątającego.
+ * Raport analizuje wykonanie zadań porządkowych przez pracowników w wybranym zakresie dat.
+ */
 @Service
 public class HousekeepingEfficiencyReportService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Generuje raport efektywności zespołu sprzątającego w wybranym przedziale dat.
+     *
+     * Raport zawiera:
+     * <ul>
+     *     <li>Statystyki wykonania zadań porządkowych według pracownika (ilość, statusy, czas realizacji)</li>
+     *     <li>Listę odrzuconych zadań z szczegółami</li>
+     *     <li>Ogólną analizę procentową odrzuceń</li>
+     * </ul>
+     *
+     * @param startDate data początkowa analizowanego okresu
+     * @param endDate   data końcowa analizowanego okresu
+     * @return mapa zawierająca sekcje raportu efektywności
+     */
     public Map<String, Object> generateHousekeepingEfficiencyReport(LocalDate startDate, LocalDate endDate) {
         Map<String, Object> reportData = new HashMap<>();
 

@@ -9,12 +9,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serwis odpowiedzialny za generowanie raportów dotyczących usterek technicznych
+ * oraz efektywności ich rozwiązywania w obiekcie hotelowym.
+ */
 @Service
 public class MaintenanceIssuesReportService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * Generuje raport dotyczący usterek konserwacyjnych w określonym przedziale czasowym.
+     *
+     * Raport zawiera:
+     * <ul>
+     *     <li>Statystyki czasu rozwiązywania usterek</li>
+     *     <li>Częstotliwość występowania usterek według pokoju</li>
+     *     <li>Częstotliwość występowania usterek według piętra</li>
+     * </ul>
+     *
+     * @param startDate data początkowa zakresu raportu
+     * @param endDate   data końcowa zakresu raportu
+     * @return mapa zawierająca dane raportowe
+     */
     public Map<String, Object> generateMaintenanceIssuesReport(LocalDate startDate, LocalDate endDate) {
         Map<String, Object> reportData = new HashMap<>();
 

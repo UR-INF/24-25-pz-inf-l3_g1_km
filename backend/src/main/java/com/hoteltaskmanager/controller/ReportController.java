@@ -20,6 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
+/**
+ * Kontroler REST do generowania i zarządzania raportami w systemie zarządzania hotelem.
+ * Umożliwia tworzenie raportów w formacie JSON oraz PDF, pobieranie zapisanych raportów,
+ * ich usuwanie i filtrowanie według typu.
+ */
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {
@@ -48,7 +53,13 @@ public class ReportController {
     @Autowired
     private ReportStorageService reportStorageService;
 
-    // Istniejące API JSON
+    /**
+     * Generuje raport dotyczący wydajności personelu w zadanym zakresie dat.
+     *
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return JSON zawierający dane raportu
+     */
     @GetMapping("/staff-performance")
     public ResponseEntity<?> getStaffPerformanceReport(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -62,11 +73,23 @@ public class ReportController {
         return ResponseEntity.ok(staffPerformanceService.generateStaffPerformanceReport(startDate, endDate));
     }
 
+    /**
+     * Generuje raport dotyczący stanu pokoi.
+     *
+     * @return JSON zawierający dane raportu
+     */
     @GetMapping("/room-status")
     public ResponseEntity<?> getRoomStatusReport() {
         return ResponseEntity.ok(roomStatusService.generateRoomStatusReport());
     }
 
+    /**
+     * Generuje raport dotyczący zgłoszeń konserwacyjnych w zadanym zakresie dat.
+     *
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return JSON zawierający dane raportu
+     */
     @GetMapping("/maintenance-issues")
     public ResponseEntity<?> getMaintenanceIssuesReport(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -80,6 +103,14 @@ public class ReportController {
         return ResponseEntity.ok(maintenanceIssuesService.generateMaintenanceIssuesReport(startDate, endDate));
     }
 
+    /**
+     * Generuje raport dotyczący efektywności pracy działu housekeeping
+     * w zadanym zakresie dat.
+     *
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return JSON zawierający dane raportu
+     */
     @GetMapping("/housekeeping-efficiency")
     public ResponseEntity<?> getHousekeepingEfficiencyReport(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -93,6 +124,13 @@ public class ReportController {
         return ResponseEntity.ok(housekeepingService.generateHousekeepingEfficiencyReport(startDate, endDate));
     }
 
+    /**
+     * Generuje raport dotyczący zarządzania rezerwacjami w zadanym zakresie dat.
+     *
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return JSON zawierający dane raportu
+     */
     @GetMapping("/reservations")
     public ResponseEntity<?> getReservationManagementReport(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -106,6 +144,14 @@ public class ReportController {
         return ResponseEntity.ok(reservationService.generateReservationManagementReport(startDate, endDate));
     }
 
+    /**
+     * Generuje raport finansowy za określony okres (tydzień, miesiąc, kwartał).
+     *
+     * @param period    Okres raportu (np. "week", "month", "quarter")
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return JSON zawierający dane raportu finansowego
+     */
     @GetMapping("/financial")
     public ResponseEntity<?> getFinancialReport(
             @RequestParam(required = false) String period, // week, month, quarter
@@ -124,8 +170,12 @@ public class ReportController {
     }
 
     /**
-     * Generuje kompletny raport PDF dotyczący pracowników, zawierający dane o wydajności personelu
-     * i efektywności obsługi pokojów.
+     * Generuje raport PDF dla personelu hotelowego,
+     * łącząc dane o wydajności i efektywności sprzątania.
+     *
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return PDF jako zasób HTTP
      */
     @GetMapping(value = "/pdf/staff", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<Resource> getStaffReportPdf(
@@ -158,6 +208,14 @@ public class ReportController {
                 .body(resource);
     }
 
+    /**
+     * Generuje raport PDF zawierający dane finansowe.
+     *
+     * @param period    Okres raportu (np. "week", "month", "quarter")
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return PDF jako zasób HTTP
+     */
     @GetMapping(value = "/pdf/financial", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<Resource> getFinancialReportPdf(
             @RequestParam(required = false) String period,
@@ -192,6 +250,14 @@ public class ReportController {
                 .body(resource);
     }
 
+    /**
+     * Generuje raport PDF dotyczący pokoi hotelowych,
+     * zawierający dane o stanie pokoi, konserwacjach i rezerwacjach.
+     *
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return PDF jako zasób HTTP
+     */
     @GetMapping(value = "/pdf/rooms", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<Resource> getRoomsReportPdf(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -224,6 +290,15 @@ public class ReportController {
                 .body(resource);
     }
 
+    /**
+     * Generuje pełny raport PDF zawierający wszystkie dostępne dane:
+     * personel, housekeeping, pokoje, konserwacje, rezerwacje i finanse.
+     *
+     * @param period    Okres raportu finansowego
+     * @param startDate Data początkowa (opcjonalna)
+     * @param endDate   Data końcowa (opcjonalna)
+     * @return PDF jako zasób HTTP
+     */
     @GetMapping(value = "/pdf/complete", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<Resource> getCompleteReportPdf(
             @RequestParam(required = false) String period,
@@ -264,7 +339,10 @@ public class ReportController {
     }
 
     /**
-     * Pobiera zapisany raport z bazy danych.
+     * Pobiera wcześniej zapisany raport PDF na podstawie identyfikatora.
+     *
+     * @param reportId ID raportu do pobrania
+     * @return PDF jako zasób HTTP lub 404 jeśli raport nie istnieje
      */
     @GetMapping(value = "/saved/{reportId}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<Resource> getSavedReport(@PathVariable Long reportId) {
@@ -278,7 +356,6 @@ public class ReportController {
 
             System.out.println("Odczytano " + reportData.length + " bajtów dla raportu ID: " + reportId);
 
-            // Sprawdź nagłówek PDF
             if (reportData.length >= 5) {
                 String pdfHeader = new String(reportData, 0, 5, "ASCII");
                 System.out.println("Nagłówek pliku: " + pdfHeader);
@@ -286,7 +363,6 @@ public class ReportController {
 
             ByteArrayResource resource = new ByteArrayResource(reportData);
 
-            // ContentDisposition.builder() dla większej kontroli
             ContentDisposition contentDisposition = ContentDisposition.builder("inline")
                     .filename("report-" + reportId + ".pdf")
                     .build();
@@ -296,7 +372,6 @@ public class ReportController {
             headers.setContentLength(reportData.length);
             headers.setContentDisposition(contentDisposition);
 
-            // Dodajemy CORS nagłówki, jeśli aplikacja działa w środowisku cross-origin
             headers.add("Access-Control-Allow-Origin", "*");
             headers.add("Access-Control-Expose-Headers", "Content-Disposition, Content-Type, Content-Length");
 
@@ -311,10 +386,10 @@ public class ReportController {
     }
 
     /**
-     * Usuwanie raportu z bazy danych i systemu plików.
+     * Usuwa zapisany raport z systemu plików i bazy danych.
      *
-     * @param reportId Identyfikator raportu do usunięcia
-     * @return ResponseEntity zawierający wynik operacji usuwania
+     * @param reportId ID raportu do usunięcia
+     * @return Informacja o sukcesie lub błędzie operacji
      */
     @DeleteMapping("/saved/{reportId}")
     public ResponseEntity<?> deleteReport(@PathVariable Long reportId) {
@@ -354,7 +429,11 @@ public class ReportController {
     }
 
     /**
-     * Zwraca listę zapisanych raportów.
+     * Zwraca listę wszystkich zapisanych raportów lub filtruje je
+     * według podanego typu raportu.
+     *
+     * @param reportType Typ raportu do filtrowania (opcjonalny)
+     * @return Lista raportów
      */
     @GetMapping("/saved")
     public ResponseEntity<List<Report>> getSavedReports(
