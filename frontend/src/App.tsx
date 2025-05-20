@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route, Navigate } from "react-router";
 import { useAuth } from "./contexts/auth";
 import LoginView from "./views/LoginView";
@@ -61,12 +62,12 @@ const protectedRoutes = [
   { path: "/ManagerDashboard/Employees", element: <EmployeesView /> },
   { path: "/ManagerDashboard/Employees/Create", element: <CreateNewEmployeeView /> },
   { path: "/ManagerDashboard/Employees/Modify/:id", element: <ModifyEmployeeView /> },
-  
+
   // { path: "/ManagerDashboard/Reports", element: <EmployeesView /> },
 
   { path: "/ManagerDashboard/Reports", element: <ReportsView /> },
-  { path: "/ManagerDashboard/CreateReport", element: <NewReport />},
-  { path: "/ManagerDashboard/Invoices", element: <InvoicesView />},
+  { path: "/ManagerDashboard/CreateReport", element: <NewReport /> },
+  { path: "/ManagerDashboard/Invoices", element: <InvoicesView /> },
 
   { path: "/Settings", element: <SettingsView /> },
 ];
