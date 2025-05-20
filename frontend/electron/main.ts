@@ -3,6 +3,10 @@ import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+import { spawn } from "node:child_process";
+import net from "node:net";
+import fetch from "node-fetch";
+import { dialog } from "electron";
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,6 +29,12 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
 const configTemplatePath = path.join(process.env.APP_ROOT!, "electron", "config.default.json");
 const userConfigPath = path.join(app.getPath("userData"), "config.json");
+
+const defaultConfig = {
+  API_URL: "http://localhost",
+  JAR_PATH: "",
+  BACKEND_PORT: 8080,
+};
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, "public")
@@ -80,10 +90,10 @@ function createWindow() {
   ipcMain.handle("config:get", () => {
     try {
       const raw = fs.readFileSync(userConfigPath, "utf-8");
-      return JSON.parse(raw);
+      return { ...defaultConfig, ...JSON.parse(raw) };
     } catch (e) {
-      console.error("Nie udało się odczytać config.json:", e);
-      return { API_URL: "http://localhost:8080" };
+      console.error("Nie udalo sie odczytac config.json:", e);
+      return defaultConfig;
     }
   });
 
@@ -92,9 +102,19 @@ function createWindow() {
       fs.writeFileSync(userConfigPath, JSON.stringify(newConfig, null, 2), "utf-8");
       return true;
     } catch (e) {
-      console.error("Nie udało się zapisać config.json:", e);
+      console.error("Nie udalo sie zapisac config.json:", e);
       return false;
     }
+  });
+
+  ipcMain.handle("dialog:selectJarPath", async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ["openFile"],
+      filters: [{ name: "Java Archive", extensions: ["jar"] }],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) return "";
+    return result.filePaths[0];
   });
 
   if (VITE_DEV_SERVER_URL) {
@@ -126,15 +146,99 @@ app.on("activate", () => {
 app.setAppUserModelId("Hotel Task Manager");
 app.setName("Hotel Task Manager");
 
-app.whenReady().then(() => {
-  createWindow();
+function isPortInUse(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const tester = net
+      .createServer()
+      .once("error", () => resolve(true))
+      .once("listening", () => {
+        tester.close(() => resolve(false));
+      })
+      .listen(port);
+  });
+}
 
+function waitForBackend(apiUrl: string, timeout = 15000): Promise<boolean> {
+  return new Promise((resolve) => {
+    const start = Date.now();
+
+    const interval = setInterval(() => {
+      fetch(`${apiUrl}/actuator/health`)
+        .then((res) => res.ok && res.json())
+        .then((data: any) => {
+          if (data && data.status === "UP") {
+            clearInterval(interval);
+            resolve(true);
+          }
+        })
+        .catch(() => {
+          if (Date.now() - start > timeout) {
+            clearInterval(interval);
+            resolve(false);
+          }
+        });
+    }, 500);
+  });
+}
+
+let backendProcess: ReturnType<typeof spawn> | null = null;
+const logDir = app.getPath("userData");
+const out = fs.openSync(path.join(logDir, "backend-out.log"), "a");
+const err = fs.openSync(path.join(logDir, "backend-err.log"), "a");
+
+app.whenReady().then(async () => {
   if (!fs.existsSync(userConfigPath)) {
     try {
       fs.copyFileSync(configTemplatePath, userConfigPath);
       console.log("Skopiowano config.default.json do userData jako config.json");
     } catch (err) {
-      console.error("Błąd kopiowania config.json:", err);
+      console.error("Blad kopiowania config.json:", err);
+    }
+  }
+
+  const raw = fs.readFileSync(userConfigPath, "utf-8");
+  const config = JSON.parse(raw);
+  const port = config.BACKEND_PORT || 8080;
+  const apiHost = config.API_URL || "http://localhost";
+
+  if (config.JAR_PATH && config.JAR_PATH.trim() !== "") {
+    const inUse = await isPortInUse(port);
+    if (!inUse) {
+      try {
+        backendProcess = spawn("java", ["-jar", config.JAR_PATH], {
+          detached: true,
+          stdio: ["ignore", out, err],
+        });
+        backendProcess.unref();
+        console.log("Backend uruchomiony z:", config.JAR_PATH);
+      } catch (e) {
+        console.error("Nie udalo sie uruchomic backendu z config.json:", e);
+      }
+    } else {
+      console.log(`Port ${port} juz jest zajety, nie uruchamiam backendu.`);
+    }
+  }
+
+  console.log("Czekam na backend...");
+
+  const fullBackendUrl = `${apiHost}:${port}`;
+  const backendReady = await waitForBackend(fullBackendUrl, 20000); // 20s timeout
+  if (backendReady) {
+    console.log("Backend gotowy - uruchamiam UI");
+  } else {
+    console.warn("Backend nie odpowiedzial - UI moze nie dzialac!");
+  }
+
+  createWindow();
+});
+
+app.on("before-quit", () => {
+  if (backendProcess && !backendProcess.killed) {
+    try {
+      process.kill(backendProcess.pid);
+      console.log("Zamknieto backend.");
+    } catch (e) {
+      console.error("Nie udalo sie zamknac backendu:", e);
     }
   }
 });

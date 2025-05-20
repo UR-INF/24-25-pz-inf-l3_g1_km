@@ -21,5 +21,6 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   focusWindow: () => electron.ipcRenderer.send("focus-window"),
   getConfig: () => electron.ipcRenderer.invoke("config:get"),
-  setConfig: (data) => electron.ipcRenderer.invoke("config:set", data)
+  setConfig: (data) => electron.ipcRenderer.invoke("config:set", data),
+  selectJarPath: () => electron.ipcRenderer.invoke("dialog:selectJarPath")
 });
