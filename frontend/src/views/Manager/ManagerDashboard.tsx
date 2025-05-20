@@ -1,3 +1,4 @@
+import React from "react";
 import ReservationCard from "../../components/ReservationCard";
 import RoomsCard from "../../components/RoomsCard";
 import RepairsCard from "../../components/RepairsCard";

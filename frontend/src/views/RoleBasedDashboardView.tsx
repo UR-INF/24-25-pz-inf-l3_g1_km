@@ -1,3 +1,4 @@
+import React from "react";
 import DashboardAlert from "../components/DashboardAlert.tsx";
 import { useUser, RoleName } from "../contexts/user";
 import ReceptionistDashboard from "./Receptionist/ReceptionistDashboard.tsx";

@@ -1,8 +1,9 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode, useRef } from "react";
+import React from "react";
 // import { useNotification } from "./notification";
 
 /**
- * Reprezentuje uÅ¼ytkownika z adresem email i tokenem JWT.
+ * Reprezentuje u¿ytkownika z adresem email i tokenem JWT.
  */
 interface User {
   email: string;
@@ -33,7 +34,7 @@ const initialState: AuthState = {
 };
 
 /**
- * Reducer do obsÅ‚ugi logowania i wylogowywania.
+ * Reducer do obs³ugi logowania i wylogowywania.
  */
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -68,7 +69,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
- * Sprawdza, czy token JWT wygasÅ‚.
+ * Sprawdza, czy token JWT wygas³.
  */
 const isTokenExpired = (token: string): boolean => {
   try {
@@ -77,12 +78,12 @@ const isTokenExpired = (token: string): boolean => {
     const now = Date.now() / 1000;
     return decoded.exp < now;
   } catch {
-    return true; // JeÅ›li bÅ‚Ä…d â€” traktujemy jako wygasÅ‚y
+    return true; // Je¶li b³±d ? traktujemy jako wygas³y
   }
 };
 
 /**
- * Provider otaczajÄ…cy aplikacjÄ™.
+ * Provider otaczaj±cy aplikacjê.
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -112,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const email = payload.email;
       dispatch({ type: "LOGIN", payload: { email, token } });
 
-      // showNotification("success", "PomyÅ›lnie zalogowano do systemu!");
+      // showNotification("success", "Pomy¶lnie zalogowano do systemu!");
     } else {
       logout();
     }
@@ -122,7 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 /**
- * Hook do uÅ¼ywania kontekstu.
+ * Hook do u¿ywania kontekstu.
  */
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
