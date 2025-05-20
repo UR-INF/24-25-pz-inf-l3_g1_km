@@ -1,10 +1,13 @@
 // @ts-nocheck
 
 import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
+import { useNavigate } from "react-router";
 
 const MaintenanceIssuesTable = () => {
+  const navigate = useNavigate();
   const { showNotification } = useNotification();
   const [issuesByRoom, setIssuesByRoom] = useState([]);
   const [issuesByFloor, setIssuesByFloor] = useState([]);
@@ -20,11 +23,15 @@ const MaintenanceIssuesTable = () => {
   });
   const [currentTab, setCurrentTab] = useState("rooms");
 
+  const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [roomMaintenances, setRoomMaintenances] = useState([]);
+  const [maintenancesLoading, setMaintenancesLoading] = useState(false);
+
   useEffect(() => {
     fetchMaintenanceData();
   }, [startDate, endDate]);
 
-  // Set date range based on predefined periods
   const setDateRangePeriod = (range) => {
     const today = new Date();
     let start = new Date();
@@ -54,28 +61,113 @@ const MaintenanceIssuesTable = () => {
         start.setMonth(start.getMonth() - 3); // Domyślnie 3 miesiące
     }
 
-    // Formatowanie dat do formatu YYYY-MM-DD
     setStartDate(start.toISOString().split("T")[0]);
     setEndDate(today.toISOString().split("T")[0]);
     setSelectedRange(range);
   };
 
   const fetchMaintenanceData = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      params.append("startDate", startDate);
-      params.append("endDate", endDate);
+  try {
+    setLoading(true);
+    const params = new URLSearchParams();
+    params.append("startDate", startDate);
+    
+    const nextDay = new Date(endDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const adjustedEndDate = nextDay.toISOString().split("T")[0];
+    
+    params.append("endDate", adjustedEndDate);
 
-      const response = await api.get(`/reports/maintenance-issues?${params}`);
-      setIssuesByRoom(response.data.issuesByRoom || []);
-      setIssuesByFloor(response.data.issuesByFloor || []);
+    const response = await api.get(`/reports/maintenance-issues?${params}`);
+    setIssuesByRoom(response.data.issuesByRoom || []);
+    setIssuesByFloor(response.data.issuesByFloor || []);
+  } catch (err) {
+    console.error("Błąd podczas pobierania danych o zgłoszeniach:", err);
+    showNotification("error", "Nie udało się pobrać danych");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // Nowa funkcja do pobierania napraw dla konkretnego pokoju
+  const fetchRoomMaintenances = async (roomId) => {
+    try {
+      setMaintenancesLoading(true);
+      const response = await api.get(`/maintenance-requests/room/${roomId}`);
+      setRoomMaintenances(response.data || []);
     } catch (err) {
-      console.error("Błąd podczas pobierania danych o zgłoszeniach:", err);
-      showNotification("error", "Nie udało się pobrać danych");
+      console.error("Błąd podczas pobierania zgłoszeń pokoju:", err);
+      showNotification("error", "Nie udało się pobrać danych o naprawach pokoju");
+      setRoomMaintenances([]);
     } finally {
-      setLoading(false);
+      setMaintenancesLoading(false);
     }
+  };
+
+  const handleShowDetails = (room, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedRoom(room);
+    setShowMaintenanceModal(true);
+    fetchRoomMaintenances(room.room_id);
+  };
+
+  const handleCloseMaintenanceModal = () => {
+    setShowMaintenanceModal(false);
+    setSelectedRoom(null);
+    setRoomMaintenances([]);
+  };
+
+  // Funkcja do formatowania daty
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat("pl-PL", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      }).format(date);
+    } catch (error) {
+      console.error("Błąd formatowania daty:", error);
+      return dateString;
+    }
+  };
+
+  const translateStatus = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "Oczekujący";
+      case "IN_PROGRESS":
+        return "W trakcie";
+      case "COMPLETED":
+        return "Zakończony";
+      case "CANCELED":
+        return "Anulowany";
+      default:
+        return status;
+    }
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "badge bg-warning text-white";
+      case "IN_PROGRESS":
+        return "badge bg-info text-white";
+      case "COMPLETED":
+        return "badge bg-success text-white";
+      case "CANCELED":
+        return "badge bg-secondary text-white";
+      default:
+        return "badge bg-primary text-white";
+    }
+  };
+
+  
+  const handleShowRepairDetails = (id) => {
+        navigate(`/RecepcionistDashboard/Orders/RepairsOrderDetails/${id}`);
   };
 
   if (loading)
@@ -217,7 +309,12 @@ const MaintenanceIssuesTable = () => {
                       </div>
                     </td>
                     <td>
-                      <button className="btn btn-sm btn-outline-primary">Pokaż szczegóły</button>
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={(e) => handleShowDetails(room, e)}
+                      >
+                        Pokaż szczegóły
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -274,6 +371,91 @@ const MaintenanceIssuesTable = () => {
           </table>
         )}
       </div>
+
+      {/* Modal ze szczegółami napraw */}
+      <Modal
+        show={showMaintenanceModal}
+        onHide={handleCloseMaintenanceModal}
+        size="xl"
+        dialogClassName="modal-dialog-scrollable"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {selectedRoom && `Zgłoszenia serwisowe - Pokój ${selectedRoom.room_number} (Piętro ${selectedRoom.floor})`}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {maintenancesLoading ? (
+            <div className="text-center">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Ładowanie...</span>
+              </div>
+              <p className="mt-2">Ładowanie zgłoszeń serwisowych...</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table card-table table-vcenter">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Opis problemu</th>
+                    <th>Data zgłoszenia</th>
+                    <th>Status</th>
+                    <th>Osoba zgłaszająca</th>
+                    <th>Przypisany technik</th>
+                    <th>Data ukończenia</th>
+                    <th>Podsumowanie serwisu</th>
+                    <th>Akcje</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {roomMaintenances.length > 0 ? (
+                    roomMaintenances.map((request) => (
+                      <tr key={request.id}>
+                        <td>{request.id}</td>
+                        <td>{request.description}</td>
+                        <td>{formatDate(request.requestDate)}</td>
+                        <td>
+                          <span className={getStatusClass(request.status)}>
+                            {translateStatus(request.status)}
+                          </span>
+                        </td>
+                        <td>
+                          {request.requester ? `${request.requester.firstName} ${request.requester.lastName}` : "-"}
+                        </td>
+                        <td>
+                          {request.assignee ? `${request.assignee.firstName} ${request.assignee.lastName}` : "-"}
+                        </td>
+                        <td>{formatDate(request.completionDate)}</td>
+                        <td>{request.serviceSummary || "-"}</td>
+                        <td>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleShowRepairDetails(request.id)}
+                          >
+                            Zobacz
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="8" className="text-center">
+                        Brak zgłoszeń serwisowych dla tego pokoju
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleCloseMaintenanceModal}>
+            Zamknij
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
@@ -291,7 +473,7 @@ const getIssueRateColor = (rate) => {
 };
 
 const getPercentageWidth = (count) => {
-  const max = 10; // Załóżmy, że 10 lub więcej zgłoszeń to 100%
+  const max = 10;
   return Math.min((count / max) * 100, 100);
 };
 
