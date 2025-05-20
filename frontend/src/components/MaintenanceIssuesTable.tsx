@@ -5,6 +5,7 @@ import { Modal } from "react-bootstrap";
 import { api } from "../services/api";
 import { useNotification } from "../contexts/notification";
 import { useNavigate } from "react-router";
+import RoomMaintenanceTable from "./RoomMaintenanceTable";
 
 const MaintenanceIssuesTable = () => {
   const navigate = useNavigate();
@@ -25,8 +26,6 @@ const MaintenanceIssuesTable = () => {
 
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [roomMaintenances, setRoomMaintenances] = useState([]);
-  const [maintenancesLoading, setMaintenancesLoading] = useState(false);
 
   useEffect(() => {
     fetchMaintenanceData();
@@ -67,40 +66,25 @@ const MaintenanceIssuesTable = () => {
   };
 
   const fetchMaintenanceData = async () => {
-  try {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.append("startDate", startDate);
-    
-    const nextDay = new Date(endDate);
-    nextDay.setDate(nextDay.getDate() + 1);
-    const adjustedEndDate = nextDay.toISOString().split("T")[0];
-    
-    params.append("endDate", adjustedEndDate);
-
-    const response = await api.get(`/reports/maintenance-issues?${params}`);
-    setIssuesByRoom(response.data.issuesByRoom || []);
-    setIssuesByFloor(response.data.issuesByFloor || []);
-  } catch (err) {
-    console.error("Błąd podczas pobierania danych o zgłoszeniach:", err);
-    showNotification("error", "Nie udało się pobrać danych");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // Nowa funkcja do pobierania napraw dla konkretnego pokoju
-  const fetchRoomMaintenances = async (roomId) => {
     try {
-      setMaintenancesLoading(true);
-      const response = await api.get(`/maintenance-requests/room/${roomId}`);
-      setRoomMaintenances(response.data || []);
+      setLoading(true);
+      const params = new URLSearchParams();
+      params.append("startDate", startDate);
+      
+      const nextDay = new Date(endDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      const adjustedEndDate = nextDay.toISOString().split("T")[0];
+      
+      params.append("endDate", adjustedEndDate);
+
+      const response = await api.get(`/reports/maintenance-issues?${params}`);
+      setIssuesByRoom(response.data.issuesByRoom || []);
+      setIssuesByFloor(response.data.issuesByFloor || []);
     } catch (err) {
-      console.error("Błąd podczas pobierania zgłoszeń pokoju:", err);
-      showNotification("error", "Nie udało się pobrać danych o naprawach pokoju");
-      setRoomMaintenances([]);
+      console.error("Błąd podczas pobierania danych o zgłoszeniach:", err);
+      showNotification("error", "Nie udało się pobrać danych");
     } finally {
-      setMaintenancesLoading(false);
+      setLoading(false);
     }
   };
 
@@ -109,65 +93,11 @@ const MaintenanceIssuesTable = () => {
     e.stopPropagation();
     setSelectedRoom(room);
     setShowMaintenanceModal(true);
-    fetchRoomMaintenances(room.room_id);
   };
 
   const handleCloseMaintenanceModal = () => {
     setShowMaintenanceModal(false);
     setSelectedRoom(null);
-    setRoomMaintenances([]);
-  };
-
-  // Funkcja do formatowania daty
-  const formatDate = (dateString) => {
-    if (!dateString) return "-";
-
-    try {
-      const date = new Date(dateString);
-      return new Intl.DateTimeFormat("pl-PL", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      }).format(date);
-    } catch (error) {
-      console.error("Błąd formatowania daty:", error);
-      return dateString;
-    }
-  };
-
-  const translateStatus = (status) => {
-    switch (status) {
-      case "PENDING":
-        return "Oczekujący";
-      case "IN_PROGRESS":
-        return "W trakcie";
-      case "COMPLETED":
-        return "Zakończony";
-      case "CANCELED":
-        return "Anulowany";
-      default:
-        return status;
-    }
-  };
-
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "PENDING":
-        return "badge bg-warning text-white";
-      case "IN_PROGRESS":
-        return "badge bg-info text-white";
-      case "COMPLETED":
-        return "badge bg-success text-white";
-      case "CANCELED":
-        return "badge bg-secondary text-white";
-      default:
-        return "badge bg-primary text-white";
-    }
-  };
-
-  
-  const handleShowRepairDetails = (id) => {
-        navigate(`/RecepcionistDashboard/Orders/RepairsOrderDetails/${id}`);
   };
 
   if (loading)
@@ -385,69 +315,12 @@ const MaintenanceIssuesTable = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {maintenancesLoading ? (
-            <div className="text-center">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Ładowanie...</span>
-              </div>
-              <p className="mt-2">Ładowanie zgłoszeń serwisowych...</p>
-            </div>
-          ) : (
-            <div className="table-responsive">
-              <table className="table card-table table-vcenter">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Opis problemu</th>
-                    <th>Data zgłoszenia</th>
-                    <th>Status</th>
-                    <th>Osoba zgłaszająca</th>
-                    <th>Przypisany technik</th>
-                    <th>Data ukończenia</th>
-                    <th>Podsumowanie serwisu</th>
-                    <th>Akcje</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {roomMaintenances.length > 0 ? (
-                    roomMaintenances.map((request) => (
-                      <tr key={request.id}>
-                        <td>{request.id}</td>
-                        <td>{request.description}</td>
-                        <td>{formatDate(request.requestDate)}</td>
-                        <td>
-                          <span className={getStatusClass(request.status)}>
-                            {translateStatus(request.status)}
-                          </span>
-                        </td>
-                        <td>
-                          {request.requester ? `${request.requester.firstName} ${request.requester.lastName}` : "-"}
-                        </td>
-                        <td>
-                          {request.assignee ? `${request.assignee.firstName} ${request.assignee.lastName}` : "-"}
-                        </td>
-                        <td>{formatDate(request.completionDate)}</td>
-                        <td>{request.serviceSummary || "-"}</td>
-                        <td>
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => handleShowRepairDetails(request.id)}
-                          >
-                            Zobacz
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="text-center">
-                        Brak zgłoszeń serwisowych dla tego pokoju
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+          {selectedRoom && (
+            <RoomMaintenanceTable 
+              roomId={selectedRoom.room_id} 
+              roomNumber={selectedRoom.room_number}
+              floor={selectedRoom.floor}
+            />
           )}
         </Modal.Body>
         <Modal.Footer>
