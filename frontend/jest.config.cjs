@@ -12,5 +12,5 @@ module.exports = {
 
   // Wyciszanie ostrzeżeń deprecacji (np. dla punycode)
   testRunner: 'jest-circus/runner',
-  setupFiles: ['<rootDir>/src/tests/silenceWarnings.js']
+  // setupFiles: ['<rootDir>/src/tests/silenceWarnings.js']
 };

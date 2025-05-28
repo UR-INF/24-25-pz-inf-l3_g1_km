@@ -22,6 +22,7 @@ const LoginView = () => {
   const { login } = useAuth();
   const { fetchUser } = useUser();
   const { showNotification } = useNotification();
+  const [showPassword, setShowPassword] = useState(false);
 
   const loginUser = async () => {
     try {
@@ -114,15 +115,6 @@ const LoginView = () => {
     }
   };
 
-  const togglePasswordVisibility = () => {
-    const passwordInput = document.getElementById("password") as HTMLInputElement;
-    const eyeIcon = document.getElementById("eye-icon") as HTMLElement;
-    const isHidden = passwordInput.type === "password";
-    passwordInput.type = isHidden ? "text" : "password";
-    eyeIcon.classList.toggle("ti-eye");
-    eyeIcon.classList.toggle("ti-eye-off");
-  };
-
   const getAlertIcon = () => {
     switch (alertMessage?.type) {
       case "danger":
@@ -202,7 +194,7 @@ const LoginView = () => {
 
                   <div className="input-group input-group-flat">
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       id="password"
                       autoComplete="current-password"
                       className="form-control"
@@ -214,12 +206,14 @@ const LoginView = () => {
                     <span className="input-group-text">
                       <a
                         href="#"
-                        id="toggle-password"
-                        onClick={togglePasswordVisibility}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowPassword((prev) => !prev);
+                        }}
                         className="link-secondary"
-                        title="Pokaż hasło"
+                        title={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
                       >
-                        <i id="eye-icon" className="ti ti-eye fs-2"></i>
+                        <i className={`ti ${showPassword ? "ti-eye-off" : "ti-eye"} fs-2`} />
                       </a>
                     </span>
                   </div>
