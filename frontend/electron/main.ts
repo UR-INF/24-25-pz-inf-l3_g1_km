@@ -31,7 +31,7 @@ const configTemplatePath = path.join(process.env.APP_ROOT!, "electron", "config.
 const userConfigPath = path.join(app.getPath("userData"), "config.json");
 
 const defaultConfig = {
-  API_URL: "http://localhost",
+  API_HOST: "http://localhost",
   JAR_PATH: "",
   BACKEND_PORT: 8080,
 };
@@ -199,7 +199,7 @@ app.whenReady().then(async () => {
   const raw = fs.readFileSync(userConfigPath, "utf-8");
   const config = JSON.parse(raw);
   const port = config.BACKEND_PORT || 8080;
-  const apiHost = config.API_URL || "http://localhost";
+  const apiHost = config.API_HOST || "http://localhost";
 
   if (config.JAR_PATH && config.JAR_PATH.trim() !== "") {
     const inUse = await isPortInUse(port);
