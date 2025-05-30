@@ -81,7 +81,10 @@ const LoginView = () => {
     loginUser();
   };
 
-  const handlePasswordReset = async () => {
+  const handlePasswordReset = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Dodajemy preventDefault, aby zapobiec odświeżeniu/przewijaniu strony
+    e.preventDefault();
+
     if (!email) {
       setAlertMessage({
         title: "Brak adresu e-mail",
@@ -104,6 +107,16 @@ const LoginView = () => {
           "Jeśli nie widzisz wiadomości, sprawdź folder SPAM",
         ],
       });
+
+      // Czyścimy tylko pole hasła, zachowując email
+      setPassword("");
+
+      // Przewijamy do alertu, aby był widoczny
+      setTimeout(() => {
+        const alertElement = document.querySelector('.alert');
+        alertElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+
     } catch (err) {
       setAlertMessage({
         title: "Błąd wysyłania",

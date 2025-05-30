@@ -12,6 +12,16 @@ import java.util.Optional;
 
 /**
  * REST API dla zarządzania fakturami.
+ *  *
+ *  * Dostępne endpointy:
+ *  *
+ *  * GET    /api/invoices                          - Pobierz wszystkie faktury
+ *  * GET    /api/invoices/{id}                     - Pobierz fakturę po ID
+ *  * GET    /api/invoices/reservation/{id}         - Pobierz fakturę przypisaną do rezerwacji
+ *  * GET    /api/invoices/{id}/pdf                 - Pobierz plik PDF faktury
+ *  * POST   /api/invoices/reservation/{id}         - Wygeneruj fakturę dla rezerwacji
+ *  * DELETE /api/invoices/{id}                     - Usuń fakturę po ID
+ *  * PUT    /api/invoices/{id}                     - Modyfikuje fakturę w systemie
  */
 @RestController
 @RequestMapping("/api/invoices")
