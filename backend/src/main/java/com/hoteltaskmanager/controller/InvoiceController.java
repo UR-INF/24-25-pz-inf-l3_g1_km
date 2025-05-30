@@ -12,16 +12,6 @@ import java.util.Optional;
 
 /**
  * REST API dla zarządzania fakturami.
- *
- * Dostępne endpointy:
- *
- * GET    /api/invoices                          - Pobierz wszystkie faktury
- * GET    /api/invoices/{id}                     - Pobierz fakturę po ID
- * GET    /api/invoices/reservation/{id}         - Pobierz fakturę przypisaną do rezerwacji
- * GET    /api/invoices/{id}/pdf                 - Pobierz plik PDF faktury
- * POST   /api/invoices/reservation/{id}         - Wygeneruj fakturę dla rezerwacji
- * DELETE /api/invoices/{id}                     - Usuń fakturę po ID
- * PUT    /api/invoices/{id}                     - Modyfikuje fakturę w systemie
  */
 @RestController
 @RequestMapping("/api/invoices")
@@ -42,10 +32,18 @@ public class InvoiceController {
             @PathVariable Long reservationId,
             @RequestParam String nip,
             @RequestParam String companyName,
-            @RequestParam String companyAddress
+            @RequestParam String companyStreet,
+            @RequestParam String companyBuildingNo,
+            @RequestParam String companyPostalCode,
+            @RequestParam String companyCity,
+            @RequestParam String companyCountry
     ) {
         try {
-            Invoice invoice = invoiceService.generateInvoice(reservationId, nip, companyName, companyAddress);
+            Invoice invoice = invoiceService.generateInvoice(
+                    reservationId, nip, companyName,
+                    companyStreet, companyBuildingNo,
+                    companyPostalCode, companyCity, companyCountry
+            );
             return ResponseEntity.ok(invoice);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();

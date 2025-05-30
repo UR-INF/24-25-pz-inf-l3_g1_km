@@ -43,7 +43,16 @@ public class InvoiceService {
     /**
      * Generuje fakturę na podstawie ID rezerwacji i danych firmy.
      */
-    public Invoice generateInvoice(Long reservationId, String nip, String companyName, String companyAddress) throws Exception {
+    public Invoice generateInvoice(
+            Long reservationId,
+            String nip,
+            String companyName,
+            String companyStreet,
+            String companyBuildingNo,
+            String companyPostalCode,
+            String companyCity,
+            String companyCountry
+    ) throws Exception {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Rezerwacja nie istnieje"));
 
@@ -51,7 +60,11 @@ public class InvoiceService {
         invoice.setIssueDate(LocalDate.now());
         invoice.setCompanyNip(nip);
         invoice.setCompanyName(companyName);
-        invoice.setCompanyAddress(companyAddress);
+        invoice.setCompanyStreet(companyStreet);
+        invoice.setCompanyBuildingNo(companyBuildingNo);
+        invoice.setCompanyPostalCode(companyPostalCode);
+        invoice.setCompanyCity(companyCity);
+        invoice.setCompanyCountry(companyCountry);
 
         String fileName = "invoice-" + UUID.randomUUID() + ".pdf";
         String pdfPath = "invoices/" + fileName;
@@ -103,7 +116,9 @@ public class InvoiceService {
         cell2.setBorder(Rectangle.NO_BORDER);
         cell2.addElement(new Paragraph("Nabywca:", boldFont));
         cell2.addElement(new Paragraph(invoice.getCompanyName(), normalFont));
-        cell2.addElement(new Paragraph(invoice.getCompanyAddress(), normalFont));
+        cell2.addElement(new Paragraph(invoice.getCompanyStreet() + " " + invoice.getCompanyBuildingNo(), normalFont));
+        cell2.addElement(new Paragraph(invoice.getCompanyPostalCode() + " " + invoice.getCompanyCity(), normalFont));
+        cell2.addElement(new Paragraph(invoice.getCompanyCountry(), normalFont));
         cell2.addElement(new Paragraph("NIP: " + invoice.getCompanyNip(), normalFont));
 
         parties.addCell(cell1);
@@ -128,7 +143,6 @@ public class InvoiceService {
         table.addCell(new PdfPCell(new Phrase("Netto", boldFont)));
         table.addCell(new PdfPCell(new Phrase("VAT 8%", boldFont)));
         table.addCell(new PdfPCell(new Phrase("Brutto", boldFont)));
-
 
         long days = ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
 
@@ -161,7 +175,6 @@ public class InvoiceService {
             totalBrutto += brutto.doubleValue();
         }
 
-
         PdfPCell sumLabel = new PdfPCell(new Phrase("Razem", boldFont));
         sumLabel.setColspan(4);
         sumLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -169,7 +182,6 @@ public class InvoiceService {
         table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalNetto), boldFont)));
         table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalVat), boldFont)));
         table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalBrutto), boldFont)));
-
 
         document.add(table);
 
@@ -250,11 +262,15 @@ public class InvoiceService {
             existingInvoice.setIssueDate(updatedInvoice.getIssueDate());
             existingInvoice.setCompanyNip(updatedInvoice.getCompanyNip());
             existingInvoice.setCompanyName(updatedInvoice.getCompanyName());
-            existingInvoice.setCompanyAddress(updatedInvoice.getCompanyAddress());
+            existingInvoice.setCompanyStreet(updatedInvoice.getCompanyStreet());
+            existingInvoice.setCompanyBuildingNo(updatedInvoice.getCompanyBuildingNo());
+            existingInvoice.setCompanyPostalCode(updatedInvoice.getCompanyPostalCode());
+            existingInvoice.setCompanyCity(updatedInvoice.getCompanyCity());
+            existingInvoice.setCompanyCountry(updatedInvoice.getCompanyCountry());
 
             // Pobierz powiązaną rezerwację
             Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Rezerwacja nie istnieje"));
+                    .orElseThrow(() -> new IllegalArgumentException("Rezerwacja nie istnieje"));
 
             // Wygeneruj nowy PDF
             String newFileName = "invoice-" + UUID.randomUUID() + ".pdf";

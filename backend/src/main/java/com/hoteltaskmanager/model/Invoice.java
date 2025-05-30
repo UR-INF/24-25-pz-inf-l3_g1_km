@@ -44,6 +44,21 @@ public class Invoice {
     /**
      * Adres firmy.
      */
-    @Column(name = "company_address")
-    private String companyAddress;
+//    @Column(name = "company_address")
+//    private String companyAddress;
+
+    @Column(name = "company_street", length = 100)
+    private String companyStreet;
+
+    @Column(name = "company_building_no", length = 20)
+    private String companyBuildingNo;
+
+    @Column(name = "company_postal_code", length = 20)
+    private String companyPostalCode;
+
+    @Column(name = "company_city", length = 100)
+    private String companyCity;
+
+    @Column(name = "company_country", length = 100)
+    private String companyCountry;
 }

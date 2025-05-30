@@ -143,15 +143,14 @@ const RoomsTable = () => {
                   <td>{room.pricePerNight.toFixed(2)} PLN</td>
                   <td>
                     <span
-                      className={`badge me-1 ${
-                        room.status === "AVAILABLE"
+                      className={`badge me-1 ${room.status === "AVAILABLE"
                           ? "bg-success"
                           : room.status === "OCCUPIED"
                             ? "bg-warning"
                             : room.status === "UNAVAILABLE"
                               ? "bg-danger"
                               : "bg-secondary"
-                      }`}
+                        }`}
                     ></span>
                     {room.status === "AVAILABLE"
                       ? "Dostępny"
@@ -201,12 +200,13 @@ const RoomsTable = () => {
           </p>
           <ul className="pagination m-0 ms-auto">
             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <a
+              <button
                 className="page-link"
-                href="#"
-                tabIndex={-1}
-                aria-disabled="true"
-                onClick={() => handleChangePage(currentPage - 1)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleChangePage(currentPage - 1);
+                }}
+                disabled={currentPage === 1}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -223,7 +223,7 @@ const RoomsTable = () => {
                   <path d="M15 6l-6 6l6 6"></path>
                 </svg>
                 poprzednia
-              </a>
+              </button>
             </li>
             {Array.from({ length: totalPages }, (_, i) => (
               <li key={i} className={`page-item ${currentPage === i + 1 ? "active" : ""}`}>
@@ -233,7 +233,14 @@ const RoomsTable = () => {
               </li>
             ))}
             <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-              <a className="page-link" href="#" onClick={() => handleChangePage(currentPage + 1)}>
+              <button
+                className="page-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleChangePage(currentPage + 1);
+                }}
+                disabled={currentPage === totalPages}
+              >
                 następna
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +256,7 @@ const RoomsTable = () => {
                 >
                   <path d="M9 6l6 6l-6 6"></path>
                 </svg>
-              </a>
+              </button>
             </li>
           </ul>
         </div>

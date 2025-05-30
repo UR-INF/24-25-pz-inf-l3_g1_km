@@ -10,7 +10,11 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
     issueDate: "",
     companyNip: "",
     companyName: "",
-    companyAddress: "",
+    companyStreet: "",
+    companyBuildingNo: "",
+    companyPostalCode: "",
+    companyCity: "",
+    companyCountry: "",
   });
 
   useEffect(() => {
@@ -18,7 +22,16 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
       try {
         const response = await api.get(`/invoices/${invoiceId}`);
         if (response.status === 200) {
-          setInvoiceData(response.data);
+          setInvoiceData({
+            issueDate: response.data.issueDate || "",
+            companyNip: response.data.companyNip || "",
+            companyName: response.data.companyName || "",
+            companyStreet: response.data.companyStreet || "",
+            companyBuildingNo: response.data.companyBuildingNo || "",
+            companyPostalCode: response.data.companyPostalCode || "",
+            companyCity: response.data.companyCity || "",
+            companyCountry: response.data.companyCountry || "",
+          });
         } else {
           console.error("Nie udało się pobrać faktury");
         }
@@ -36,7 +49,6 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
       ...prevData,
       [name]: value,
     }));
-    console.log(invoiceData);
   };
 
   const handleSubmit = async (e) => {
@@ -62,10 +74,8 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
   return (
     <div className="card-body">
       <h2 className="mb-4">Edytuj fakturę</h2>
-
       <form onSubmit={handleSubmit}>
         <h3 className="card-title">Szczegóły faktury</h3>
-
         <div className="mb-3">
           <label htmlFor="issueDate" className="form-label">
             Data wystawienia
@@ -80,7 +90,6 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
             required
           />
         </div>
-
         <div className="mb-3">
           <label htmlFor="companyNip" className="form-label">
             NIP firmy
@@ -92,9 +101,9 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
             value={invoiceData.companyNip}
             onChange={handleInputChange}
             className="form-control"
+            placeholder="5270103391 - testowy" // do usuniecia
           />
         </div>
-
         <div className="mb-3">
           <label htmlFor="companyName" className="form-label">
             Nazwa firmy
@@ -109,21 +118,76 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
             required
           />
         </div>
-
         <div className="mb-3">
-          <label htmlFor="companyAddress" className="form-label">
-            Adres firmy
+          <label htmlFor="companyStreet" className="form-label">
+            Ulica
           </label>
-          <textarea
-            id="companyAddress"
-            name="companyAddress"
-            value={invoiceData.companyAddress}
+          <input
+            type="text"
+            id="companyStreet"
+            name="companyStreet"
+            value={invoiceData.companyStreet}
             onChange={handleInputChange}
             className="form-control"
             required
           />
         </div>
-
+        <div className="mb-3">
+          <label htmlFor="companyBuildingNo" className="form-label">
+            Nr budynku / mieszkania
+          </label>
+          <input
+            type="text"
+            id="companyBuildingNo"
+            name="companyBuildingNo"
+            value={invoiceData.companyBuildingNo}
+            onChange={handleInputChange}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="companyPostalCode" className="form-label">
+            Kod pocztowy
+          </label>
+          <input
+            type="text"
+            id="companyPostalCode"
+            name="companyPostalCode"
+            value={invoiceData.companyPostalCode}
+            onChange={handleInputChange}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="companyCity" className="form-label">
+            Miasto
+          </label>
+          <input
+            type="text"
+            id="companyCity"
+            name="companyCity"
+            value={invoiceData.companyCity}
+            onChange={handleInputChange}
+            className="form-control"
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="companyCountry" className="form-label">
+            Kraj
+          </label>
+          <input
+            type="text"
+            id="companyCountry"
+            name="companyCountry"
+            value={invoiceData.companyCountry}
+            onChange={handleInputChange}
+            className="form-control"
+            required
+          />
+        </div>
         <div className="d-flex justify-content-between">
           <button type="submit" className="btn btn-primary">
             Zaktualizuj fakturę
