@@ -1,0 +1,10 @@
+/target/
+/Cargo.lock
+
+/installer.log
+
+*.exe
+*.dll
+
+.DS_Store
+Thumbs.db

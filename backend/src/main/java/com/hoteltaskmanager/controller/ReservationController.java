@@ -2,13 +2,10 @@ package com.hoteltaskmanager.controller;
 
 import com.hoteltaskmanager.model.Invoice;
 import com.hoteltaskmanager.model.Reservation;
-import com.hoteltaskmanager.model.ReservationRoom;
 import com.hoteltaskmanager.model.ReservationStatus;
 import com.hoteltaskmanager.repository.ReservationRepository;
-import com.hoteltaskmanager.repository.ReservationRoomRepository;
 import com.hoteltaskmanager.service.RoomStatusManagerService;
 import com.hoteltaskmanager.service.InvoiceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,16 +31,13 @@ import java.util.Optional;
 public class ReservationController {
 
     private final ReservationRepository reservationRepository;
-    private final ReservationRoomRepository reservationRoomRepository;
     private final InvoiceService invoiceService;
     private final RoomStatusManagerService roomStatusManagerService;
 
     public ReservationController(ReservationRepository reservationRepository,
-                                 ReservationRoomRepository reservationRoomRepository,
                                  InvoiceService invoiceService,
                                  RoomStatusManagerService roomStatusManagerService) {
         this.reservationRepository = reservationRepository;
-        this.reservationRoomRepository = reservationRoomRepository;
         this.invoiceService = invoiceService;
         this.roomStatusManagerService = roomStatusManagerService;
     }
