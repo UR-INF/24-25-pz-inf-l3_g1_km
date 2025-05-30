@@ -196,8 +196,38 @@ app.whenReady().then(async () => {
     }
   }
 
-  const raw = fs.readFileSync(userConfigPath, "utf-8");
-  const config = JSON.parse(raw);
+  let config = defaultConfig;
+
+  try {
+    let raw = fs.readFileSync(userConfigPath, "utf-8").trim();
+
+    if (raw === "") {
+      throw new Error("Plik config.json jest pusty.");
+    }
+
+    const parsed = JSON.parse(raw);
+    config = { ...defaultConfig, ...parsed };
+  } catch (err) {
+    console.warn("Wystapil problem z config.json, nadpisuje zawartosc domyslna:", err);
+
+    try {
+      fs.writeFileSync(userConfigPath, JSON.stringify(defaultConfig, null, 2), "utf-8");
+      console.log("Zapisano domyslna konfiguracje do config.json.");
+    } catch (writeErr) {
+      console.error("Nie udalo sie zapisac domyslnej konfiguracji:", writeErr);
+    }
+  }
+
+  if (!config.BACKEND_PORT) {
+    console.log("BACKEND_PORT nie zostal ustawiony w config.json — uzywam domyslnego: 8080");
+  }
+
+  if (!config.API_HOST) {
+    console.log(
+      "API_HOST nie zostal ustawiony w config.json — uzywam domyslnego: http://localhost",
+    );
+  }
+
   const port = config.BACKEND_PORT || 8080;
   const apiHost = config.API_HOST || "http://localhost";
 
