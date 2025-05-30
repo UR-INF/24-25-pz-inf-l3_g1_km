@@ -1,12 +1,11 @@
+use eframe::{egui, App, CreationContext, Frame};
+use egui::Margin;
+use serde::{Deserialize, Serialize};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
 use std::process::Command;
 use std::time::SystemTime;
-use egui::Margin;
-
-
-use eframe::{egui, App, CreationContext, Frame};
 use which::which;
 use winreg::enums::*;
 use winreg::RegKey;
@@ -44,6 +43,13 @@ struct InstallerApp {
     status: String,
 }
 
+#[derive(Deserialize, Serialize)]
+struct FrontendConfig {
+    API_HOST: String,
+    JAR_PATH: String,
+    BACKEND_PORT: u16,
+}
+
 impl InstallerApp {
     fn new(_cc: &CreationContext<'_>) -> Self {
         Self::default()
@@ -77,7 +83,7 @@ impl App for InstallerApp {
                 .show(ui, |ui| {
                     egui::ScrollArea::vertical().show(ui, |ui| {
                         ui.vertical_centered(|ui| {
-                            ui.set_max_width(400.0); // maksymalna szerokość
+                            ui.set_max_width(400.0);
                             ui.heading("Instalator środowiska aplikacji Hotel Task Manager");
                             ui.add_space(20.0);
 
@@ -85,37 +91,22 @@ impl App for InstallerApp {
                                 0 => {
                                     ui.label("Czy chcesz zainstalować backend lokalnie?");
                                     ui.horizontal(|ui| {
-                                        ui.radio_value(
-                                            &mut self.backend_choice,
-                                            BackendOption::Local,
-                                            "Tak",
-                                        );
-                                        ui.radio_value(
-                                            &mut self.backend_choice,
-                                            BackendOption::Remote,
-                                            "Nie",
-                                        );
+                                        ui.radio_value(&mut self.backend_choice, BackendOption::Local, "Tak");
+                                        ui.radio_value(&mut self.backend_choice, BackendOption::Remote, "Nie");
                                     });
-
-                                    ui.add_space(10.0);
-                                    ui.horizontal(|ui| {
-                                        if ui.button("Dalej").clicked() {
-                                            match self.backend_choice {
-                                                BackendOption::Local => self.step = 1,
-                                                BackendOption::Remote => self.step = 10,
-                                                BackendOption::Undecided => {
-                                                    self.status =
-                                                        "Wybierz jedną z opcji.".to_string();
-                                                }
+                                    if ui.button("Dalej").clicked() {
+                                        match self.backend_choice {
+                                            BackendOption::Local => self.step = 1,
+                                            BackendOption::Remote => self.step = 10,
+                                            BackendOption::Undecided => {
+                                                self.status = "Wybierz jedną z opcji.".to_string();
                                             }
                                         }
-                                    });
+                                    }
                                 }
 
                                 1 => {
-                                    ui.label(
-                                        "Czy chcesz połączyć backend z zewnętrzną bazą danych?",
-                                    );
+                                    ui.label("Czy chcesz połączyć backend z zewnętrzną bazą danych?");
                                     ui.checkbox(&mut self.use_external_db, "Tak");
 
                                     if self.use_external_db {
@@ -140,11 +131,7 @@ impl App for InstallerApp {
                                             self.back();
                                         }
                                         if ui.button("Dalej").clicked() {
-                                            if !self.use_external_db {
-                                                self.step += 1;
-                                            } else {
-                                                self.step = 3;
-                                            }
+                                            self.step = if self.use_external_db { 3 } else { 2 };
                                         }
                                     });
                                 }
@@ -176,8 +163,7 @@ impl App for InstallerApp {
                                         let _ = Command::new("msiexec")
                                             .args(["/i", "resources/openjdk.msi", "/quiet"])
                                             .spawn();
-                                        self.status
-                                            .push_str(" JAVA_HOME musi być ustawione ręcznie.");
+                                        self.status.push_str(" JAVA_HOME musi być ustawione ręcznie.");
                                     }
                                     self.step += 1;
                                 }
@@ -186,20 +172,74 @@ impl App for InstallerApp {
                                     ui.label("Instalowanie backendu...");
                                     let backend_dir = PathBuf::from("C:/Hotel Task Manager Environment/backend");
                                     fs::create_dir_all(&backend_dir).unwrap();
-                                    fs::copy(
-                                        "resources/backend.jar",
-                                        backend_dir.join("backend.jar"),
-                                    )
-                                    .unwrap();
+                                    fs::copy("resources/backend.jar", backend_dir.join("backend.jar")).unwrap();
                                     self.backend_installed = true;
-                                    self.status = "Backend został skopiowany do C:/Hotel Task Manager Environment/backend."
-                                        .to_string();
-                                    self.log("Backend copied to C:/Hotel Task Manager Environment/backend.");
+                                    self.status = "Backend został skopiowany.".to_string();
+                                    self.log("Backend copied.");
                                     self.step = 5;
+                                }
+
+                                5 => {
+                                    ui.label("Czy frontend został już zainstalowany?");
+                                    ui.horizontal(|ui| {
+                                        if ui.button("Nie – zainstaluj teraz").clicked() {
+                                            let exe_path = std::env::current_dir()
+                                                .unwrap()
+                                                .parent()
+                                                .unwrap()
+                                                .join("resources")
+                                                .join("frontend.exe");
+                                            if !exe_path.exists() {
+                                                self.status = format!("Nie znaleziono instalatora frontendu: {:?}", exe_path);
+                                                self.log(&self.status);
+                                            } else {
+                                                match Command::new(&exe_path).spawn() {
+                                                    Ok(_) => {
+                                                        self.status = "Uruchomiono instalator frontendu. Po instalacji kliknij 'Dalej'.".to_string();
+                                                        self.log("Frontend installer launched.");
+                                                    }
+                                                    Err(e) => {
+                                                        self.status = format!("Błąd uruchamiania instalatora frontendu: {}", e);
+                                                        self.log(&self.status);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if ui.button("Frontend już zainstalowany – przejdź dalej").clicked() {
+                                            self.step = 6;
+                                        }
+                                    });
+                                }
+
+                                6 => {
+                                    ui.label("Aktualizowanie konfiguracji frontendu...");
+                                    let result = update_frontend_config(
+                                        self.external_api_url.trim(),
+                                        self.external_api_port.trim(),
+                                    );
+                                    match result {
+                                        Ok(_) => {
+                                            self.status = "Zaktualizowano konfigurację frontendu.".to_string();
+                                            self.log(&self.status);
+                                            self.step = 7;
+                                        }
+                                        Err(e) => {
+                                            self.status = format!("Błąd aktualizacji config frontendu: {}", e);
+                                            self.log(&self.status);
+                                        }
+                                    }
+                                }
+
+                                7 => {
+                                    ui.heading("Instalacja zakończona");
+                                    ui.label("Środowisko backendowe oraz konfiguracja frontendu zostały zakończone.");
+                                    ui.label(&self.status);
                                 }
 
                                 10 => {
                                     ui.label("Podaj dane do zewnętrznego backendu:");
+                                    
                                     ui.add(
                                         egui::TextEdit::singleline(&mut self.external_api_url)
                                             .hint_text("Adres, np. http://localhost"),
@@ -232,61 +272,22 @@ impl App for InstallerApp {
                                             self.back();
                                         }
                                         if ui.button("Dalej").clicked() {
-                                            if self.external_api_url.trim().is_empty()
-                                                || self.external_api_port.trim().is_empty()
-                                            {
-                                                self.status =
-                                                    "Podaj poprawny adres i port.".to_string();
-                                            } else {
-                                                self.log(&format!(
-                                                    "Ustawiono zdalny backend: {}:{}",
-                                                    self.external_api_url, self.external_api_port
-                                                ));
-                                                self.step = 5;
-                                            }
+                                            self.step = 5;
                                         }
                                     });
                                 }
 
-                                5 => {
-                                    ui.label("Czy chcesz uruchomić instalator frontendu?");
-                                    ui.horizontal(|ui| { 
-                                        if ui.button("Tak").clicked() {
-                                            let exe_path = std::env::current_dir()
-                                                .unwrap()
-                                                .parent()
-                                                .unwrap()
-                                                .join("resources")
-                                                .join("frontend.exe");
-
-                                            let _ = Command::new(exe_path).spawn();
-
-                                            self.frontend_launched = true;
-                                            self.status =
-                                                "Frontend został uruchomiony.".to_string();
-                                            self.log("Frontend launched.");
-                                            self.step = 6;
-                                        }
-                                        if ui.button("Nie").clicked() {
-                                            self.step = 6;
-                                        }
-                                    });
-                                }
-
-                                _ => {
-                                    ui.heading("Instalacja zakończona");
-                                    ui.label(&self.status);
-                                }
+                                _ => {}
                             }
 
-                            ui.add_space(20.0);
                             if !self.status.is_empty() {
+                                ui.add_space(10.0);
                                 ui.label(format!("Status: {}", self.status));
                             }
                         });
                     });
                 });
-            });
+        });
     }
 }
 
@@ -325,3 +326,53 @@ fn check_spring_health(url: &str, port: &str) -> Result<String, String> {
         Err(e) => Err(format!("Błąd połączenia: {}", e)),
     }
 }
+
+fn get_frontend_config_path() -> Option<PathBuf> {
+    dirs::config_dir().map(|path| path.join("Hotel Task Manager").join("config.json"))
+}
+
+fn update_frontend_config(host: &str, port: &str) -> Result<(), String> {
+    let config_path = get_frontend_config_path()
+        .ok_or("Nie można znaleźć ścieżki do pliku konfiguracyjnego.")?;
+
+    let port: u16 = port
+        .parse()
+        .map_err(|_| "Niepoprawny numer portu".to_string())?;
+
+    let config = if config_path.exists() {
+        let content = std::fs::read_to_string(&config_path)
+            .map_err(|e| format!("Błąd odczytu pliku: {}", e))?;
+
+        if content.trim().is_empty() {
+            // Plik istnieje, ale jest pusty — tworzymy nowy
+            FrontendConfig {
+                API_HOST: host.to_string(),
+                BACKEND_PORT: port,
+                JAR_PATH: "".to_string(),
+            }
+        } else {
+            let mut parsed: FrontendConfig = serde_json::from_str(&content)
+                .map_err(|e| format!("Błąd parsowania JSON: {}", e))?;
+
+            parsed.API_HOST = host.to_string();
+            parsed.BACKEND_PORT = port;
+            parsed
+        }
+    } else {
+        // Plik nie istnieje — też tworzymy nowy
+        FrontendConfig {
+            API_HOST: host.to_string(),
+            BACKEND_PORT: port,
+            JAR_PATH: "".to_string(),
+        }
+    };
+
+    let updated_json = serde_json::to_string_pretty(&config)
+        .map_err(|e| format!("Błąd serializacji: {}", e))?;
+
+    std::fs::write(&config_path, updated_json)
+        .map_err(|e| format!("Błąd zapisu pliku: {}", e))?;
+
+    Ok(())
+}
+
