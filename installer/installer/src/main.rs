@@ -5,10 +5,10 @@ use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
 use std::process::Command;
-use std::time::SystemTime;
 use which::which;
 use winreg::enums::*;
 use winreg::RegKey;
+use chrono::Local;
 
 fn main() -> eframe::Result<()> {
     let native_options = eframe::NativeOptions::default();
@@ -39,15 +39,19 @@ struct InstallerApp {
     db_pass: String,
     java_installed: bool,
     backend_installed: bool,
-    frontend_launched: bool,
     status: String,
 }
 
 #[derive(Deserialize, Serialize)]
 struct FrontendConfig {
-    API_HOST: String,
-    JAR_PATH: String,
-    BACKEND_PORT: u16,
+    #[serde(rename = "API_HOST")]
+    api_host: String,
+
+    #[serde(rename = "JAR_PATH")]
+    jar_path: String,
+
+    #[serde(rename = "BACKEND_PORT")]
+    backend_port: u16,
 }
 
 impl InstallerApp {
@@ -68,8 +72,10 @@ impl InstallerApp {
             .append(true)
             .open(log_path)
             .expect("Unable to open log file");
-        let timestamp = SystemTime::now();
-        let entry = format!("[{:?}] {}\n", timestamp, message);
+
+        let now = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+        let entry = format!("[{}] {}\n", now, message);
+
         let _ = file.write_all(entry.as_bytes());
     }
 }
@@ -182,7 +188,7 @@ impl App for InstallerApp {
                                 5 => {
                                     ui.label("Czy frontend został już zainstalowany?");
                                     ui.horizontal(|ui| {
-                                        if ui.button("Nie – zainstaluj teraz").clicked() {
+                                        if ui.button("Nie - zainstaluj teraz").clicked() {
                                             let exe_path = std::env::current_dir()
                                                 .unwrap()
                                                 .parent()
@@ -195,7 +201,11 @@ impl App for InstallerApp {
                                             } else {
                                                 match Command::new(&exe_path).spawn() {
                                                     Ok(_) => {
-                                                        self.status = "Uruchomiono instalator frontendu. Po instalacji kliknij 'Dalej'.".to_string();
+                                                        self.status = "Instalator frontendu został uruchomiony.\n\
+                                                            \n\
+                                                            ❗Nie kontynuuj instalacji, dopóki nie zakończysz instalacji frontendu.\n\
+                                                            W przeciwnym razie konfiguracja nie powiedzie się.".to_string();
+
                                                         self.log("Frontend installer launched.");
                                                     }
                                                     Err(e) => {
@@ -335,6 +345,18 @@ fn update_frontend_config(host: &str, port: &str) -> Result<(), String> {
     let config_path = get_frontend_config_path()
         .ok_or("Nie można znaleźć ścieżki do pliku konfiguracyjnego.")?;
 
+    println!("Ścieżka do pliku konfiguracyjnego: {:?}", config_path);
+
+    if let Some(parent_dir) = config_path.parent() {
+        if !parent_dir.exists() {
+            println!("Tworzę folder: {:?}", parent_dir);
+            std::fs::create_dir_all(parent_dir)
+                .map_err(|e| format!("Błąd tworzenia folderu: {}", e))?;
+        }
+    } else {
+        return Err("Nie można ustalić folderu nadrzędnego dla config.json.".to_string());
+    }
+
     let port: u16 = port
         .parse()
         .map_err(|_| "Niepoprawny numer portu".to_string())?;
@@ -346,24 +368,24 @@ fn update_frontend_config(host: &str, port: &str) -> Result<(), String> {
         if content.trim().is_empty() {
             // Plik istnieje, ale jest pusty — tworzymy nowy
             FrontendConfig {
-                API_HOST: host.to_string(),
-                BACKEND_PORT: port,
-                JAR_PATH: "".to_string(),
+                api_host: host.to_string(),
+                backend_port: port,
+                jar_path: "".to_string(),
             }
         } else {
             let mut parsed: FrontendConfig = serde_json::from_str(&content)
                 .map_err(|e| format!("Błąd parsowania JSON: {}", e))?;
 
-            parsed.API_HOST = host.to_string();
-            parsed.BACKEND_PORT = port;
+            parsed.api_host = host.to_string();
+            parsed.backend_port = port;
             parsed
         }
     } else {
         // Plik nie istnieje — też tworzymy nowy
         FrontendConfig {
-            API_HOST: host.to_string(),
-            BACKEND_PORT: port,
-            JAR_PATH: "".to_string(),
+            api_host: host.to_string(),
+            backend_port: port,
+            jar_path: "".to_string(),
         }
     };
 

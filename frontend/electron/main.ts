@@ -187,6 +187,7 @@ const out = fs.openSync(path.join(logDir, "backend-out.log"), "a");
 const err = fs.openSync(path.join(logDir, "backend-err.log"), "a");
 
 app.whenReady().then(async () => {
+
   if (!fs.existsSync(userConfigPath)) {
     try {
       fs.copyFileSync(configTemplatePath, userConfigPath);
@@ -260,6 +261,8 @@ app.whenReady().then(async () => {
   }
 
   createWindow();
+
+  console.log("userConfigPath:", userConfigPath);
 });
 
 app.on("before-quit", () => {
