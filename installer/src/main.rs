@@ -17,6 +17,13 @@ use image::GenericImageView;
 use std::sync::Arc;
 use egui::IconData;
 
+/// Punkt wejścia aplikacji instalatora Hotel Task Manager.
+///
+/// - Ładuje ikonę aplikacji (jeśli dostępna),
+/// - Tworzy opcje uruchomienia (`NativeOptions`) z centrowaniem i ikoną,
+/// - Uruchamia aplikację `eframe` z `InstallerApp`.
+///
+/// Zwraca `eframe::Result<()>`.
 fn main() -> eframe::Result<()> {
     let icon_opt = load_icon();
 
@@ -39,10 +46,17 @@ fn main() -> eframe::Result<()> {
     )
 }
 
+/// Osadzone zasoby binarne z folderu `resources/`.
+///
+/// Umożliwia dostęp do plików (np. ikon, instalatorów, CSS) w trakcie działania programu,
+/// nawet po spakowaniu binarki.
 #[derive(RustEmbed)]
 #[folder = "resources/"]
 struct Assets;
 
+/// Opcja wyboru backendu w instalatorze.
+///
+/// Określa, czy backend ma być uruchomiony lokalnie, zdalnie, czy jeszcze nie wybrano.
 #[derive(Default, PartialEq)]
 enum BackendOption {
     #[default]
@@ -51,6 +65,9 @@ enum BackendOption {
     Remote,
 }
 
+/// Stan aplikacji instalacyjnej sterujący przepływem kreatora.
+///
+/// Przechowuje dane wejściowe użytkownika, aktualny krok oraz stan systemu.
 #[derive(Default)]
 struct InstallerApp {
     step: usize,
@@ -66,8 +83,13 @@ struct InstallerApp {
     backend_installed: bool,
     status: String,
     seed_database: bool,
+    just_entered_step_2: bool,
 }
 
+/// Reprezentuje konfigurację frontendu aplikacji.
+///
+/// Dane są serializowane do pliku `config.json` i wykorzystywane
+/// przy uruchamianiu backendu z poziomu aplikacji.
 #[derive(Deserialize, Serialize)]
 struct FrontendConfig {
     #[serde(rename = "API_HOST")]
