@@ -309,78 +309,79 @@ impl App for InstallerApp {
                                 2 => {
                                     ui.label("Instalacja i konfiguracja bazy danych MariaDB:");
 
-                                    if is_mariadb_installed() {
-                                        self.status = "MariaDB jest już zainstalowane.".to_string();
-                                        self.log("MariaDB already installed.");
-                                    } else {
-                                        self.status = "Trwa instalacja MariaDB...".to_string();
-                                        self.log("Launching MariaDB installer...");
-
-                                        let temp_dir = Path::new(
-                                            "C:/Hotel Task Manager Environment/tmp"
-                                        );
-                                        if let Err(e) = fs::create_dir_all(temp_dir) {
+                                    if self.just_entered_step_2 {
+                                        if is_mariadb_installed() {
                                             self.status =
-                                                format!("Nie udało się utworzyć katalogu tymczasowego: {}", e);
-                                            self.log(&self.status);
-                                            return;
-                                        }
+                                                "MariaDB jest już zainstalowane.".to_string();
+                                            self.log("MariaDB already installed.");
+                                        } else {
+                                            self.status = "Trwa instalacja MariaDB...".to_string();
+                                            self.log("Launching MariaDB installer...");
 
-                                        let msi_path = temp_dir.join("mariadb.msi");
-
-                                        match write_embedded_file("mariadb.msi", &msi_path) {
-                                            Err(e) => {
+                                            let temp_dir = Path::new(
+                                                "C:/Hotel Task Manager Environment/tmp"
+                                            );
+                                            if let Err(e) = fs::create_dir_all(temp_dir) {
                                                 self.status =
-                                                    format!("Nie znaleziono pliku instalatora MariaDB: {}", e);
+                                                    format!("Nie udało się utworzyć katalogu tymczasowego: {}", e);
                                                 self.log(&self.status);
                                                 return;
                                             }
-                                            Ok(_) => {
-                                                let result = Command::new("msiexec")
-                                                    .args([
-                                                        "/i",
-                                                        msi_path.to_str().unwrap(),
-                                                        "/quiet",
-                                                    ])
-                                                    .spawn()
-                                                    .and_then(|mut child| child.wait());
 
-                                                match result {
-                                                    Ok(status) if status.success() => {
-                                                        self.status.push_str(
-                                                            " Instalacja zakończona."
-                                                        );
-                                                        self.log(
-                                                            "MariaDB installer zakończony poprawnie."
-                                                        );
-                                                    }
-                                                    Ok(status) => {
-                                                        self.status.push_str(
-                                                            &format!(
-                                                                " Instalator zakończył się z kodem: {:?}",
-                                                                status.code()
-                                                            )
-                                                        );
-                                                        self.log(
-                                                            &format!(
-                                                                "Instalator zakończony z kodem: {:?}",
-                                                                status.code()
-                                                            )
-                                                        );
-                                                    }
-                                                    Err(e) => {
-                                                        self.status.push_str(
-                                                            &format!(" Błąd uruchamiania instalatora: {}", e)
-                                                        );
-                                                        self.log(&self.status);
-                                                        return;
+                                            let msi_path = temp_dir.join("mariadb.msi");
+
+                                            match write_embedded_file("mariadb.msi", &msi_path) {
+                                                Err(e) => {
+                                                    self.status =
+                                                        format!("Nie znaleziono pliku instalatora MariaDB: {}", e);
+                                                    self.log(&self.status);
+                                                    return;
+                                                }
+                                                Ok(_) => {
+                                                    let result = Command::new("msiexec")
+                                                        .args([
+                                                            "/i",
+                                                            msi_path.to_str().unwrap(),
+                                                            "/quiet",
+                                                        ])
+                                                        .spawn()
+                                                        .and_then(|mut child| child.wait());
+
+                                                    match result {
+                                                        Ok(status) if status.success() => {
+                                                            self.status.push_str(
+                                                                " Instalacja zakończona."
+                                                            );
+                                                            self.log(
+                                                                "MariaDB installer zakończony poprawnie."
+                                                            );
+                                                        }
+                                                        Ok(status) => {
+                                                            self.status.push_str(
+                                                                &format!(
+                                                                    " Instalator zakończył się z kodem: {:?}",
+                                                                    status.code()
+                                                                )
+                                                            );
+                                                            self.log(
+                                                                &format!(
+                                                                    "Instalator zakończony z kodem: {:?}",
+                                                                    status.code()
+                                                                )
+                                                            );
+                                                        }
+                                                        Err(e) => {
+                                                            self.status.push_str(
+                                                                &format!(" Błąd uruchamiania instalatora: {}", e)
+                                                            );
+                                                            self.log(&self.status);
+                                                            return;
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if self.just_entered_step_2 {
                                         self.db_host = "localhost".to_string();
                                         self.db_user = "root".to_string();
                                         self.db_pass = "".to_string();
