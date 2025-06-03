@@ -194,11 +194,11 @@ const AdminConfigModal = ({ show, onClose }: Props) => {
                 </div>
 
                 <div className="col-md-6">
-                    <p className="text-muted mb-3">
-                      Te ustawienia są wymagane tylko, jeśli backend uruchamiany jest lokalnie.
-                    </p>
+                  <p className="text-muted mb-3">
+                    Te ustawienia są wymagane tylko, jeśli backend uruchamiany jest lokalnie.
+                  </p>
 
-                   <Form.Group controlId="jarPathInput" className="mb-3">
+                  <Form.Group controlId="jarPathInput" className="mb-3">
                     <Form.Label>Ścieżka do pliku .jar</Form.Label>
                     <InputGroup>
                       <Form.Control

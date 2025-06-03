@@ -19,7 +19,7 @@ const AddInvoiceForm = ({ reservationId }) => {
   const [nipError, setNipError] = useState("");
 
   const validateNip = (nip) => {
-    const cleanNip = nip.replace(/[^0-9]/g, '');
+    const cleanNip = nip.replace(/[^0-9]/g, "");
     if (cleanNip.length !== 10) {
       return "NIP musi składać się z 10 cyfr";
     }
@@ -41,16 +41,16 @@ const AddInvoiceForm = ({ reservationId }) => {
       ...prevData,
       [name]: value,
     }));
-    if (name === 'companyNip' && value.trim() !== '') {
+    if (name === "companyNip" && value.trim() !== "") {
       setNipError(validateNip(value));
-    } else if (name === 'companyNip' && value.trim() === '') {
-      setNipError('');
+    } else if (name === "companyNip" && value.trim() === "") {
+      setNipError("");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (invoiceData.companyNip.trim() !== '') {
+    if (invoiceData.companyNip.trim() !== "") {
       const error = validateNip(invoiceData.companyNip);
       if (error) {
         setNipError(error);
@@ -110,12 +110,13 @@ const AddInvoiceForm = ({ reservationId }) => {
             name="companyNip"
             value={invoiceData.companyNip}
             onChange={handleInputChange}
-            className={`form-control ${nipError ? 'is-invalid' : ''}`}
+            className={`form-control ${nipError ? "is-invalid" : ""}`}
             autoComplete="off"
-            placeholder="5270103391 - testowy" // do usuniecia
           />
           {nipError && <div className="invalid-feedback">{nipError}</div>}
-          <small className="form-text text-muted">Możesz wprowadzić NIP z myślnikami lub bez.</small>
+          <small className="form-text text-muted">
+            Możesz wprowadzić NIP z myślnikami lub bez.
+          </small>
         </div>
 
         <div className="mb-3">

@@ -70,11 +70,11 @@ const MaintenanceIssuesTable = () => {
       setLoading(true);
       const params = new URLSearchParams();
       params.append("startDate", startDate);
-      
+
       const nextDay = new Date(endDate);
       nextDay.setDate(nextDay.getDate() + 1);
       const adjustedEndDate = nextDay.toISOString().split("T")[0];
-      
+
       params.append("endDate", adjustedEndDate);
 
       const response = await api.get(`/reports/maintenance-issues?${params}`);
@@ -311,13 +311,14 @@ const MaintenanceIssuesTable = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title>
-            {selectedRoom && `Zgłoszenia serwisowe - Pokój ${selectedRoom.room_number} (Piętro ${selectedRoom.floor})`}
+            {selectedRoom &&
+              `Zgłoszenia serwisowe - Pokój ${selectedRoom.room_number} (Piętro ${selectedRoom.floor})`}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedRoom && (
-            <RoomMaintenanceTable 
-              roomId={selectedRoom.room_id} 
+            <RoomMaintenanceTable
+              roomId={selectedRoom.room_id}
               roomNumber={selectedRoom.room_number}
               floor={selectedRoom.floor}
             />

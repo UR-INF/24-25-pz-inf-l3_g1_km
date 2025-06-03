@@ -46,13 +46,13 @@ const RoomMaintenanceTable = ({ roomId, roomNumber, floor }) => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
-    
+
     try {
       const date = new Date(dateString);
       return new Intl.DateTimeFormat("pl-PL", {
         day: "2-digit",
         month: "2-digit",
-        year: "numeric"
+        year: "numeric",
       }).format(date);
     } catch (error) {
       console.error("Błąd formatowania daty:", error);
@@ -91,18 +91,14 @@ const RoomMaintenanceTable = ({ roomId, roomNumber, floor }) => {
   };
 
   const filteredRepairs = repairs
-    .filter((repair) => 
-      repair.description.toLowerCase().includes(search.toLowerCase())
-    )
-    .filter((repair) => 
-      filterStatus === "ALL" || repair.status === filterStatus
-    )
+    .filter((repair) => repair.description.toLowerCase().includes(search.toLowerCase()))
+    .filter((repair) => filterStatus === "ALL" || repair.status === filterStatus)
     .sort((a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime());
 
   const totalPages = Math.max(1, Math.ceil(filteredRepairs.length / itemsPerPage));
   const currentData = filteredRepairs.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   if (loading) {
@@ -119,7 +115,9 @@ const RoomMaintenanceTable = ({ roomId, roomNumber, floor }) => {
   return (
     <div>
       {roomNumber && floor && (
-        <h4 className="mb-3">Zgłoszenia serwisowe - Pokój {roomNumber} (Piętro {floor})</h4>
+        <h4 className="mb-3">
+          Zgłoszenia serwisowe - Pokój {roomNumber} (Piętro {floor})
+        </h4>
       )}
 
       <div className="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
@@ -197,10 +195,14 @@ const RoomMaintenanceTable = ({ roomId, roomNumber, floor }) => {
                     </span>
                   </td>
                   <td>
-                    {request.requester ? `${request.requester.firstName} ${request.requester.lastName}` : "-"}
+                    {request.requester
+                      ? `${request.requester.firstName} ${request.requester.lastName}`
+                      : "-"}
                   </td>
                   <td>
-                    {request.assignee ? `${request.assignee.firstName} ${request.assignee.lastName}` : "-"}
+                    {request.assignee
+                      ? `${request.assignee.firstName} ${request.assignee.lastName}`
+                      : "-"}
                   </td>
                   <td>{formatDate(request.completionDate)}</td>
                   <td>{request.serviceSummary || "-"}</td>
@@ -216,8 +218,7 @@ const RoomMaintenanceTable = ({ roomId, roomNumber, floor }) => {
               ))
             ) : (
               <tr>
-                <td className="text-center">
-                </td>
+                <td className="text-center"></td>
               </tr>
             )}
           </tbody>
@@ -227,7 +228,8 @@ const RoomMaintenanceTable = ({ roomId, roomNumber, floor }) => {
       {filteredRepairs.length > 0 && (
         <div className="d-flex align-items-center mt-3">
           <p className="m-0 text-secondary">
-            Wyświetlono <span>{Math.min(filteredRepairs.length, 1 + (currentPage - 1) * itemsPerPage)}</span> do{" "}
+            Wyświetlono{" "}
+            <span>{Math.min(filteredRepairs.length, 1 + (currentPage - 1) * itemsPerPage)}</span> do{" "}
             <span>{Math.min(currentPage * itemsPerPage, filteredRepairs.length)}</span> z{" "}
             <span>{filteredRepairs.length}</span> zgłoszeń
           </p>

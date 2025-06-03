@@ -1,41 +1,41 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import LoginView from '../../views/LoginView';
-import { api } from '../../services/api';
-import { useAuth } from '../../contexts/auth';
-import { useUser } from '../../contexts/user';
-import { useNotification } from '../../contexts/notification';
-import { useNavigate } from 'react-router';
-import userEvent from '@testing-library/user-event';
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import LoginView from "../../views/LoginView";
+import { api } from "../../services/api";
+import { useAuth } from "../../contexts/auth";
+import { useUser } from "../../contexts/user";
+import { useNotification } from "../../contexts/notification";
+import { useNavigate } from "react-router";
+import userEvent from "@testing-library/user-event";
 
 // Mockujemy wszystkie zależności
-jest.mock('../../services/api', () => ({
+jest.mock("../../services/api", () => ({
   api: {
-    post: jest.fn()
-  }
+    post: jest.fn(),
+  },
 }));
 
-jest.mock('../../contexts/auth', () => ({
-  useAuth: jest.fn()
+jest.mock("../../contexts/auth", () => ({
+  useAuth: jest.fn(),
 }));
 
-jest.mock('../../contexts/user', () => ({
-  useUser: jest.fn()
+jest.mock("../../contexts/user", () => ({
+  useUser: jest.fn(),
 }));
 
-jest.mock('../../contexts/notification', () => ({
-  useNotification: jest.fn()
+jest.mock("../../contexts/notification", () => ({
+  useNotification: jest.fn(),
 }));
 
-jest.mock('react-router', () => ({
-  useNavigate: jest.fn()
+jest.mock("react-router", () => ({
+  useNavigate: jest.fn(),
 }));
 
 // Mockowanie komponentów
-jest.mock('../../components/Titlebar', () => () => <div data-testid="titlebar">Titlebar</div>);
-jest.mock('../../components/Footer', () => () => <div data-testid="footer">Footer</div>);
+jest.mock("../../components/Titlebar", () => () => <div data-testid="titlebar">Titlebar</div>);
+jest.mock("../../components/Footer", () => () => <div data-testid="footer">Footer</div>);
 
-describe('LoginView', () => {
+describe("LoginView", () => {
   const mockNavigate = jest.fn();
   const mockLogin = jest.fn();
   const mockFetchUser = jest.fn();
@@ -43,8 +43,8 @@ describe('LoginView', () => {
 
   // Dane testowe dla poprawnego użytkownika
   const validUserCredentials = {
-    email: 'dawid@hotel.pl',
-    password: 'admin123'
+    email: "dawid@hotel.pl",
+    password: "admin123",
   };
 
   beforeEach(() => {
@@ -61,30 +61,30 @@ describe('LoginView', () => {
 
     // Mockujemy document.getElementById, aby obsłużyć togglePasswordVisibility
     document.getElementById = jest.fn().mockImplementation((id) => {
-      if (id === 'password') {
-        return { type: 'password' };
+      if (id === "password") {
+        return { type: "password" };
       }
-      if (id === 'eye-icon') {
+      if (id === "eye-icon") {
         return { classList: { toggle: jest.fn() } };
       }
       return null;
     });
   });
 
-  test('renderuje komponent LoginView z formularzem logowania', () => {
+  test("renderuje komponent LoginView z formularzem logowania", () => {
     render(<LoginView />);
 
     // Sprawdź, czy wszystkie elementy formularza są obecne
-    expect(screen.getByTestId('titlebar')).toBeInTheDocument();
-    expect(screen.getByText('Zaloguj się')).toBeInTheDocument();
+    expect(screen.getByTestId("titlebar")).toBeInTheDocument();
+    expect(screen.getByText("Zaloguj się")).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/wpisz e-mail/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/wpisz hasło/i)).toBeInTheDocument();
-    expect(screen.getByText('Zapomniałeś hasła?')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Zaloguj/i })).toBeInTheDocument();
-    expect(screen.getByTestId('footer')).toBeInTheDocument();
+    expect(screen.getByText("Zapomniałeś hasła?")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Zaloguj/i })).toBeInTheDocument();
+    expect(screen.getByTestId("footer")).toBeInTheDocument();
   });
 
-  test('pozwala wprowadzać dane do formularza', async () => {
+  test("pozwala wprowadzać dane do formularza", async () => {
     const user = userEvent.setup();
     render(<LoginView />);
 
@@ -98,10 +98,10 @@ describe('LoginView', () => {
     expect(passwordInput).toHaveValue(validUserCredentials.password);
   });
 
-  test('wykonuje logowanie z poprawnymi danymi', async () => {
+  test("wykonuje logowanie z poprawnymi danymi", async () => {
     // Mockujemy odpowiedź z API dla udanego logowania
     (api.post as jest.Mock).mockResolvedValue({
-      data: { token: 'test-token' }
+      data: { token: "test-token" },
     });
 
     const user = userEvent.setup();
@@ -112,50 +112,55 @@ describe('LoginView', () => {
     await user.type(screen.getByPlaceholderText(/wpisz hasło/i), validUserCredentials.password);
 
     // Wyślij formularz
-    await user.click(screen.getByRole('button', { name: /Zaloguj/i }));
+    await user.click(screen.getByRole("button", { name: /Zaloguj/i }));
 
     // Sprawdź, czy API zostało wywołane z poprawnymi parametrami
     await waitFor(() => {
-      expect(api.post).toHaveBeenCalledWith('/auth/login', validUserCredentials);
+      expect(api.post).toHaveBeenCalledWith("/auth/login", validUserCredentials);
     });
 
     // Sprawdź, czy funkcje kontekstów zostały wywołane
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith({
         email: validUserCredentials.email,
-        token: 'test-token'
+        token: "test-token",
       });
       expect(mockFetchUser).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith('/');
-      expect(mockShowNotification).toHaveBeenCalledWith('success', 'Pomyślnie zalogowano do systemu!');
+      expect(mockNavigate).toHaveBeenCalledWith("/");
+      expect(mockShowNotification).toHaveBeenCalledWith(
+        "success",
+        "Pomyślnie zalogowano do systemu!",
+      );
     });
   });
 
-  test('pokazuje błąd dla nieprawidłowych danych logowania', async () => {
+  test("pokazuje błąd dla nieprawidłowych danych logowania", async () => {
     // Mockujemy błąd 401 z API
     (api.post as jest.Mock).mockRejectedValue({
-      response: { status: 401 }
+      response: { status: 401 },
     });
 
     const user = userEvent.setup();
     render(<LoginView />);
 
     // Wypełnij formularz nieprawidłowymi danymi (różne od validUserCredentials)
-    await user.type(screen.getByPlaceholderText(/wpisz e-mail/i), 'niepoprawny@example.com');
-    await user.type(screen.getByPlaceholderText(/wpisz hasło/i), 'złehasło');
+    await user.type(screen.getByPlaceholderText(/wpisz e-mail/i), "niepoprawny@example.com");
+    await user.type(screen.getByPlaceholderText(/wpisz hasło/i), "złehasło");
 
     // Wyślij formularz
-    await user.click(screen.getByRole('button', { name: /Zaloguj/i }));
+    await user.click(screen.getByRole("button", { name: /Zaloguj/i }));
 
     // Sprawdź, czy pokazał się komunikat o błędzie - akceptujemy zarówno "Błąd uwierzytelniania" jak i "Nieznany błąd"
     await waitFor(() => {
       // Próbujemy znaleźć którykolwiek z możliwych nagłówków błędu
-      const errorHeading = screen.queryByText('Błąd uwierzytelniania') || screen.queryByText('Nieznany błąd');
+      const errorHeading =
+        screen.queryByText("Błąd uwierzytelniania") || screen.queryByText("Nieznany błąd");
       expect(errorHeading).toBeInTheDocument();
 
       // Podobnie dla treści błędu, może być jedna z dwóch wersji
-      const errorContent = screen.queryByText('Nieprawidłowy e-mail lub hasło.') ||
-        screen.queryByText('Wystąpił nieznany błąd.');
+      const errorContent =
+        screen.queryByText("Nieprawidłowy e-mail lub hasło.") ||
+        screen.queryByText("Wystąpił nieznany błąd.");
       expect(errorContent).toBeInTheDocument();
     });
 
@@ -165,7 +170,7 @@ describe('LoginView', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  test('obsługuje reset hasła', async () => {
+  test("obsługuje reset hasła", async () => {
     // Mockujemy pozytywną odpowiedź z API dla resetu hasła
     (api.post as jest.Mock).mockResolvedValue({});
 
@@ -176,43 +181,45 @@ describe('LoginView', () => {
     await user.type(screen.getByPlaceholderText(/wpisz e-mail/i), validUserCredentials.email);
 
     // Kliknij link resetowania hasła
-    await user.click(screen.getByText('Zapomniałeś hasła?'));
+    await user.click(screen.getByText("Zapomniałeś hasła?"));
 
     // Sprawdź, czy API zostało wywołane z odpowiednim parametrem
     await waitFor(() => {
-      expect(api.post).toHaveBeenCalledWith('/auth/password/reset-request', {
-        email: validUserCredentials.email
+      expect(api.post).toHaveBeenCalledWith("/auth/password/reset-request", {
+        email: validUserCredentials.email,
       });
     });
 
     // Sprawdź, czy pokazał się komunikat o sukcesie
     await waitFor(() => {
-      expect(screen.getByText('Link wysłany')).toBeInTheDocument();
-      expect(screen.getByText('Link do resetu hasła został wysłany na podany adres e-mail.')).toBeInTheDocument();
+      expect(screen.getByText("Link wysłany")).toBeInTheDocument();
+      expect(
+        screen.getByText("Link do resetu hasła został wysłany na podany adres e-mail."),
+      ).toBeInTheDocument();
     });
   });
 
-  test('pokazuje błąd podczas resetowania hasła bez adresu email', async () => {
+  test("pokazuje błąd podczas resetowania hasła bez adresu email", async () => {
     const user = userEvent.setup();
     render(<LoginView />);
 
     // Kliknij link resetowania hasła bez wprowadzania emaila
-    await user.click(screen.getByText('Zapomniałeś hasła?'));
+    await user.click(screen.getByText("Zapomniałeś hasła?"));
 
     // Sprawdź, czy pokazał się komunikat o błędzie
     await waitFor(() => {
-      expect(screen.getByText('Brak adresu e-mail')).toBeInTheDocument();
-      expect(screen.getByText('Wprowadź najpierw swój adres e-mail.')).toBeInTheDocument();
+      expect(screen.getByText("Brak adresu e-mail")).toBeInTheDocument();
+      expect(screen.getByText("Wprowadź najpierw swój adres e-mail.")).toBeInTheDocument();
     });
 
     // API nie powinno być wywołane
     expect(api.post).not.toHaveBeenCalled();
   });
 
-  test('obsługuje błędy serwera podczas logowania', async () => {
+  test("obsługuje błędy serwera podczas logowania", async () => {
     // Mockujemy błąd serwera (status 500)
     (api.post as jest.Mock).mockRejectedValue({
-      response: { status: 500 }
+      response: { status: 500 },
     });
 
     const user = userEvent.setup();
@@ -223,43 +230,49 @@ describe('LoginView', () => {
     await user.type(screen.getByPlaceholderText(/wpisz hasło/i), validUserCredentials.password);
 
     // Wyślij formularz
-    await user.click(screen.getByRole('button', { name: /Zaloguj/i }));
+    await user.click(screen.getByRole("button", { name: /Zaloguj/i }));
 
     // Sprawdź, czy pokazał się komunikat o błędzie
     await waitFor(() => {
       // Akceptujemy dowolny z możliwych nagłówków błędu
-      const errorHeading = screen.queryByText('Błąd serwera') || screen.queryByText('Nieznany błąd');
+      const errorHeading =
+        screen.queryByText("Błąd serwera") || screen.queryByText("Nieznany błąd");
       expect(errorHeading).toBeInTheDocument();
 
       // Podobnie dla treści błędu
-      const errorContent = screen.queryByText('Wystąpił błąd serwera. Spróbuj później.') ||
-        screen.queryByText('Wystąpił nieznany błąd.');
+      const errorContent =
+        screen.queryByText("Wystąpił błąd serwera. Spróbuj później.") ||
+        screen.queryByText("Wystąpił nieznany błąd.");
       expect(errorContent).toBeInTheDocument();
     });
   });
 
-  test('pozwala pokazać i ukryć hasło', async () => {
+  test("pozwala pokazać i ukryć hasło", async () => {
     const user = userEvent.setup();
 
     // Implementacja mockowania documentu z większą funkcjonalnością
-    let passwordType = 'password';
+    let passwordType = "password";
     const mockPasswordInput = {
       type: passwordType,
-      get: function () { return this.type; },
-      set: function (value: string) { this.type = value; }
+      get: function () {
+        return this.type;
+      },
+      set: function (value: string) {
+        this.type = value;
+      },
     };
 
     const mockEyeIcon = {
       classList: {
-        toggle: jest.fn()
-      }
+        toggle: jest.fn(),
+      },
     };
 
     document.getElementById = jest.fn().mockImplementation((id) => {
-      if (id === 'password') {
+      if (id === "password") {
         return mockPasswordInput;
       }
-      if (id === 'eye-icon') {
+      if (id === "eye-icon") {
         return mockEyeIcon;
       }
       return null;
@@ -268,18 +281,18 @@ describe('LoginView', () => {
     render(<LoginView />);
 
     // Kliknij przycisk pokazywania hasła
-    const toggleButton = screen.getByTitle('Pokaż hasło');
+    const toggleButton = screen.getByTitle("Pokaż hasło");
     await user.click(toggleButton);
 
     // Sprawdź, czy funkcje zostały wywołane dla zmiany widoczności hasła
-    expect(mockEyeIcon.classList.toggle).toHaveBeenCalledWith('ti-eye');
-    expect(mockEyeIcon.classList.toggle).toHaveBeenCalledWith('ti-eye-off');
+    expect(mockEyeIcon.classList.toggle).toHaveBeenCalledWith("ti-eye");
+    expect(mockEyeIcon.classList.toggle).toHaveBeenCalledWith("ti-eye-off");
   });
 
-  test('pozwala zamknąć alert z komunikatem błędu', async () => {
+  test("pozwala zamknąć alert z komunikatem błędu", async () => {
     // Mockujemy błąd 401 z API
     (api.post as jest.Mock).mockRejectedValue({
-      response: { status: 401 }
+      response: { status: 401 },
     });
 
     const user = userEvent.setup();
@@ -288,21 +301,21 @@ describe('LoginView', () => {
     // Wypełnij formularz poprawnymi danymi (co ciekawe, nawet poprawne dane mogą zostać odrzucone jeśli serwer nie działa)
     await user.type(screen.getByPlaceholderText(/wpisz e-mail/i), validUserCredentials.email);
     await user.type(screen.getByPlaceholderText(/wpisz hasło/i), validUserCredentials.password);
-    await user.click(screen.getByRole('button', { name: /Zaloguj/i }));
+    await user.click(screen.getByRole("button", { name: /Zaloguj/i }));
 
     // Poczekaj na pojawienie się alertu
     await waitFor(() => {
       // Sprawdzamy tylko czy alert się pojawił, nie ważne jaki tytuł ma
-      const alertElement = screen.getByRole('alert');
+      const alertElement = screen.getByRole("alert");
       expect(alertElement).toBeInTheDocument();
     });
 
     // Kliknij przycisk zamknięcia alertu
-    await user.click(screen.getByLabelText('close'));
+    await user.click(screen.getByLabelText("close"));
 
     // Sprawdź, czy alert zniknął
     await waitFor(() => {
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
   });
 });

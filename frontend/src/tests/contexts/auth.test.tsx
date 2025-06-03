@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen, act } from '@testing-library/react';
-import { AuthProvider, useAuth } from '../../contexts/auth';
+import React from "react";
+import { render, screen, act } from "@testing-library/react";
+import { AuthProvider, useAuth } from "../../contexts/auth";
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -15,17 +15,19 @@ const localStorageMock = (() => {
     }),
     clear: jest.fn(() => {
       store = {};
-    })
+    }),
   };
 })();
 
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 // Wartość testowego tokenu JWT (wygasły)
-const expiredToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE2MjE2OTM2MDB9.Q7Zh4JU-aubn8xzf_HuKqJTg3yhNdJZwGngXiLEHVGI';
+const expiredToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE2MjE2OTM2MDB9.Q7Zh4JU-aubn8xzf_HuKqJTg3yhNdJZwGngXiLEHVGI";
 
 // Wartość testowego tokenu JWT (ważny)
-const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjk5OTk5OTk5OTl9.j28Rw-EGiEUZWgb7dOJNIYEWpGXGCWwS5XSCKGgaj6Y';
+const validToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjk5OTk5OTk5OTl9.j28Rw-EGiEUZWgb7dOJNIYEWpGXGCWwS5XSCKGgaj6Y";
 
 // Komponent testowy wykorzystujący kontekst autoryzacji
 const TestComponent = ({ onRender }: { onRender: (data: any) => void }) => {
@@ -33,12 +35,13 @@ const TestComponent = ({ onRender }: { onRender: (data: any) => void }) => {
   onRender(auth);
   return (
     <div>
-      <div data-testid="logged-in">{auth.state.loggedIn ? 'true' : 'false'}</div>
-      <div data-testid="loading">{auth.state.loading ? 'true' : 'false'}</div>
-      {auth.state.user && (
-        <div data-testid="user-email">{auth.state.user.email}</div>
-      )}
-      <button data-testid="login-button" onClick={() => auth.login({ email: 'test@example.com', token: validToken })}>
+      <div data-testid="logged-in">{auth.state.loggedIn ? "true" : "false"}</div>
+      <div data-testid="loading">{auth.state.loading ? "true" : "false"}</div>
+      {auth.state.user && <div data-testid="user-email">{auth.state.user.email}</div>}
+      <button
+        data-testid="login-button"
+        onClick={() => auth.login({ email: "test@example.com", token: validToken })}
+      >
         Login
       </button>
       <button data-testid="logout-button" onClick={() => auth.logout()}>
@@ -48,17 +51,17 @@ const TestComponent = ({ onRender }: { onRender: (data: any) => void }) => {
   );
 };
 
-describe('AuthContext', () => {
+describe("AuthContext", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorageMock.clear();
 
     // Mock funkcji atob i btoa, które są używane do dekodowania tokenu JWT
-    global.atob = jest.fn(str => Buffer.from(str, 'base64').toString('binary'));
-    global.btoa = jest.fn(str => Buffer.from(str, 'binary').toString('base64'));
+    global.atob = jest.fn((str) => Buffer.from(str, "base64").toString("binary"));
+    global.btoa = jest.fn((str) => Buffer.from(str, "binary").toString("base64"));
   });
 
-  test('inicjalnie stan to loading=true i loggedIn=false', () => {
+  test("inicjalnie stan to loading=true i loggedIn=false", () => {
     const handleRender = jest.fn();
 
     // Pierwsza wartość renderowania powinna mieć loading=true
@@ -78,24 +81,24 @@ describe('AuthContext', () => {
     render(
       <AuthProvider>
         <TestComponent onRender={mockHandleRender} />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Po pierwszym renderowaniu stan powinien być zaktualizowany przez useEffect
     expect(handleRender).toHaveBeenCalled();
-    expect(screen.getByTestId('logged-in')).toHaveTextContent('false');
+    expect(screen.getByTestId("logged-in")).toHaveTextContent("false");
 
     // Nie sprawdzamy już elementu loading, ponieważ jest asynchronicznie aktualizowany
     // i może mieć wartość true lub false w zależności od momentu wykonania testu
   });
 
-  test('login zmienia stan na zalogowany i zapisuje token w localStorage', async () => {
+  test("login zmienia stan na zalogowany i zapisuje token w localStorage", async () => {
     const handleRender = jest.fn();
 
     render(
       <AuthProvider>
         <TestComponent onRender={handleRender} />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Wstępne renderowanie z działającym useEffect
@@ -103,51 +106,51 @@ describe('AuthContext', () => {
 
     // Wywołanie funkcji login
     await act(async () => {
-      screen.getByTestId('login-button').click();
+      screen.getByTestId("login-button").click();
     });
 
     // Sprawdzenie, czy token został zapisany w localStorage
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('token', validToken);
+    expect(localStorageMock.setItem).toHaveBeenCalledWith("token", validToken);
 
     // Sprawdzenie, czy stan został zaktualizowany
-    expect(screen.getByTestId('logged-in')).toHaveTextContent('true');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-    expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
+    expect(screen.getByTestId("logged-in")).toHaveTextContent("true");
+    expect(screen.getByTestId("loading")).toHaveTextContent("false");
+    expect(screen.getByTestId("user-email")).toHaveTextContent("test@example.com");
   });
 
-  test('logout usuwa token z localStorage i resetuje stan', async () => {
+  test("logout usuwa token z localStorage i resetuje stan", async () => {
     const handleRender = jest.fn();
 
     render(
       <AuthProvider>
         <TestComponent onRender={handleRender} />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     // Najpierw zaloguj użytkownika
     await act(async () => {
-      screen.getByTestId('login-button').click();
+      screen.getByTestId("login-button").click();
     });
 
-    expect(screen.getByTestId('logged-in')).toHaveTextContent('true');
+    expect(screen.getByTestId("logged-in")).toHaveTextContent("true");
 
     // Teraz wyloguj użytkownika
     await act(async () => {
-      screen.getByTestId('logout-button').click();
+      screen.getByTestId("logout-button").click();
     });
 
     // Sprawdzenie, czy token został usunięty z localStorage
-    expect(localStorageMock.removeItem).toHaveBeenCalledWith('token');
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith("token");
 
     // Sprawdzenie, czy stan został zresetowany
-    expect(screen.getByTestId('logged-in')).toHaveTextContent('false');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-    expect(screen.queryByTestId('user-email')).not.toBeInTheDocument();
+    expect(screen.getByTestId("logged-in")).toHaveTextContent("false");
+    expect(screen.getByTestId("loading")).toHaveTextContent("false");
+    expect(screen.queryByTestId("user-email")).not.toBeInTheDocument();
   });
 
-  test('automatycznie loguje się przy ważnym tokenie w localStorage', async () => {
+  test("automatycznie loguje się przy ważnym tokenie w localStorage", async () => {
     // Ustaw ważny token w localStorage przed renderowaniem
-    localStorageMock.setItem('token', validToken);
+    localStorageMock.setItem("token", validToken);
 
     const handleRender = jest.fn();
 
@@ -155,19 +158,19 @@ describe('AuthContext', () => {
       render(
         <AuthProvider>
           <TestComponent onRender={handleRender} />
-        </AuthProvider>
+        </AuthProvider>,
       );
     });
 
     // Po useEffect, stan powinien być zaktualizowany
-    expect(screen.getByTestId('logged-in')).toHaveTextContent('true');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-    expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
+    expect(screen.getByTestId("logged-in")).toHaveTextContent("true");
+    expect(screen.getByTestId("loading")).toHaveTextContent("false");
+    expect(screen.getByTestId("user-email")).toHaveTextContent("test@example.com");
   });
 
-  test('nie loguje się automatycznie przy wygasłym tokenie', async () => {
+  test("nie loguje się automatycznie przy wygasłym tokenie", async () => {
     // Ustaw wygasły token w localStorage
-    localStorageMock.setItem('token', expiredToken);
+    localStorageMock.setItem("token", expiredToken);
 
     const handleRender = jest.fn();
 
@@ -175,16 +178,16 @@ describe('AuthContext', () => {
       render(
         <AuthProvider>
           <TestComponent onRender={handleRender} />
-        </AuthProvider>
+        </AuthProvider>,
       );
     });
 
     // Token wygasł, więc użytkownik nie powinien być zalogowany
-    expect(screen.getByTestId('logged-in')).toHaveTextContent('false');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-    expect(screen.queryByTestId('user-email')).not.toBeInTheDocument();
+    expect(screen.getByTestId("logged-in")).toHaveTextContent("false");
+    expect(screen.getByTestId("loading")).toHaveTextContent("false");
+    expect(screen.queryByTestId("user-email")).not.toBeInTheDocument();
 
     // Token powinien być usunięty z localStorage
-    expect(localStorageMock.removeItem).toHaveBeenCalledWith('token');
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith("token");
   });
 });

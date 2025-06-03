@@ -101,7 +101,6 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
             value={invoiceData.companyNip}
             onChange={handleInputChange}
             className="form-control"
-            placeholder="5270103391 - testowy" // do usuniecia
           />
         </div>
         <div className="mb-3">

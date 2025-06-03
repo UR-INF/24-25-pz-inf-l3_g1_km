@@ -143,14 +143,15 @@ const RoomsTable = () => {
                   <td>{room.pricePerNight.toFixed(2)} PLN</td>
                   <td>
                     <span
-                      className={`badge me-1 ${room.status === "AVAILABLE"
+                      className={`badge me-1 ${
+                        room.status === "AVAILABLE"
                           ? "bg-success"
                           : room.status === "OCCUPIED"
                             ? "bg-warning"
                             : room.status === "UNAVAILABLE"
                               ? "bg-danger"
                               : "bg-secondary"
-                        }`}
+                      }`}
                     ></span>
                     {room.status === "AVAILABLE"
                       ? "Dostępny"

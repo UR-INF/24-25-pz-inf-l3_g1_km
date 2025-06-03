@@ -3,7 +3,7 @@ import React from "react";
 // import { useNotification } from "./notification";
 
 /**
- * Reprezentuje u¿ytkownika z adresem email i tokenem JWT.
+ * Reprezentuje uÅ¼ytkownika z adresem email i tokenem JWT.
  */
 interface User {
   email: string;
@@ -34,7 +34,7 @@ const initialState: AuthState = {
 };
 
 /**
- * Reducer do obs³ugi logowania i wylogowywania.
+ * Reducer do obsÅ‚ugi logowania i wylogowywania.
  */
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -69,7 +69,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
- * Sprawdza, czy token JWT wygas³.
+ * Sprawdza, czy token JWT wygasÅ‚.
  */
 const isTokenExpired = (token: string): boolean => {
   try {
@@ -78,12 +78,12 @@ const isTokenExpired = (token: string): boolean => {
     const now = Date.now() / 1000;
     return decoded.exp < now;
   } catch {
-    return true; // Je¶li b³±d ? traktujemy jako wygas³y
+    return true;
   }
 };
 
 /**
- * Provider otaczaj±cy aplikacjê.
+ * Provider otaczajÄ…cy aplikacjÄ™.
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const email = payload.email;
       dispatch({ type: "LOGIN", payload: { email, token } });
 
-      // showNotification("success", "Pomy¶lnie zalogowano do systemu!");
+      // showNotification("success", "PomyÅ›lnie zalogowano do systemu!");
     } else {
       logout();
     }
@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 /**
- * Hook do u¿ywania kontekstu.
+ * Hook do uÅ¼ywania kontekstu.
  */
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

@@ -110,10 +110,9 @@ const LoginView = () => {
 
       // Przewijamy do alertu, aby był widoczny
       setTimeout(() => {
-        const alertElement = document.querySelector('.alert');
-        alertElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const alertElement = document.querySelector(".alert");
+        alertElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }, 100);
-
     } catch (err) {
       setAlertMessage({
         title: "Błąd wysyłania",
