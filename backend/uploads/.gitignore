@@ -1,9 +1,0 @@
-# ignore all grahpic files in uploads/avatars/
-avatars/*.png
-avatars/*.jpg
-avatars/*.jpeg
-
-# do not ignore default grahpic files in uploads/avatars/:
-!avatars/default.png
-!avatars/example[0-9]*.png
-

@@ -1,13 +1,10 @@
 package com.hoteltaskmanager.util;
 
 import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.pdf.BaseFont;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 /**
  * Konfiguracja czcionek PDF wykorzystywanych w generowanych dokumentach.

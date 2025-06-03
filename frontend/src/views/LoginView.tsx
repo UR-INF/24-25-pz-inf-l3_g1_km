@@ -189,7 +189,10 @@ const LoginView = () => {
                       <a
                         href="#"
                         id="forgotPassword"
-                        onClick={handlePasswordReset}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePasswordReset();
+                        }}
                         className="d-inline-flex align-items-center"
                         style={{ pointerEvents: isResettingPassword ? "none" : "auto" }}
                       >
@@ -219,9 +222,10 @@ const LoginView = () => {
                     <span className="input-group-text">
                       <a
                         href="#"
+                        id="toggle-password"
                         onClick={(e) => {
                           e.preventDefault();
-                          setShowPassword((prev) => !prev);
+                          togglePasswordVisibility();
                         }}
                         className="link-secondary"
                         title={showPassword ? "Ukryj hasło" : "Pokaż hasło"}

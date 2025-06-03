@@ -1,3 +1,12 @@
 {
-  "API_URL": "http://localhost:8080"
+  "API_HOST": "http://localhost",
+  "BACKEND_PORT": 8080,
+  "JAR_PATH": "",
+
+  "DB_HOST": "localhost",
+  "DB_NAME": "hoteltaskmanager",
+  "DB_USER": "root",
+  "DB_PASS": "",
+
+  "SEED_DB": false
 }
