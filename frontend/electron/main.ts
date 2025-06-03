@@ -393,9 +393,19 @@ app.whenReady().then(async () => {
   } else {
     console.warn("Backend nie odpowiedzial - UI moze nie dzialac!");
 
-    showStatusWindow(
-      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund.\n\nAplikacja może nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem.",
-    );
+    let errorMessage =
+      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund.\n\n" +
+      "Aplikacja może nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem.";
+
+    if (config.JAR_PATH && config.JAR_PATH.trim() !== "") {
+      errorMessage +=
+        "\n\nJeśli backend był uruchamiany lokalnie, sprawdź logi:\n" +
+        "- backend-out.log\n" +
+        "- backend-err.log\n" +
+        `w katalogu: ${path.dirname(config.JAR_PATH)}`;
+    }
+
+    showStatusWindow(errorMessage);
   }
 
   createWindow();

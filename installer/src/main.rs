@@ -40,7 +40,7 @@ fn main() -> eframe::Result<()> {
 }
 
 #[derive(RustEmbed)]
-#[folder = "../resources/"]
+#[folder = "resources/"]
 struct Assets;
 
 #[derive(Default, PartialEq)]
@@ -358,6 +358,13 @@ impl App for InstallerApp {
                                         }
                                     }
 
+                                    if self.just_entered_step_2 {
+                                        self.db_host = "localhost".to_string();
+                                        self.db_user = "root".to_string();
+                                        self.db_pass = "".to_string();
+                                        self.just_entered_step_2 = false;
+                                    }
+
                                     ui.add_space(10.0);
                                     ui.label("Podaj hasło administratora bazy danych (root):");
 
@@ -378,10 +385,6 @@ impl App for InstallerApp {
                                     );
 
                                     ui.add_space(10.0);
-
-                                    self.db_host = "localhost".to_string();
-                                    self.db_user = "root".to_string();
-                                    self.db_pass = "".to_string();
 
                                     let can_create = !self.db_name.trim().is_empty();
 
@@ -751,7 +754,7 @@ impl App for InstallerApp {
                                     ui.add_space(10.0);
                                     ui.horizontal(|ui| {
                                         if ui.button("Wstecz").clicked() {
-                                            self.back();
+                                            self.step = 0;
                                         }
                                         if ui.button("Dalej").clicked() {
                                             self.step = 5;
@@ -979,10 +982,8 @@ fn get_frontend_config_path() -> Option<PathBuf> {
     dirs::config_dir().map(|path| path.join("Hotel Task Manager").join("config.json"))
 }
 
-/// Tworzy lub aktualizuje plik `config.json` używany przez frontend aplikacji.
+/// Usuwa jeśli istnieje, a następnie tworzy plik `config.json` używany przez frontend aplikacji.
 ///
-/// Jeśli plik istnieje, jego zawartość zostaje zaktualizowana.
-/// W przeciwnym razie tworzony jest nowy plik konfiguracyjny z podanymi danymi.
 ///
 /// # Argumenty
 /// - `host`: adres API (np. `"http://localhost"`)
@@ -1020,51 +1021,23 @@ fn update_frontend_config(
         return Err("Nie można ustalić folderu nadrzędnego dla config.json.".to_string());
     }
 
+    if config_path.exists() {
+        std::fs
+            ::remove_file(&config_path)
+            .map_err(|e| format!("Nie udało się usunąć starego config.json: {}", e))?;
+    }
+
     let port_num: u16 = port.parse().map_err(|_| "Niepoprawny numer portu".to_string())?;
 
-    let config = if config_path.exists() {
-        let content = std::fs
-            ::read_to_string(&config_path)
-            .map_err(|e| format!("Błąd odczytu pliku: {}", e))?;
-
-        if content.trim().is_empty() {
-            FrontendConfig {
-                api_host: host.to_string(),
-                backend_port: port_num,
-                jar_path: jar_path.to_string(),
-                db_host: db_host.map(|s| s.to_string()),
-                db_name: db_name.map(|s| s.to_string()),
-                db_user: db_user.map(|s| s.to_string()),
-                db_pass: db_pass.map(|s| s.to_string()),
-                seed_db,
-            }
-        } else {
-            let mut parsed: FrontendConfig = serde_json
-                ::from_str(&content)
-                .map_err(|e| format!("Błąd parsowania JSON: {}", e))?;
-
-            parsed.api_host = host.to_string();
-            parsed.backend_port = port_num;
-            parsed.jar_path = jar_path.to_string();
-            parsed.db_host = db_host.map(|s| s.to_string());
-            parsed.db_name = db_name.map(|s| s.to_string());
-            parsed.db_user = db_user.map(|s| s.to_string());
-            parsed.db_pass = db_pass.map(|s| s.to_string());
-            parsed.seed_db = seed_db;
-
-            parsed
-        }
-    } else {
-        FrontendConfig {
-            api_host: host.to_string(),
-            backend_port: port_num,
-            jar_path: jar_path.to_string(),
-            db_host: db_host.map(|s| s.to_string()),
-            db_name: db_name.map(|s| s.to_string()),
-            db_user: db_user.map(|s| s.to_string()),
-            db_pass: db_pass.map(|s| s.to_string()),
-            seed_db,
-        }
+    let config = FrontendConfig {
+        api_host: host.to_string(),
+        backend_port: port_num,
+        jar_path: jar_path.to_string(),
+        db_host: db_host.map(|s| s.to_string()),
+        db_name: db_name.map(|s| s.to_string()),
+        db_user: db_user.map(|s| s.to_string()),
+        db_pass: db_pass.map(|s| s.to_string()),
+        seed_db,
     };
 
     let updated_json = serde_json

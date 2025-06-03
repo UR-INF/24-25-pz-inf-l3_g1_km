@@ -1,4 +1,11 @@
-/resources/backend.jar
-/resources/frontend.exe
-/resources/openjdk.msi
-/resources/mariadb.msi
+/target/
+resources/
+/Cargo.lock
+
+/installer.log
+
+*.exe
+*.dll
+
+.DS_Store
+Thumbs.db
