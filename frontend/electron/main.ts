@@ -7,6 +7,7 @@ import { spawn } from "node:child_process";
 import net from "node:net";
 import fetch from "node-fetch";
 import { dialog } from "electron";
+import mysql from "mysql2/promise";
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -32,8 +33,13 @@ const userConfigPath = path.join(app.getPath("userData"), "config.json");
 
 const defaultConfig = {
   API_HOST: "http://localhost",
-  JAR_PATH: "",
   BACKEND_PORT: 8080,
+  JAR_PATH: "",
+
+  DB_HOST: "localhost",
+  DB_NAME: "hoteltaskmanager",
+  DB_USER: "root",
+  DB_PASS: "",
 };
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
@@ -117,6 +123,24 @@ function createWindow() {
     return result.filePaths[0];
   });
 
+  ipcMain.handle("testDbConnection", async (_event, { host, name, user, pass }) => {
+    try {
+      const connection = await mysql.createConnection({
+        host,
+        user,
+        password: pass,
+        database: name,
+      });
+
+      await connection.ping();
+      await connection.end();
+
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message || String(error) };
+    }
+  });
+
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
@@ -142,6 +166,71 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+let statusWindow: BrowserWindow | null = null;
+
+export function showStatusWindow(message: string) {
+  if (statusWindow && !statusWindow.isDestroyed()) {
+    closeStatusWindow();
+  }
+
+  const cssPath = path.join(process.env.APP_ROOT!, "resources", "tabler.min.css");
+  const cssContents = fs.readFileSync(cssPath, "utf-8");
+
+  statusWindow = new BrowserWindow({
+    icon: path.join(process.env.VITE_PUBLIC, "hotel.ico"),
+    width: 500,
+    height: 260,
+    frame: false,
+    resizable: false,
+    alwaysOnTop: true,
+    transparent: true,
+    center: true,
+    show: false,
+    title: "Hotel Task Manager - Status ładowania aplikacji",
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  const html = `
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <style>
+        ${cssContents}
+        body {
+          font-family: 'Inter', sans-serif;
+        }
+      </style>
+    </head>
+   <body class="d-flex align-items-center justify-content-center" style="height: 100vh; margin: 0; background: transparent;">
+    <div class="card shadow-lg w-100" style="max-width: 400px;">
+      <div class="card-header" style="-webkit-app-region: drag;">
+        <h3 class="card-title">Hotel Task Manager</h3>
+      </div>
+      <div class="card-body text-center">
+        <p class="text-secondary">${message}</p>
+      </div>
+      <div class="card-footer border-top d-flex justify-content-center">
+        <button class="btn btn-primary" onclick="window.close()">Zamknij</button>
+      </div>
+    </div>
+  </body>
+
+  </html>
+  `;
+
+  statusWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
+  statusWindow.once("ready-to-show", () => statusWindow?.show());
+}
+
+export function closeStatusWindow() {
+  if (statusWindow && !statusWindow.isDestroyed()) {
+    statusWindow.close();
+    statusWindow = null;
+  }
+}
 
 app.setAppUserModelId("Hotel Task Manager");
 app.setName("Hotel Task Manager");
@@ -182,12 +271,8 @@ function waitForBackend(apiUrl: string, timeout = 15000): Promise<boolean> {
 }
 
 let backendProcess: ReturnType<typeof spawn> | null = null;
-const logDir = app.getPath("userData");
-const out = fs.openSync(path.join(logDir, "backend-out.log"), "a");
-const err = fs.openSync(path.join(logDir, "backend-err.log"), "a");
 
 app.whenReady().then(async () => {
-
   if (!fs.existsSync(userConfigPath)) {
     try {
       fs.copyFileSync(configTemplatePath, userConfigPath);
@@ -236,33 +321,61 @@ app.whenReady().then(async () => {
     const inUse = await isPortInUse(port);
     if (!inUse) {
       try {
-        backendProcess = spawn("java", ["-jar", config.JAR_PATH], {
+        showStatusWindow("Rozpoczynam uruchamianie backendu...");
+
+        const args = [
+          "-jar",
+          config.JAR_PATH,
+          `--spring.datasource.url=jdbc:mysql://${config.DB_HOST || "localhost"}:3306/${config.DB_NAME || "hoteltaskmanager"}?useSSL=false&serverTimezone=UTC`,
+          `--spring.datasource.username=${config.DB_USER || "root"}`,
+          `--spring.datasource.password=${config.DB_PASS || ""}`,
+        ];
+
+        const out = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-out.log"), "a");
+        const err = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-err.log"), "a");
+
+        console.log("Uruchamianie backendu z argumentami:", args);
+
+        backendProcess = spawn("java", args, {
+          cwd: path.dirname(config.JAR_PATH),
           detached: true,
           stdio: ["ignore", out, err],
         });
+
         backendProcess.unref();
         console.log("Backend uruchomiony z:", config.JAR_PATH);
+
+        showStatusWindow(`Backend został uruchomiony z: ${config.JAR_PATH}`);
       } catch (e) {
         console.error("Nie udalo sie uruchomic backendu z config.json:", e);
+
+        showStatusWindow(`Nie udało się uruchomić backendu:\n${String(e)}`);
       }
     } else {
       console.log(`Port ${port} juz jest zajety, nie uruchamiam backendu.`);
+
+      showStatusWindow(`Port ${port} jest już zajęty. Nie uruchamiam backendu.`);
     }
   }
 
-  console.log("Czekam na backend...");
+  showStatusWindow(
+    "Oczekiwanie na backend. Aplikacja spróbuje nawiązać połączenie przez maksymalnie 20 sekund.",
+  );
 
   const fullBackendUrl = `${apiHost}:${port}`;
   const backendReady = await waitForBackend(fullBackendUrl, 20000); // 20s timeout
   if (backendReady) {
     console.log("Backend gotowy - uruchamiam UI");
+    closeStatusWindow();
   } else {
     console.warn("Backend nie odpowiedzial - UI moze nie dzialac!");
+
+    showStatusWindow(
+      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund. Aplikacja może nie działać poprawnie.",
+    );
   }
 
   createWindow();
-
-  console.log("userConfigPath:", userConfigPath);
 });
 
 app.on("before-quit", () => {

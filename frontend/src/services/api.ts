@@ -4,16 +4,33 @@ declare global {
   interface Window {
     electronAPI?: {
       selectJarPath(): Promise<string>;
+
       getConfig?: () => Promise<{
         API_HOST?: string;
         BACKEND_PORT?: number;
         JAR_PATH?: string;
+        DB_HOST?: string;
+        DB_NAME?: string;
+        DB_USER?: string;
+        DB_PASS?: string;
       }>;
+
       setConfig?: (data: {
         API_HOST?: string;
         BACKEND_PORT?: number;
         JAR_PATH?: string;
+        DB_HOST?: string;
+        DB_NAME?: string;
+        DB_USER?: string;
+        DB_PASS?: string;
       }) => Promise<boolean>;
+
+      testDbConnection?: (params: {
+        host: string;
+        name: string;
+        user: string;
+        pass: string;
+      }) => Promise<{ success: boolean; error?: string }>;
     };
   }
 }

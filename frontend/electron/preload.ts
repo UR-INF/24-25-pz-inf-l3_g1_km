@@ -25,4 +25,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getConfig: () => ipcRenderer.invoke("config:get"),
   setConfig: (data: any) => ipcRenderer.invoke("config:set", data),
   selectJarPath: () => ipcRenderer.invoke("dialog:selectJarPath"),
+  testDbConnection: (params) => ipcRenderer.invoke("testDbConnection", params),
 });
