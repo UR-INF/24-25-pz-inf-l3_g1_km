@@ -184,7 +184,10 @@ const LoginView = () => {
                       <a
                         href="#"
                         id="forgotPassword"
-                        onClick={handlePasswordReset}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePasswordReset();
+                        }}
                         className="d-inline-flex align-items-center"
                         style={{ pointerEvents: isResettingPassword ? "none" : "auto" }}
                       >
@@ -215,7 +218,10 @@ const LoginView = () => {
                       <a
                         href="#"
                         id="toggle-password"
-                        onClick={togglePasswordVisibility}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          togglePasswordVisibility();
+                        }}
                         className="link-secondary"
                         title="Pokaż hasło"
                       >

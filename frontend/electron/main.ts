@@ -187,7 +187,7 @@ export function showStatusWindow(message: string) {
   statusWindow = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "hotel.ico"),
     width: 500,
-    height: 260,
+    height: 340,
     frame: false,
     resizable: false,
     alwaysOnTop: true,

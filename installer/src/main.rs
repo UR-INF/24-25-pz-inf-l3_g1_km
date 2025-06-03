@@ -68,7 +68,7 @@ enum BackendOption {
 /// Stan aplikacji instalacyjnej sterujący przepływem kreatora.
 ///
 /// Przechowuje dane wejściowe użytkownika, aktualny krok oraz stan systemu.
-#[derive(Default)]
+#[derive(PartialEq)]
 struct InstallerApp {
     step: usize,
     backend_choice: BackendOption,
@@ -84,6 +84,27 @@ struct InstallerApp {
     status: String,
     seed_database: bool,
     just_entered_step_2: bool,
+}
+
+impl Default for InstallerApp {
+    fn default() -> Self {
+        Self {
+            step: 0,
+            backend_choice: BackendOption::Undecided,
+            external_api_url: String::new(),
+            external_api_port: String::new(),
+            use_existing_db: false,
+            db_host: String::new(),
+            db_name: String::new(),
+            db_user: String::new(),
+            db_pass: String::new(),
+            java_installed: false,
+            backend_installed: false,
+            status: String::new(),
+            seed_database: false,
+            just_entered_step_2: true,
+        }
+    }
 }
 
 /// Reprezentuje konfigurację frontendu aplikacji.
@@ -679,6 +700,15 @@ impl App for InstallerApp {
 
                                 6 => {
                                     ui.label("Aktualizowanie konfiguracji frontendu...");
+
+                                    // self.log(
+                                    //     &format!(
+                                    //         "Przypisano db_host = {}, db_user = {}, db_pass = '{}'",
+                                    //         self.db_host,
+                                    //         self.db_user,
+                                    //         self.db_pass
+                                    //     )
+                                    // );
 
                                     let (db_host, db_name, db_user, db_pass) = if
                                         self.backend_choice == BackendOption::Local
