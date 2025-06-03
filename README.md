@@ -263,7 +263,7 @@ Po uzupełnieniu pól można utworzyć bazę, klikając **Utwórz bazę danych**
 
 Na tym etapie instalator sprawdza, czy na systemie zainstalowane jest środowisko **Java 21 lub nowsze**:
 
-* Jeśli Java **nie jest obecna**, instalator zainstaluje ją automatycznie.
+* Jeśli odpowiednia Java **nie jest zainstalowana**, instalator zainstaluje ją automatycznie.
 * Następnie podejmuje próbę ustawienia zmiennej środowiskowej `JAVA_HOME`.
 
 > W przypadku uruchomienia instalatora **bez uprawnień administratora**, system może zablokować modyfikację rejestru — przez co nie uda się ustawić `JAVA_HOME`.
