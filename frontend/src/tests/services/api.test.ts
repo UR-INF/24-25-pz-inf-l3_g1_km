@@ -58,8 +58,17 @@ describe("API Module", () => {
 
     // Mock elektronAPI
     window.electronAPI = {
-      getConfig: jest.fn().mockResolvedValue({ API_URL: "http://test-api.com" }),
+      getConfig: jest.fn().mockResolvedValue({
+        API_HOST: "http://localhost",
+        BACKEND_PORT: 5000,
+        JAR_PATH: "C:/mock/path/to/app.jar",
+        DB_HOST: "localhost",
+        DB_NAME: "mock_db",
+        DB_USER: "mock_user",
+        DB_PASS: "mock_pass",
+      }),
       setConfig: jest.fn().mockResolvedValue(true),
+      selectJarPath: jest.fn().mockResolvedValue("C:/mock/path/to/app.jar"),
     };
 
     // Reset interceptora
@@ -95,7 +104,6 @@ describe("API Module", () => {
   });
 
   test("createAxiosInstance używa domyślnego URL jeśli electronAPI nie jest dostępne", async () => {
-    // Usuń elektronu API
     window.electronAPI = undefined;
 
     await createAxiosInstance();

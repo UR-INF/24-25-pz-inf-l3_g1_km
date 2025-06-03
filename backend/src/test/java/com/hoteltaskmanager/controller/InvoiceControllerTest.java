@@ -62,10 +62,13 @@ class InvoiceControllerTest {
         sampleInvoice.setIssueDate(LocalDate.now());
         sampleInvoice.setCompanyNip("1234567890");
         sampleInvoice.setCompanyName("Test Company");
-        sampleInvoice.setCompanyAddress("Test Address");
+        sampleInvoice.setCompanyStreet("Test Street");
+        sampleInvoice.setCompanyBuildingNo("11A");
+        sampleInvoice.setCompanyPostalCode("00-123");
+        sampleInvoice.setCompanyCity("Test City");
+        sampleInvoice.setCompanyCountry("Testland");
         sampleInvoice.setPdfFile("invoice-1.pdf");
     }
-
     // ---------------- CREATE ----------------
 
     /**
@@ -73,20 +76,45 @@ class InvoiceControllerTest {
      */
     @Test
     void shouldGenerateInvoiceForReservation() throws Exception {
+        sampleInvoice.setId(1L);
+        sampleInvoice.setCompanyNip("1234567890");
+        sampleInvoice.setCompanyName("Test Company");
+        sampleInvoice.setCompanyStreet("Test Street");
+        sampleInvoice.setCompanyBuildingNo("22B");
+        sampleInvoice.setCompanyPostalCode("01-234");
+        sampleInvoice.setCompanyCity("Test City");
+        sampleInvoice.setCompanyCountry("Testland");
+        sampleInvoice.setIssueDate(LocalDate.now());
         sampleInvoice.setPdfFile("invoice-101.pdf");
 
-        when(invoiceService.generateInvoice(101L, "1234567890", "Test Company", "Test Address"))
-                .thenReturn(sampleInvoice);
+        when(invoiceService.generateInvoice(
+                eq(101L),
+                eq("1234567890"),
+                eq("Test Company"),
+                eq("Test Street"),
+                eq("22B"),
+                eq("01-234"),
+                eq("Test City"),
+                eq("Testland")
+        )).thenReturn(sampleInvoice);
 
         mockMvc.perform(post("/api/invoices/reservation/101")
                         .param("nip", "1234567890")
                         .param("companyName", "Test Company")
-                        .param("companyAddress", "Test Address"))
+                        .param("companyStreet", "Test Street")
+                        .param("companyBuildingNo", "22B")
+                        .param("companyPostalCode", "01-234")
+                        .param("companyCity", "Test City")
+                        .param("companyCountry", "Testland"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.companyNip").value("1234567890"))
                 .andExpect(jsonPath("$.companyName").value("Test Company"))
-                .andExpect(jsonPath("$.companyAddress").value("Test Address"));
+                .andExpect(jsonPath("$.companyStreet").value("Test Street"))
+                .andExpect(jsonPath("$.companyBuildingNo").value("22B"))
+                .andExpect(jsonPath("$.companyPostalCode").value("01-234"))
+                .andExpect(jsonPath("$.companyCity").value("Test City"))
+                .andExpect(jsonPath("$.companyCountry").value("Testland"));
     }
 
     // ---------------- READ ----------------
@@ -165,7 +193,13 @@ class InvoiceControllerTest {
         updatedInvoice.setId(1L);
         updatedInvoice.setCompanyNip("0987654321");
         updatedInvoice.setCompanyName("Updated Company");
-        updatedInvoice.setCompanyAddress("Updated Address");
+        updatedInvoice.setCompanyStreet("Updated Street");
+        updatedInvoice.setCompanyBuildingNo("12A");
+        updatedInvoice.setCompanyPostalCode("00-001");
+        updatedInvoice.setCompanyCity("Updated City");
+        updatedInvoice.setCompanyCountry("Poland");
+        updatedInvoice.setIssueDate(LocalDate.now());
+        updatedInvoice.setPdfFile("invoice_1.pdf");
 
         when(invoiceService.updateInvoice(eq(1L), eq(101L), any(Invoice.class)))
                 .thenReturn(Optional.of(updatedInvoice));
@@ -174,7 +208,11 @@ class InvoiceControllerTest {
                 {
                   "companyNip": "0987654321",
                   "companyName": "Updated Company",
-                  "companyAddress": "Updated Address"
+                  "companyStreet": "Updated Street",
+                  "companyBuildingNo": "12A",
+                  "companyPostalCode": "00-001",
+                  "companyCity": "Updated City",
+                  "companyCountry": "Poland"
                 }
                 """;
 
@@ -185,6 +223,10 @@ class InvoiceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.companyNip").value("0987654321"))
                 .andExpect(jsonPath("$.companyName").value("Updated Company"))
-                .andExpect(jsonPath("$.companyAddress").value("Updated Address"));
+                .andExpect(jsonPath("$.companyStreet").value("Updated Street"))
+                .andExpect(jsonPath("$.companyBuildingNo").value("12A"))
+                .andExpect(jsonPath("$.companyPostalCode").value("00-001"))
+                .andExpect(jsonPath("$.companyCity").value("Updated City"))
+                .andExpect(jsonPath("$.companyCountry").value("Poland"));
     }
 }
