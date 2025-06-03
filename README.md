@@ -206,3 +206,113 @@ app.db.seed=false
 - **ApexCharts** – wizualizacja danych na wykresach
 
 ## Pliki instalacyjne wraz z opisem instalacji i konfiguracji wraz pierwszego uruchomienia
+
+Pewnie, oto poprawiona wersja w stylu instrukcji krok po kroku, z naciskiem na formę "należy wejść", "należy pobrać" itd.:
+
+---
+
+## Pliki instalacyjne wraz z opisem instalacji i konfiguracji pierwszego uruchomienia
+
+### 1. Pobranie plików instalacyjnych
+
+Aby zainstalować aplikację, należy:
+
+1. Przejść do zakładki **[Releases](https://github.com/UR-INF/24-25-pz-inf-l3_g1_km/releases)**.
+2. Pobrać plik **`hoteltaskmanager-installer.exe`** w najnowszej dostępnej wersji.
+3. Uruchomić pobrany plik **z uprawnieniami administratora** (klikając prawym przyciskiem myszy i wybierając „Uruchom jako administrator”).
+
+> **Uwaga:** W niektórych przypadkach system lub oprogramowanie antywirusowe może wyświetlić ostrzeżenie przy uruchamianiu pliku .exe. Należy potwierdzić, że chcemy kontynuować instalację.
+
+### 2. Przebieg instalacji – krok po kroku
+
+Po uruchomieniu instalatora zostanie wyświetlony interaktywny kreator. Oto kolejne etapy:
+
+#### Krok 1: Wybór backendu
+
+* Należy wybrać sposób działania backendu:
+
+  * **Lokalny** – backend zostanie zainstalowany na tym komputerze.
+  * **Zdalny** – aplikacja będzie łączyć się z zewnętrznym serwerem.
+
+![Pierwszy krok instalacji](installer-images/1.png)
+
+Po wybraniu opcji **zdalny backend**, instalator poprosi o podanie adresu i portu zewnętrznego serwera. Można wówczas sprawdzić połączenie, klikając przycisk **Sprawdź połączenie**.
+
+![Kolejny krok instalacji](installer-images/3.png)
+
+#### Krok 2: Konfiguracja bazy danych
+
+W tym kroku należy zdecydować, czy aplikacja ma:
+
+* **Utworzyć nową lokalną bazę danych** – instalator sam przygotuje strukturę i dane.
+* **Połączyć się z istniejącą bazą danych** – użytkownik podaje dane logowania do istniejącej bazy.
+
+Dodatkowo można zaznaczyć opcję automatycznego **utworzenia struktury bazy oraz wypełnienia przykładowymi danymi** przy pierwszym uruchomieniu.
+
+![Kolejny krok instalacji](installer-images/2.png)
+
+#### Krok 3: Konfiguracja lokalnej bazy danych
+
+Instalator automatycznie sprawdza, czy MariaDB jest zainstalowana w systemie:
+
+* **Jeśli MariaDB nie jest obecna**, instalator zainstaluje ją automatycznie.
+* **Jeśli MariaDB jest już zainstalowana**, użytkownik zostanie poproszony o podanie danych do utworzenia bazy:
+
+  * hasło administratora (`root`),
+  * nazwę nowej bazy danych.
+
+Po uzupełnieniu pól można utworzyć bazę, klikając **Utwórz bazę danych**.
+
+![Kolejny krok instalacji](installer-images/4.png)
+
+#### Krok 4: Weryfikacja środowiska Java
+
+Na tym etapie instalator sprawdza, czy na systemie zainstalowane jest środowisko **Java 21 lub nowsze**:
+
+* Jeśli Java **nie jest obecna**, instalator zainstaluje ją automatycznie.
+* Następnie podejmuje próbę ustawienia zmiennej środowiskowej `JAVA_HOME`.
+
+> W przypadku uruchomienia instalatora **bez uprawnień administratora**, system może zablokować modyfikację rejestru — przez co nie uda się ustawić `JAVA_HOME`.
+
+Przykład błędu związanego z brakiem uprawnień:
+![Kolejny krok instalacji](installer-images/5.png)
+
+#### Krok 5: Instalacja backendu i integracja z frontendem
+
+Na tym etapie instalator:
+
+* **kopiuje pliki backendu** do domyślnej lokalizacji (`C:\Hotel Task Manager Environment\backend\backend.jar`),
+* a następnie pyta użytkownika, czy frontend został już zainstalowany.
+
+Użytkownik ma do wyboru:
+
+* **„Nie – zainstaluj teraz”** – instalator przechodzi do instalacji frontendu,
+* **„Frontend już zainstalowany – przejdź dalej”** – pomija ten krok.
+
+![Kolejny krok instalacji](installer-images/6.png)
+
+Jeśli użytkownik wybierze opcję **„Nie – zainstaluj teraz”**, zostanie automatycznie uruchomiony **osobny instalator frontendu**. Należy go **przejść do końca** (przeklikując klasyczny kreator), a następnie **wrócić do głównego instalatora** i kontynuować konfigurację.
+
+![Kolejny krok instalacji](installer-images/7.png)
+
+Świetnie! Oto końcowy fragment do README – **Krok 5: Zakończenie instalacji**, z uwzględnieniem komunikatu i screena:
+
+---
+
+#### Krok 6: Zakończenie instalacji
+
+Po poprawnym zakończeniu instalacji backendu i (opcjonalnie) frontendu, instalator wyświetli potwierdzenie zakończenia konfiguracji.
+Frontend zostaje automatycznie zaktualizowany do współpracy z backendem.
+
+![Ostatni krok instalacji](installer-images/8.png)
+
+
+
+
+
+
+
+
+
+
+
