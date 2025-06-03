@@ -210,7 +210,7 @@ export function showStatusWindow(message: string) {
       </style>
     </head>
    <body class="d-flex align-items-center justify-content-center" style="height: 100vh; margin: 0; background: transparent;">
-    <div class="card shadow w-100" style="max-width: 400px;">
+    <div class="card shadow-sm w-100" style="max-width: 400px;">
       <div class="card-header" style="-webkit-app-region: drag;">
         <h3 class="card-title">Hotel Task Manager</h3>
       </div>
