@@ -40,6 +40,8 @@ const defaultConfig = {
   DB_NAME: "hoteltaskmanager",
   DB_USER: "root",
   DB_PASS: "",
+
+  SEED_DB: false,
 };
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
@@ -334,6 +336,9 @@ app.whenReady().then(async () => {
           `--spring.datasource.url=jdbc:mysql://${config.DB_HOST || "localhost"}:3306/${config.DB_NAME || "hoteltaskmanager"}?useSSL=false&serverTimezone=UTC`,
           `--spring.datasource.username=${config.DB_USER || "root"}`,
           `--spring.datasource.password=${config.DB_PASS || ""}`,
+          ...(config.SEED_DB === true
+            ? ["--app.db.seed=true", "--spring.jpa.hibernate.ddl-auto=create"]
+            : []),
         ];
 
         const out = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-out.log"), "a");
@@ -351,6 +356,19 @@ app.whenReady().then(async () => {
         console.log("Backend uruchomiony z:", config.JAR_PATH);
 
         showStatusWindow(`Backend został uruchomiony z: ${config.JAR_PATH}`);
+
+        if (config.SEED_DB) {
+          config.SEED_DB = false;
+
+          try {
+            const current = JSON.parse(fs.readFileSync(userConfigPath, "utf-8"));
+            const updated = { ...current, SEED_DB: false };
+            fs.writeFileSync(userConfigPath, JSON.stringify(updated, null, 2), "utf-8");
+            console.log("SEED_DB ustawiono na false w config.json");
+          } catch (err) {
+            console.error("Nie udalo sie zaktualizowac SEED_DB:", err);
+          }
+        }
       } catch (e) {
         console.error("Nie udalo sie uruchomic backendu z config.json:", e);
 
@@ -376,7 +394,7 @@ app.whenReady().then(async () => {
     console.warn("Backend nie odpowiedzial - UI moze nie dzialac!");
 
     showStatusWindow(
-      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund.\n\nAplikacja może nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem."
+      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund.\n\nAplikacja może nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem.",
     );
   }
 

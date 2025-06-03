@@ -6,5 +6,7 @@
   "DB_HOST": "localhost",
   "DB_NAME": "hoteltaskmanager",
   "DB_USER": "root",
-  "DB_PASS": ""
+  "DB_PASS": "",
+
+  "SEED_DB": false
 }

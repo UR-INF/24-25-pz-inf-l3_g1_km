@@ -47,6 +47,7 @@ struct InstallerApp {
     java_installed: bool,
     backend_installed: bool,
     status: String,
+    seed_database: bool,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -71,6 +72,9 @@ struct FrontendConfig {
 
     #[serde(rename = "DB_PASS", skip_serializing_if = "Option::is_none")]
     db_pass: Option<String>,
+
+    #[serde(rename = "SEED_DB", skip_serializing_if = "Option::is_none")]
+    seed_db: Option<bool>,
 }
 
 impl InstallerApp {
@@ -172,6 +176,12 @@ impl App for InstallerApp {
                                             "Połącz z istniejącą bazą danych"
                                         );
                                     });
+
+                                    ui.add_space(10.0);
+                                    ui.checkbox(
+                                        &mut self.seed_database,
+                                        "Czy chcesz stworzyć strukturę bazy danych oraz zapełnić bazę przykładowymi danymi przy pierwszym uruchomieniu aplikacji?"
+                                    );
 
                                     let mut can_proceed = true;
 
@@ -662,7 +672,8 @@ impl App for InstallerApp {
                                         db_host,
                                         db_name,
                                         db_user,
-                                        db_pass
+                                        db_pass,
+                                        Some(self.seed_database)
                                     );
 
                                     match result {
@@ -956,7 +967,8 @@ fn update_frontend_config(
     db_host: Option<&str>,
     db_name: Option<&str>,
     db_user: Option<&str>,
-    db_pass: Option<&str>
+    db_pass: Option<&str>,
+    seed_db: Option<bool>,
 ) -> Result<(), String> {
     let config_path = get_frontend_config_path().ok_or(
         "Nie można znaleźć ścieżki do pliku konfiguracyjnego."
@@ -991,6 +1003,7 @@ fn update_frontend_config(
                 db_name: db_name.map(|s| s.to_string()),
                 db_user: db_user.map(|s| s.to_string()),
                 db_pass: db_pass.map(|s| s.to_string()),
+                seed_db,
             }
         } else {
             let mut parsed: FrontendConfig = serde_json
@@ -1004,6 +1017,7 @@ fn update_frontend_config(
             parsed.db_name = db_name.map(|s| s.to_string());
             parsed.db_user = db_user.map(|s| s.to_string());
             parsed.db_pass = db_pass.map(|s| s.to_string());
+            parsed.seed_db = seed_db;
 
             parsed
         }
@@ -1016,6 +1030,7 @@ fn update_frontend_config(
             db_name: db_name.map(|s| s.to_string()),
             db_user: db_user.map(|s| s.to_string()),
             db_pass: db_pass.map(|s| s.to_string()),
+            seed_db
         }
     };
 
