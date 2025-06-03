@@ -289,10 +289,6 @@ Jeśli użytkownik wybierze opcję **„Nie – zainstaluj teraz”**, zostanie 
 
 ![Kolejny krok instalacji](installer-images/7.png)
 
-Świetnie! Oto końcowy fragment do README – **Krok 5: Zakończenie instalacji**, z uwzględnieniem komunikatu i screena:
-
----
-
 #### Krok 6: Zakończenie instalacji
 
 Po poprawnym zakończeniu instalacji backendu i (opcjonalnie) frontendu, instalator wyświetli potwierdzenie zakończenia konfiguracji.
