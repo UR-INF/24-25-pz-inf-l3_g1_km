@@ -174,7 +174,12 @@ export function showStatusWindow(message: string) {
     closeStatusWindow();
   }
 
-  const cssPath = path.join(process.env.APP_ROOT!, "resources", "tabler.min.css");
+  const isProd = !VITE_DEV_SERVER_URL;
+
+  const cssPath = isProd
+    ? path.join(process.resourcesPath, "resources", "tabler.min.css")
+    : path.join(process.env.APP_ROOT!, "resources", "tabler.min.css");
+
   const cssContents = fs.readFileSync(cssPath, "utf-8");
 
   statusWindow = new BrowserWindow({
@@ -205,12 +210,12 @@ export function showStatusWindow(message: string) {
       </style>
     </head>
    <body class="d-flex align-items-center justify-content-center" style="height: 100vh; margin: 0; background: transparent;">
-    <div class="card shadow-lg w-100" style="max-width: 400px;">
+    <div class="card shadow w-100" style="max-width: 400px;">
       <div class="card-header" style="-webkit-app-region: drag;">
         <h3 class="card-title">Hotel Task Manager</h3>
       </div>
       <div class="card-body text-center">
-        <p class="text-secondary">${message}</p>
+        <p class="text-secondary">${message.replace(/\n/g, "<br>")}</p>
       </div>
       <div class="card-footer border-top d-flex justify-content-center">
         <button class="btn btn-primary" onclick="window.close()">Zamknij</button>
@@ -371,7 +376,7 @@ app.whenReady().then(async () => {
     console.warn("Backend nie odpowiedzial - UI moze nie dzialac!");
 
     showStatusWindow(
-      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund. Aplikacja może nie działać poprawnie.",
+      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund.\n\nAplikacja może nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem."
     );
   }
 
