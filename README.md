@@ -207,12 +207,6 @@ app.db.seed=false
 
 ## Pliki instalacyjne wraz z opisem instalacji i konfiguracji wraz pierwszego uruchomienia
 
-Pewnie, oto poprawiona wersja w stylu instrukcji krok po kroku, z naciskiem na formę "należy wejść", "należy pobrać" itd.:
-
----
-
-## Pliki instalacyjne wraz z opisem instalacji i konfiguracji pierwszego uruchomienia
-
 ### 1. Pobranie plików instalacyjnych
 
 Aby zainstalować aplikację, należy:
