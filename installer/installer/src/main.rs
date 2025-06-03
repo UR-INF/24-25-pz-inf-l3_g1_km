@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use eframe::{ egui, App, CreationContext, Frame };
 use egui::Margin;
 use serde::{ Deserialize, Serialize };
@@ -11,9 +13,25 @@ use std::{ path::Path, path::PathBuf };
 use rust_embed::RustEmbed;
 use egui::RichText;
 use mysql::prelude::Queryable;
+use image::GenericImageView;
+use std::sync::Arc;
+use egui::IconData;
 
 fn main() -> eframe::Result<()> {
-    let native_options = eframe::NativeOptions::default();
+    let icon_opt = load_icon();
+
+    let mut viewport = egui::ViewportBuilder::default();
+
+    if let Some(icon) = icon_opt {
+        viewport = viewport.with_icon(Arc::new(icon));
+    }
+
+    let native_options = eframe::NativeOptions {
+        centered: true,
+        viewport,
+        ..Default::default()
+    };
+
     eframe::run_native(
         "Instalator Hotel Task Manager",
         native_options,
@@ -755,6 +773,21 @@ impl App for InstallerApp {
     }
 }
 
+/// Ładuje osadzoną ikonę aplikacji z pliku PNG przy użyciu `RustEmbed`.
+///
+/// Ikona jest używana do ustawienia ikonki okna aplikacji w `eframe::NativeOptions`.
+///
+/// # Zwraca
+/// - `Some(IconData)` jeśli udało się poprawnie wczytać i sparsować obraz
+/// - `None`, jeśli zasób nie istnieje lub wystąpił błąd przy dekodowaniu
+fn load_icon() -> Option<IconData> {
+    let asset = Assets::get("icon.png")?;
+    let img = image::load_from_memory(&asset.data).ok()?;
+    let (width, height) = img.dimensions();
+    let rgba = img.into_rgba8().into_raw();
+    Some(IconData { rgba, width, height })
+}
+
 /// Tworzy nową bazę danych przy użyciu konta root.
 ///
 /// # Argumenty
@@ -968,7 +1001,7 @@ fn update_frontend_config(
     db_name: Option<&str>,
     db_user: Option<&str>,
     db_pass: Option<&str>,
-    seed_db: Option<bool>,
+    seed_db: Option<bool>
 ) -> Result<(), String> {
     let config_path = get_frontend_config_path().ok_or(
         "Nie można znaleźć ścieżki do pliku konfiguracyjnego."
@@ -1030,7 +1063,7 @@ fn update_frontend_config(
             db_name: db_name.map(|s| s.to_string()),
             db_user: db_user.map(|s| s.to_string()),
             db_pass: db_pass.map(|s| s.to_string()),
-            seed_db
+            seed_db,
         }
     };
 

@@ -341,8 +341,8 @@ app.whenReady().then(async () => {
             : []),
         ];
 
-        const out = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-out.log"), "a");
-        const err = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-err.log"), "a");
+        const out = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-out.log"), "w");
+        const err = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-err.log"), "w");
 
         console.log("Uruchamianie backendu z argumentami:", args);
 

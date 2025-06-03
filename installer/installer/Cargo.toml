@@ -2,6 +2,10 @@
 name = "installer"
 version = "0.1.0"
 edition = "2024"
+build = "build.rs"
+
+[build-dependencies]
+embed-resource = "2.4"
 
 [dependencies]
 eframe = "0.27"
@@ -15,4 +19,14 @@ dirs = "5"
 chrono = { version = "0.4", features = ["serde"] }
 mysql = "24.0"
 rust-embed = "8"
+image = "0.25"
+
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+
+[package.metadata.winres]
+windows_subsystem = "windows"
 
