@@ -1,20 +1,20 @@
-use eframe::{egui, App, CreationContext, Frame};
+use eframe::{ egui, App, CreationContext, Frame };
 use egui::Margin;
-use serde::{Deserialize, Serialize};
-use std::fs::{self, OpenOptions};
+use serde::{ Deserialize, Serialize };
+use std::fs::{ self, OpenOptions };
 use std::io::Write;
 use std::process::Command;
 use which::which;
 use chrono::Local;
-use mysql::{OptsBuilder, Pool};
-use std::path::{Path, PathBuf};
+use mysql::{ OptsBuilder, Pool };
+use std::path::{ Path, PathBuf };
 
 fn main() -> eframe::Result<()> {
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
         "Instalator Hotel Task Manager",
         native_options,
-        Box::new(|cc| Box::new(InstallerApp::new(cc))),
+        Box::new(|cc| Box::new(InstallerApp::new(cc)))
     )
 }
 
@@ -66,7 +66,6 @@ struct FrontendConfig {
     db_pass: Option<String>,
 }
 
-
 impl InstallerApp {
     fn new(_cc: &CreationContext<'_>) -> Self {
         Self::default()
@@ -96,7 +95,8 @@ impl InstallerApp {
 impl App for InstallerApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            egui::Frame::none()
+            egui::Frame
+                ::none()
                 .fill(ctx.style().visuals.panel_fill)
                 .inner_margin(Margin::same(20.0))
                 .show(ui, |ui| {
@@ -110,13 +110,25 @@ impl App for InstallerApp {
                                 0 => {
                                     ui.label("Czy chcesz zainstalować backend lokalnie?");
                                     ui.horizontal(|ui| {
-                                        ui.radio_value(&mut self.backend_choice, BackendOption::Local, "Tak");
-                                        ui.radio_value(&mut self.backend_choice, BackendOption::Remote, "Nie");
+                                        ui.radio_value(
+                                            &mut self.backend_choice,
+                                            BackendOption::Local,
+                                            "Tak"
+                                        );
+                                        ui.radio_value(
+                                            &mut self.backend_choice,
+                                            BackendOption::Remote,
+                                            "Nie"
+                                        );
                                     });
                                     if ui.button("Dalej").clicked() {
                                         match self.backend_choice {
-                                            BackendOption::Local => self.step = 1,
-                                            BackendOption::Remote => self.step = 10,
+                                            BackendOption::Local => {
+                                                self.step = 1;
+                                            }
+                                            BackendOption::Remote => {
+                                                self.step = 10;
+                                            }
                                             BackendOption::Undecided => {
                                                 self.status = "Wybierz jedną z opcji.".to_string();
                                             }
@@ -125,46 +137,64 @@ impl App for InstallerApp {
                                 }
 
                                 1 => {
-                                    ui.label("Czy chcesz połączyć backend z zewnętrzną bazą danych?");
+                                    ui.label(
+                                        "Czy chcesz połączyć backend z zewnętrzną bazą danych?"
+                                    );
                                     ui.checkbox(&mut self.use_external_db, "Tak");
 
                                     if self.use_external_db {
                                         ui.label("Dane logowania do bazy:");
                                         ui.add(
-                                            egui::TextEdit::singleline(&mut self.db_host)
-                                                .hint_text("Host"),
+                                            egui::TextEdit
+                                                ::singleline(&mut self.db_host)
+                                                .hint_text("Host")
                                         );
 
                                         ui.add(
-                                            egui::TextEdit::singleline(&mut self.db_name)
-                                            .hint_text("Nazwa bazy danych, np. hoteltaskmanager"),
+                                            egui::TextEdit
+                                                ::singleline(&mut self.db_name)
+                                                .hint_text(
+                                                    "Nazwa bazy danych, np. hoteltaskmanager"
+                                                )
                                         );
 
                                         ui.add(
-                                            egui::TextEdit::singleline(&mut self.db_user)
-                                                .hint_text("Użytkownik"),
+                                            egui::TextEdit
+                                                ::singleline(&mut self.db_user)
+                                                .hint_text("Użytkownik")
                                         );
                                         ui.add(
-                                            egui::TextEdit::singleline(&mut self.db_pass)
-                                                .hint_text("Hasło"),
+                                            egui::TextEdit
+                                                ::singleline(&mut self.db_pass)
+                                                .hint_text("Hasło")
                                         );
 
                                         ui.add_space(10.0);
                                         if ui.button("Przetestuj połączenie").clicked() {
-                                            if self.db_host.trim().is_empty()
-                                                || self.db_name.trim().is_empty()
-                                                || self.db_user.trim().is_empty()
+                                            if
+                                                self.db_host.trim().is_empty() ||
+                                                self.db_name.trim().is_empty() ||
+                                                self.db_user.trim().is_empty()
                                             {
-                                                self.status = "Podaj host, nazwę bazy i użytkownika.".to_string();
+                                                self.status =
+                                                    "Podaj host, nazwę bazy i użytkownika.".to_string();
                                             } else {
-                                                match test_db_connection(
-                                                    self.db_host.trim(),
-                                                    self.db_name.trim(),
-                                                    self.db_user.trim(),
-                                                    self.db_pass.trim(),
-                                                ) {
-                                                    Ok(_) => self.status = "Połączenie z bazą danych jest OK!".to_string(),
-                                                    Err(e) => self.status = format!("Błąd połączenia: {}", e),
+                                                match
+                                                    test_db_connection(
+                                                        self.db_host.trim(),
+                                                        self.db_name.trim(),
+                                                        self.db_user.trim(),
+                                                        self.db_pass.trim()
+                                                    )
+                                                {
+                                                    Ok(_) => {
+                                                        self.status =
+                                                            "Połączenie z bazą danych jest OK!".to_string();
+                                                    }
+                                                    Err(e) => {
+                                                        self.status =
+                                                            format!("Błąd połączenia: {}", e);
+                                                    }
                                                 }
                                             }
                                         }
@@ -181,7 +211,8 @@ impl App for InstallerApp {
                                     });
                                 }
 
-                                2 => { // nic nieruszone
+                                2 => {
+                                    // nic nieruszone
                                     ui.label("Sprawdzanie obecności MariaDB...");
                                     if is_mariadb_installed() {
                                         self.status = "MariaDB jest już zainstalowane.".to_string();
@@ -209,15 +240,21 @@ impl App for InstallerApp {
 
                                         let java_home = java_home_opt.unwrap();
 
-                                        let env_home = std::env::var("JAVA_HOME").unwrap_or_default();
+                                        let env_home = std::env
+                                            ::var("JAVA_HOME")
+                                            .unwrap_or_default();
                                         if env_home.trim().is_empty() || !env_home.contains("Java") {
                                             match set_java_home(&java_home) {
                                                 Ok(_) => {
                                                     self.status.push_str("\nUstawiono JAVA_HOME");
-                                                    self.log(&format!("JAVA_HOME ustawione na: {}", java_home));
+                                                    self.log(
+                                                        &format!("JAVA_HOME ustawione na: {}", java_home)
+                                                    );
                                                 }
                                                 Err(e) => {
-                                                    self.status.push_str(&format!("\nNie udało się ustawić JAVA_HOME: {}", e));
+                                                    self.status.push_str(
+                                                        &format!("\nNie udało się ustawić JAVA_HOME: {}", e)
+                                                    );
                                                     self.log(&format!("Błąd JAVA_HOME: {}", e));
                                                 }
                                             }
@@ -231,7 +268,12 @@ impl App for InstallerApp {
                                         let msi_path = get_resource_path("openjdk.msi");
 
                                         if !msi_path.exists() {
-                                            self.status.push_str(&format!(" Nie znaleziono pliku instalatora: {}", msi_path.display()));
+                                            self.status.push_str(
+                                                &format!(
+                                                    " Nie znaleziono pliku instalatora: {}",
+                                                    msi_path.display()
+                                                )
+                                            );
                                             self.log(&self.status);
                                         } else {
                                             let result = Command::new("msiexec")
@@ -241,58 +283,95 @@ impl App for InstallerApp {
 
                                             match result {
                                                 Ok(status) if status.success() => {
-                                                    self.status.push_str(" Instalacja zakończona. Sprawdzam ponownie...");
-                                                    self.log("OpenJDK installer zakończony poprawnie.");
+                                                    self.status.push_str(
+                                                        " Instalacja zakończona. Sprawdzam ponownie..."
+                                                    );
+                                                    self.log(
+                                                        "OpenJDK installer zakończony poprawnie."
+                                                    );
 
-                                                    std::thread::sleep(std::time::Duration::from_secs(3));
+                                                    std::thread::sleep(
+                                                        std::time::Duration::from_secs(3)
+                                                    );
 
                                                     let java_home_opt = detect_java_home();
                                                     self.java_installed = java_home_opt.is_some();
 
                                                     if let Some(java_home) = java_home_opt {
-                                                        self.status.push_str(" Java została poprawnie zainstalowana 🎉");
+                                                        self.status.push_str(
+                                                            " Java została poprawnie zainstalowana 🎉"
+                                                        );
                                                         match set_java_home(&java_home) {
-                                                            Ok(_) => self.status.push_str("\nJAVA_HOME ustawione."),
-                                                            Err(e) => self.status.push_str(&format!("\nBłąd JAVA_HOME: {}", e)),
+                                                            Ok(_) =>
+                                                                self.status.push_str(
+                                                                    "\nJAVA_HOME ustawione."
+                                                                ),
+                                                            Err(e) =>
+                                                                self.status.push_str(
+                                                                    &format!("\nBłąd JAVA_HOME: {}", e)
+                                                                ),
                                                         }
                                                     } else {
-                                                        self.status.push_str("Java nadal niewykryta.");
-                                                        self.log("Java nadal niewykryta po instalacji.");
+                                                        self.status.push_str(
+                                                            "Java nadal niewykryta."
+                                                        );
+                                                        self.log(
+                                                            "Java nadal niewykryta po instalacji."
+                                                        );
                                                     }
                                                 }
                                                 Ok(status) => {
-                                                    self.status.push_str(&format!(" Instalator zakończył się, kod: {:?}", status.code()));
-                                                    self.log(&format!("Installer zakończony z kodem: {:?}", status.code()));
+                                                    self.status.push_str(
+                                                        &format!(
+                                                            " Instalator zakończył się, kod: {:?}",
+                                                            status.code()
+                                                        )
+                                                    );
+                                                    self.log(
+                                                        &format!(
+                                                            "Installer zakończony z kodem: {:?}",
+                                                            status.code()
+                                                        )
+                                                    );
                                                 }
                                                 Err(e) => {
-                                                    self.status.push_str(&format!(" Błąd uruchomienia instalatora: {}", e));
-                                                    self.log(&format!("Błąd uruchamiania msiexec: {}", e));
+                                                    self.status.push_str(
+                                                        &format!(" Błąd uruchomienia instalatora: {}", e)
+                                                    );
+                                                    self.log(
+                                                        &format!("Błąd uruchamiania msiexec: {}", e)
+                                                    );
                                                 }
                                             }
                                         }
                                     }
-                                    
+
                                     std::thread::sleep(std::time::Duration::from_secs(1));
                                     self.step += 1;
                                 }
-
 
                                 4 => {
                                     self.log("Instalowanie backendu...");
 
                                     ui.label("Instalowanie backendu...");
 
-                                    let backend_dir = PathBuf::from("C:/Hotel Task Manager Environment/backend");
+                                    let backend_dir = PathBuf::from(
+                                        "C:/Hotel Task Manager Environment/backend"
+                                    );
 
                                     if let Err(e) = fs::create_dir_all(&backend_dir) {
-                                        self.status = format!("Nie udało się utworzyć katalogu backendu: {}", e);
+                                        self.status =
+                                            format!("Nie udało się utworzyć katalogu backendu: {}", e);
                                         self.log(&self.status);
                                         return;
                                     }
 
                                     let jar_source = get_resource_path("backend.jar");
                                     if !jar_source.exists() {
-                                        self.status = format!("Nie znaleziono pliku backend.jar: {}", jar_source.display());
+                                        self.status = format!(
+                                            "Nie znaleziono pliku backend.jar: {}",
+                                            jar_source.display()
+                                        );
                                         self.log(&self.status);
                                         return;
                                     }
@@ -306,7 +385,10 @@ impl App for InstallerApp {
                                     }
 
                                     self.backend_installed = true;
-                                    self.status = format!("Backend został skopiowany do: {}", jar_dest.display());
+                                    self.status = format!(
+                                        "Backend został skopiowany do: {}",
+                                        jar_dest.display()
+                                    );
                                     self.log("Backend copied successfully.");
                                     std::thread::sleep(std::time::Duration::from_secs(1));
                                     self.step = 5;
@@ -320,27 +402,37 @@ impl App for InstallerApp {
                                             let exe_path = get_resource_path("frontend.exe");
 
                                             if !exe_path.exists() {
-                                                self.status = format!("Nie znaleziono instalatora frontendu: {}", exe_path.display());
+                                                self.status = format!(
+                                                    "Nie znaleziono instalatora frontendu: {}",
+                                                    exe_path.display()
+                                                );
                                                 self.log(&self.status);
                                             } else {
                                                 match Command::new(&exe_path).spawn() {
                                                     Ok(_) => {
-                                                        self.status = "Instalator frontendu został uruchomiony.\n\
+                                                        self.status =
+                                                            "Instalator frontendu został uruchomiony.\n\
                                                             \n\
                                                             Nie kontynuuj instalacji, dopóki nie zakończysz instalacji frontendu.\n\
-                                                            W przeciwnym razie konfiguracja nie powiedzie się."
-                                                            .to_string();
+                                                            W przeciwnym razie konfiguracja nie powiedzie się.".to_string();
                                                         self.log("Frontend installer launched.");
                                                     }
                                                     Err(e) => {
-                                                        self.status = format!("Błąd uruchamiania instalatora frontendu: {}", e);
+                                                        self.status =
+                                                            format!("Błąd uruchamiania instalatora frontendu: {}", e);
                                                         self.log(&self.status);
                                                     }
                                                 }
                                             }
                                         }
 
-                                        if ui.button("Frontend już zainstalowany - przejdź dalej").clicked() {
+                                        if
+                                            ui
+                                                .button(
+                                                    "Frontend już zainstalowany - przejdź dalej"
+                                                )
+                                                .clicked()
+                                        {
                                             self.step = 6;
                                         }
                                     });
@@ -349,7 +441,9 @@ impl App for InstallerApp {
                                 6 => {
                                     ui.label("Aktualizowanie konfiguracji frontendu...");
 
-                                    let (db_host, db_name, db_user, db_pass) = if self.use_external_db {
+                                    let (db_host, db_name, db_user, db_pass) = if
+                                        self.use_external_db
+                                    {
                                         (
                                             Some(self.db_host.trim()),
                                             Some(self.db_name.trim()),
@@ -360,7 +454,9 @@ impl App for InstallerApp {
                                         (None, None, None, None)
                                     };
 
-                                    let (api_url, api_port, jar_path) = if self.backend_choice == BackendOption::Local {
+                                    let (api_url, api_port, jar_path) = if
+                                        self.backend_choice == BackendOption::Local
+                                    {
                                         (
                                             "http://localhost",
                                             "8080",
@@ -381,45 +477,50 @@ impl App for InstallerApp {
                                         db_host,
                                         db_name,
                                         db_user,
-                                        db_pass,
+                                        db_pass
                                     );
 
                                     match result {
                                         Ok(_) => {
-                                            self.status = "Zaktualizowano konfigurację frontendu.".to_string();
+                                            self.status =
+                                                "Zaktualizowano konfigurację frontendu.".to_string();
                                             self.log(&self.status);
                                             self.step = 7;
                                         }
                                         Err(e) => {
-                                            self.status = format!("Błąd aktualizacji config frontendu: {}", e);
+                                            self.status =
+                                                format!("Błąd aktualizacji config frontendu: {}", e);
                                             self.log(&self.status);
                                         }
                                     }
                                 }
 
-
                                 7 => {
                                     ui.heading("Instalacja zakończona");
-                                    ui.label("Środowisko backendowe oraz konfiguracja frontendu zostały zakończone.");
+                                    ui.label(
+                                        "Środowisko backendowe oraz konfiguracja frontendu zostały zakończone."
+                                    );
                                     ui.label(&self.status);
                                 }
 
                                 10 => {
                                     ui.label("Podaj dane do zewnętrznego backendu:");
-                                    
+
                                     ui.add(
-                                        egui::TextEdit::singleline(&mut self.external_api_url)
-                                            .hint_text("Adres, np. http://localhost"),
+                                        egui::TextEdit
+                                            ::singleline(&mut self.external_api_url)
+                                            .hint_text("Adres, np. http://localhost")
                                     );
                                     ui.add(
-                                        egui::TextEdit::singleline(&mut self.external_api_port)
-                                            .hint_text("Port, np. 8080"),
+                                        egui::TextEdit
+                                            ::singleline(&mut self.external_api_port)
+                                            .hint_text("Port, np. 8080")
                                     );
 
                                     if ui.button("Sprawdź połączenie").clicked() {
                                         let result = check_spring_health(
                                             self.external_api_url.trim(),
-                                            self.external_api_port.trim(),
+                                            self.external_api_port.trim()
                                         );
                                         match result {
                                             Ok(msg) => {
@@ -501,9 +602,11 @@ fn detect_java_home() -> Option<String> {
                     if let Ok(major) = version_str.split('.').next().unwrap_or("").parse::<u32>() {
                         if major >= 21 {
                             let java_bin = path.to_string_lossy().to_string();
-                            if let Some(java_home) = std::path::Path::new(&java_bin)
-                                .parent()
-                                .and_then(|p| p.parent())
+                            if
+                                let Some(java_home) = std::path::Path
+                                    ::new(&java_bin)
+                                    .parent()
+                                    .and_then(|p| p.parent())
                             {
                                 return Some(java_home.to_string_lossy().to_string());
                             }
@@ -524,7 +627,7 @@ fn set_java_home(java_home: &str) -> Result<(), String> {
     let system_env = RegKey::predef(HKEY_LOCAL_MACHINE)
         .open_subkey_with_flags(
             "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment",
-            KEY_WRITE,
+            KEY_WRITE
         )
         .map_err(|e| format!("Błąd otwierania rejestru: {}", e))?;
 
@@ -568,29 +671,30 @@ fn update_frontend_config(
     db_host: Option<&str>,
     db_name: Option<&str>,
     db_user: Option<&str>,
-    db_pass: Option<&str>,
+    db_pass: Option<&str>
 ) -> Result<(), String> {
-    let config_path = get_frontend_config_path()
-        .ok_or("Nie można znaleźć ścieżki do pliku konfiguracyjnego.")?;
+    let config_path = get_frontend_config_path().ok_or(
+        "Nie można znaleźć ścieżki do pliku konfiguracyjnego."
+    )?;
 
     // println!("Ścieżka do pliku konfiguracyjnego: {:?}", config_path);
 
     if let Some(parent_dir) = config_path.parent() {
         if !parent_dir.exists() {
             println!("Tworzę folder: {:?}", parent_dir);
-            std::fs::create_dir_all(parent_dir)
+            std::fs
+                ::create_dir_all(parent_dir)
                 .map_err(|e| format!("Błąd tworzenia folderu: {}", e))?;
         }
     } else {
         return Err("Nie można ustalić folderu nadrzędnego dla config.json.".to_string());
     }
 
-    let port_num: u16 = port
-        .parse()
-        .map_err(|_| "Niepoprawny numer portu".to_string())?;
+    let port_num: u16 = port.parse().map_err(|_| "Niepoprawny numer portu".to_string())?;
 
     let config = if config_path.exists() {
-        let content = std::fs::read_to_string(&config_path)
+        let content = std::fs
+            ::read_to_string(&config_path)
             .map_err(|e| format!("Błąd odczytu pliku: {}", e))?;
 
         if content.trim().is_empty() {
@@ -604,7 +708,8 @@ fn update_frontend_config(
                 db_pass: db_pass.map(|s| s.to_string()),
             }
         } else {
-            let mut parsed: FrontendConfig = serde_json::from_str(&content)
+            let mut parsed: FrontendConfig = serde_json
+                ::from_str(&content)
                 .map_err(|e| format!("Błąd parsowania JSON: {}", e))?;
 
             parsed.api_host = host.to_string();
@@ -629,11 +734,11 @@ fn update_frontend_config(
         }
     };
 
-    let updated_json = serde_json::to_string_pretty(&config)
+    let updated_json = serde_json
+        ::to_string_pretty(&config)
         .map_err(|e| format!("Błąd serializacji: {}", e))?;
 
-    std::fs::write(&config_path, updated_json)
-        .map_err(|e| format!("Błąd zapisu pliku: {}", e))?;
+    std::fs::write(&config_path, updated_json).map_err(|e| format!("Błąd zapisu pliku: {}", e))?;
 
     Ok(())
 }
