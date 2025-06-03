@@ -81,10 +81,7 @@ const LoginView = () => {
     loginUser();
   };
 
-  const handlePasswordReset = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Dodajemy preventDefault, aby zapobiec odświeżeniu/przewijaniu strony
-    e.preventDefault();
-
+  const handlePasswordReset = async () => {
     if (!email) {
       setAlertMessage({
         title: "Brak adresu e-mail",
@@ -225,7 +222,7 @@ const LoginView = () => {
                         id="toggle-password"
                         onClick={(e) => {
                           e.preventDefault();
-                          togglePasswordVisibility();
+                          setShowPassword((prev) => !prev);
                         }}
                         className="link-secondary"
                         title={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
