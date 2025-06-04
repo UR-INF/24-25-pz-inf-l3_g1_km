@@ -552,7 +552,7 @@ impl App for InstallerApp {
 
                                                         if let Some(java_home) = java_home_opt {
                                                             self.status.push_str(
-                                                                " Java została poprawnie zainstalowana 🎉"
+                                                                " Java została poprawnie zainstalowana"
                                                             );
                                                             match set_java_home(&java_home) {
                                                                 Ok(_) =>

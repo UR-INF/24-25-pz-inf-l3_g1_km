@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { useNavigate } from "react-router";
 import { useNotification } from "../contexts/notification";
+import { fetchCompanyByNip } from "../utils/fetchCompanyByNip";
+import { validateNip } from "../utils/validateNip";
 
 const ModifyInvoice = ({ invoiceId, reservationId }) => {
   const navigate = useNavigate();
@@ -16,6 +18,8 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
     companyCity: "",
     companyCountry: "",
   });
+  const [isLoadingCompany, setIsLoadingCompany] = useState(false);
+  const [nipError, setNipError] = useState("");
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -49,10 +53,24 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
       ...prevData,
       [name]: value,
     }));
+    if (name === "companyNip" && value.trim() !== "") {
+      setNipError(validateNip(value));
+    } else if (name === "companyNip" && value.trim() === "") {
+      setNipError("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (invoiceData.companyNip.trim() !== "") {
+      const error = validateNip(invoiceData.companyNip);
+      if (error) {
+        setNipError(error);
+        showNotification("error", error);
+        return;
+      }
+    }
 
     try {
       const response = await api.put(
@@ -94,14 +112,59 @@ const ModifyInvoice = ({ invoiceId, reservationId }) => {
           <label htmlFor="companyNip" className="form-label">
             NIP firmy
           </label>
-          <input
-            type="text"
-            id="companyNip"
-            name="companyNip"
-            value={invoiceData.companyNip}
-            onChange={handleInputChange}
-            className="form-control"
-          />
+          <div className="input-group">
+            <input
+              type="text"
+              id="companyNip"
+              name="companyNip"
+              value={invoiceData.companyNip}
+              onChange={(e) => {
+                handleInputChange(e);
+                setNipError("");
+              }}
+              className={`form-control ${nipError ? "is-invalid" : ""}`}
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              disabled={!!validateNip(invoiceData.companyNip) || isLoadingCompany}
+              onClick={async () => {
+                if (!!validateNip(invoiceData.companyNip)) {
+                  setNipError("Nieprawidłowy numer NIP");
+                  return;
+                }
+
+                setIsLoadingCompany(true);
+                try {
+                  const companyData = await fetchCompanyByNip(invoiceData.companyNip);
+                  setInvoiceData((prev) => ({
+                    ...prev,
+                    ...companyData,
+                  }));
+                  showNotification("success", "Dane firmy zostały pobrane.");
+                } catch {
+                  showNotification("error", "Nie udało się pobrać danych firmy.");
+                } finally {
+                  setIsLoadingCompany(false);
+                }
+              }}
+            >
+              {isLoadingCompany ? (
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              ) : (
+                "Pobierz dane z rejestru podatników"
+              )}
+            </button>
+          </div>
+          {nipError && <div className="invalid-feedback d-block">{nipError}</div>}
+          <small className="form-text text-muted">
+            Możesz wprowadzić NIP z myślnikami lub bez.
+          </small>
         </div>
         <div className="mb-3">
           <label htmlFor="companyName" className="form-label">
