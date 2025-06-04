@@ -19,6 +19,7 @@ const ModifyReservation = ({ reservationId }) => {
   const navigate = useNavigate();
   const [originalKwota, setOriginalKwota] = useState(0);
   const { showNotification } = useNotification();
+  const [shouldAddCleaningTask, setShouldAddCleaningTask] = useState(true);
   const [formData, setFormData] = useState({
     startDate: "2023-03-01",
     endDate: "2023-03-07",
@@ -243,14 +244,14 @@ const ModifyReservation = ({ reservationId }) => {
         console.error("Błąd podczas podmiany przypisania pokoju:", error);
       }
     }
-    if (formData.status === "COMPLETED") {
+    if (formData.status === "COMPLETED" && shouldAddCleaningTask) {
       try {
         const now = new Date().toISOString().slice(0, 19);
         for (const rr of formData.reservationRooms) {
           await api.post("/housekeeping-tasks", {
-            employee: {
-              id: 1,
-            },
+            // employee: {
+            //   id: null,
+            // },
             room: rr.room,
             requestDate: now,
             completionDate: now,
@@ -655,6 +656,23 @@ const ModifyReservation = ({ reservationId }) => {
             Zakończona
           </label>
         </div>
+
+        {formData.status === "COMPLETED" && (
+          <div className="form-check mt-2">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="cleaningTasksCheckbox"
+              checked={shouldAddCleaningTask}
+              onChange={(e) => setShouldAddCleaningTask(e.target.checked)}
+              disabled={!isEditable}
+            />
+            <label className="form-check-label" htmlFor="cleaningTasksCheckbox">
+              Utwórz zadania sprzątania dla wszystkich pokoi
+            </label>
+          </div>
+        )}
+
         <h3 className="card-title mt-4">Kwota bazowa</h3>
         <h3 className="card-title">{kwota} PLN</h3>
         {originalKwota > 0 && originalKwota !== parseFloat(kwota) && (
