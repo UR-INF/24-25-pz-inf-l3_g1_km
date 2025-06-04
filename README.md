@@ -204,6 +204,8 @@ app.db.seed=false
 - **Electron** – uruchomienie aplikacji jako natywny program desktopowy
 - **Axios** – komunikacja między frontendem a backendem
 - **ApexCharts** – wizualizacja danych na wykresach
+- **Rust** – język programowania użyty do stworzenia instalatora
+- **egui + eframe** – biblioteki GUI w Rust do budowy graficznego instalatora aplikacji
 
 ## Pliki instalacyjne wraz z opisem instalacji i konfiguracji wraz pierwszego uruchomienia
 
