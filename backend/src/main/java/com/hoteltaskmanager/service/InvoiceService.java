@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -85,112 +87,120 @@ public class InvoiceService {
      * Tworzy plik PDF z fakturą na dysku.
      */
     private void generatePdfFile(Invoice invoice, Reservation reservation, List<ReservationRoom> reservationRooms, String filePath) throws Exception {
-        Document document = new Document();
         Files.createDirectories(Paths.get("invoices"));
-        PdfWriter.getInstance(document, new FileOutputStream(filePath));
-        document.open();
 
-        BaseFont baseFont = BaseFont.createFont("src/main/resources/fonts/LexendPeta-VariableFont_wght.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        Font normalFont = new Font(baseFont, 12);
-        Font boldFont = new Font(baseFont, 12, Font.BOLD);
-        Font titleFont = new Font(baseFont, 18, Font.BOLD);
+        // 1. Wczytanie czcionki z resources
+        try (InputStream fontStream = getClass().getClassLoader().getResourceAsStream("fonts/LexendPeta-VariableFont_wght.ttf")) {
+            if (fontStream == null) {
+                throw new FileNotFoundException("Nie znaleziono czcionki: LexendPeta-VariableFont_wght.ttf");
+            }
 
-        Paragraph title = new Paragraph("FAKTURA", titleFont);
-        title.setAlignment(Element.ALIGN_CENTER);
-        document.add(title);
-        document.add(new Paragraph("\n"));
+            byte[] fontBytes = fontStream.readAllBytes();
+            BaseFont baseFont = BaseFont.createFont("LexendPeta.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, BaseFont.CACHED, fontBytes, null);
+            Font normalFont = new Font(baseFont, 12);
+            Font boldFont = new Font(baseFont, 12, Font.BOLD);
+            Font titleFont = new Font(baseFont, 18, Font.BOLD);
 
-        PdfPTable parties = new PdfPTable(2);
-        parties.setWidthPercentage(100);
-        parties.setSpacingBefore(10f);
+            // 2. Tworzenie dokumentu PDF
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            document.open();
 
-        PdfPCell cell1 = new PdfPCell();
-        cell1.setBorder(Rectangle.NO_BORDER);
-        cell1.addElement(new Paragraph("Sprzedawca:", boldFont));
-        cell1.addElement(new Paragraph("Hotel Example Sp. z o.o.", normalFont));
-        cell1.addElement(new Paragraph("ul. Rejtana 12", normalFont));
-        cell1.addElement(new Paragraph("31-555 Rzeszów", normalFont));
-        cell1.addElement(new Paragraph("NIP: 123-456-78-90", normalFont));
+            Paragraph title = new Paragraph("FAKTURA", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(new Paragraph("\n"));
 
-        PdfPCell cell2 = new PdfPCell();
-        cell2.setBorder(Rectangle.NO_BORDER);
-        cell2.addElement(new Paragraph("Nabywca:", boldFont));
-        cell2.addElement(new Paragraph(invoice.getCompanyName(), normalFont));
-        cell2.addElement(new Paragraph(invoice.getCompanyStreet() + " " + invoice.getCompanyBuildingNo(), normalFont));
-        cell2.addElement(new Paragraph(invoice.getCompanyPostalCode() + " " + invoice.getCompanyCity(), normalFont));
-        cell2.addElement(new Paragraph(invoice.getCompanyCountry(), normalFont));
-        cell2.addElement(new Paragraph("NIP: " + invoice.getCompanyNip(), normalFont));
+            PdfPTable parties = new PdfPTable(2);
+            parties.setWidthPercentage(100);
+            parties.setSpacingBefore(10f);
 
-        parties.addCell(cell1);
-        parties.addCell(cell2);
-        document.add(parties);
+            PdfPCell cell1 = new PdfPCell();
+            cell1.setBorder(Rectangle.NO_BORDER);
+            cell1.addElement(new Paragraph("Sprzedawca:", boldFont));
+            cell1.addElement(new Paragraph("Hotel Example Sp. z o.o.", normalFont));
+            cell1.addElement(new Paragraph("ul. Rejtana 12", normalFont));
+            cell1.addElement(new Paragraph("31-555 Rzeszów", normalFont));
+            cell1.addElement(new Paragraph("NIP: 123-456-78-90", normalFont));
 
-        document.add(new Paragraph("\nData wystawienia: " + invoice.getIssueDate(), normalFont));
-        document.add(new Paragraph("Gość: " + reservation.getGuestFirstName() + " " + reservation.getGuestLastName(), normalFont));
-        document.add(new Paragraph("PESEL: " + reservation.getGuestPesel(), normalFont));
-        document.add(new Paragraph("Telefon: " + reservation.getGuestPhone(), normalFont));
+            PdfPCell cell2 = new PdfPCell();
+            cell2.setBorder(Rectangle.NO_BORDER);
+            cell2.addElement(new Paragraph("Nabywca:", boldFont));
+            cell2.addElement(new Paragraph(invoice.getCompanyName(), normalFont));
+            cell2.addElement(new Paragraph(invoice.getCompanyStreet() + " " + invoice.getCompanyBuildingNo(), normalFont));
+            cell2.addElement(new Paragraph(invoice.getCompanyPostalCode() + " " + invoice.getCompanyCity(), normalFont));
+            cell2.addElement(new Paragraph(invoice.getCompanyCountry(), normalFont));
+            cell2.addElement(new Paragraph("NIP: " + invoice.getCompanyNip(), normalFont));
 
-        document.add(new Paragraph("\n"));
+            parties.addCell(cell1);
+            parties.addCell(cell2);
+            document.add(parties);
 
-        PdfPTable table = new PdfPTable(7);
-        table.setWidthPercentage(100);
-        table.setWidths(new int[]{2, 1, 1, 2, 2, 2, 2});
+            document.add(new Paragraph("\nData wystawienia: " + invoice.getIssueDate(), normalFont));
+            document.add(new Paragraph("Gość: " + reservation.getGuestFirstName() + " " + reservation.getGuestLastName(), normalFont));
+            document.add(new Paragraph("PESEL: " + reservation.getGuestPesel(), normalFont));
+            document.add(new Paragraph("Telefon: " + reservation.getGuestPhone(), normalFont));
+            document.add(new Paragraph("\n"));
 
-        table.addCell(new PdfPCell(new Phrase("Pokój", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("Dni", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("Osoby", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("Cena za dzień", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("Netto", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("VAT 8%", boldFont)));
-        table.addCell(new PdfPCell(new Phrase("Brutto", boldFont)));
+            PdfPTable table = new PdfPTable(7);
+            table.setWidthPercentage(100);
+            table.setWidths(new int[]{2, 1, 1, 2, 2, 2, 2});
 
-        long days = ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
+            table.addCell(new PdfPCell(new Phrase("Pokój", boldFont)));
+            table.addCell(new PdfPCell(new Phrase("Dni", boldFont)));
+            table.addCell(new PdfPCell(new Phrase("Osoby", boldFont)));
+            table.addCell(new PdfPCell(new Phrase("Cena za dzień", boldFont)));
+            table.addCell(new PdfPCell(new Phrase("Netto", boldFont)));
+            table.addCell(new PdfPCell(new Phrase("VAT 8%", boldFont)));
+            table.addCell(new PdfPCell(new Phrase("Brutto", boldFont)));
 
-        double totalBrutto = 0;
-        double totalNetto = 0;
-        double totalVat = 0;
+            long days = ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
 
-        for (ReservationRoom rr : reservationRooms) {
-            Room room = rr.getRoom();
-            int guests = rr.getGuestCount();
-            BigDecimal pricePerNight = room.getPricePerNight();
+            double totalBrutto = 0;
+            double totalNetto = 0;
+            double totalVat = 0;
 
-            int maxGuests = room.getBedCount();
-            BigDecimal pricePerGuest = pricePerNight.divide(BigDecimal.valueOf(maxGuests), 2, RoundingMode.HALF_UP);
-            BigDecimal brutto = pricePerGuest.multiply(BigDecimal.valueOf(guests)).multiply(BigDecimal.valueOf(days));
+            for (ReservationRoom rr : reservationRooms) {
+                Room room = rr.getRoom();
+                int guests = rr.getGuestCount();
+                BigDecimal pricePerNight = room.getPricePerNight();
 
-            BigDecimal netto = brutto.divide(BigDecimal.valueOf(1.08), 2, RoundingMode.HALF_UP);
-            BigDecimal vat = brutto.subtract(netto);
+                int maxGuests = room.getBedCount();
+                BigDecimal pricePerGuest = pricePerNight.divide(BigDecimal.valueOf(maxGuests), 2, RoundingMode.HALF_UP);
+                BigDecimal brutto = pricePerGuest.multiply(BigDecimal.valueOf(guests)).multiply(BigDecimal.valueOf(days));
+                BigDecimal netto = brutto.divide(BigDecimal.valueOf(1.08), 2, RoundingMode.HALF_UP);
+                BigDecimal vat = brutto.subtract(netto);
 
-            table.addCell(new PdfPCell(new Phrase("Pokój " + room.getRoomNumber(), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(days), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(guests), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", pricePerGuest), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", netto), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", vat), normalFont)));
-            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", brutto), normalFont)));
+                table.addCell(new PdfPCell(new Phrase("Pokój " + room.getRoomNumber(), normalFont)));
+                table.addCell(new PdfPCell(new Phrase(String.valueOf(days), normalFont)));
+                table.addCell(new PdfPCell(new Phrase(String.valueOf(guests), normalFont)));
+                table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", pricePerGuest), normalFont)));
+                table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", netto), normalFont)));
+                table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", vat), normalFont)));
+                table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", brutto), normalFont)));
 
-            totalNetto += netto.doubleValue();
-            totalVat += vat.doubleValue();
-            totalBrutto += brutto.doubleValue();
+                totalNetto += netto.doubleValue();
+                totalVat += vat.doubleValue();
+                totalBrutto += brutto.doubleValue();
+            }
+
+            PdfPCell sumLabel = new PdfPCell(new Phrase("Razem", boldFont));
+            sumLabel.setColspan(4);
+            sumLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            table.addCell(sumLabel);
+            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalNetto), boldFont)));
+            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalVat), boldFont)));
+            table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalBrutto), boldFont)));
+
+            document.add(table);
+
+            document.add(new Paragraph("\nForma płatności: Gotówka", normalFont));
+            document.add(new Paragraph("Dziękujemy za skorzystanie z naszych usług!", normalFont));
+
+            document.close();
         }
-
-        PdfPCell sumLabel = new PdfPCell(new Phrase("Razem", boldFont));
-        sumLabel.setColspan(4);
-        sumLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        table.addCell(sumLabel);
-        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalNetto), boldFont)));
-        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalVat), boldFont)));
-        table.addCell(new PdfPCell(new Phrase(String.format("%.2f zł", totalBrutto), boldFont)));
-
-        document.add(table);
-
-        document.add(new Paragraph("\nForma płatności: Gotówka", normalFont));
-        document.add(new Paragraph("Dziękujemy za skorzystanie z naszych usług!", normalFont));
-
-        document.close();
     }
-
+    
     /**
      * Pobiera wszystkie faktury z bazy danych.
      */
