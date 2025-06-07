@@ -44,7 +44,7 @@ const AdminConfigModal = ({ show, onClose }: Props) => {
     setDbHost(config.DB_HOST || "");
     setDbName(config.DB_NAME || "");
     setDbUser(config.DB_USER || "");
-    setDbPass(config.DB_PASS || "");
+    setDbPass(config.DB_PASS ? Buffer.from(config.DB_PASS, "base64").toString("utf-8") : "");
   };
 
   const saveConfig = async () => {
@@ -55,7 +55,7 @@ const AdminConfigModal = ({ show, onClose }: Props) => {
       DB_HOST: dbHost,
       DB_NAME: dbName,
       DB_USER: dbUser,
-      DB_PASS: dbPass,
+      DB_PASS: Buffer.from(dbPass, "utf-8").toString("base64"),
     });
 
     showNotification("success", "Zapisano konfigurację.");

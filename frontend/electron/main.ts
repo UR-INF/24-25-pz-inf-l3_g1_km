@@ -330,12 +330,13 @@ app.whenReady().then(async () => {
       try {
         showStatusWindow("Rozpoczynam uruchamianie backendu...");
 
+        const dbPassDecrypted = Buffer.from(config.DB_PASS, "base64").toString("utf-8");
         const args = [
           "-jar",
           config.JAR_PATH,
           `--spring.datasource.url=jdbc:mysql://${config.DB_HOST || "localhost"}:3306/${config.DB_NAME || "hoteltaskmanager"}?useSSL=false&serverTimezone=UTC`,
           `--spring.datasource.username=${config.DB_USER || "root"}`,
-          `--spring.datasource.password=${config.DB_PASS || ""}`,
+          `--spring.datasource.password=${dbPassDecrypted || ""}`,
           ...(config.SEED_DB === true
             ? ["--app.db.seed=true", "--spring.jpa.hibernate.ddl-auto=create"]
             : []),

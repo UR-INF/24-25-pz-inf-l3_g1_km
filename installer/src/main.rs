@@ -16,6 +16,7 @@ use mysql::prelude::Queryable;
 use image::GenericImageView;
 use std::sync::Arc;
 use egui::IconData;
+use base64;
 
 /// Punkt wejścia aplikacji instalatora Hotel Task Manager.
 ///
@@ -1089,7 +1090,7 @@ fn update_frontend_config(
         db_host: db_host.map(|s| s.to_string()),
         db_name: db_name.map(|s| s.to_string()),
         db_user: db_user.map(|s| s.to_string()),
-        db_pass: db_pass.map(|s| s.to_string()),
+        db_pass: db_pass.map(|s| base64::encode(s)),
         seed_db,
     };
 
