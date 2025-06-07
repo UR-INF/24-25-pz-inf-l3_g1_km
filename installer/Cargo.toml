@@ -20,6 +20,7 @@ chrono = { version = "0.4", features = ["serde"] }
 mysql = "24.0"
 rust-embed = "8"
 image = "0.25"
+base64 = "0.22.1"
 
 [profile.release]
 opt-level = "z"

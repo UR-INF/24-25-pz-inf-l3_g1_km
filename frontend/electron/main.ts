@@ -98,7 +98,11 @@ function createWindow() {
   ipcMain.handle("config:get", () => {
     try {
       const raw = fs.readFileSync(userConfigPath, "utf-8");
-      return { ...defaultConfig, ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+
+      parsed.DB_PASS = Buffer.from(parsed.DB_PASS, "base64").toString("utf-8");
+
+      return { ...defaultConfig, ...parsed };
     } catch (e) {
       console.error("Nie udalo sie odczytac config.json:", e);
       return defaultConfig;
@@ -107,6 +111,8 @@ function createWindow() {
 
   ipcMain.handle("config:set", (_, newConfig) => {
     try {
+      newConfig.DB_PASS = Buffer.from(newConfig.DB_PASS, "utf-8").toString("base64");
+
       fs.writeFileSync(userConfigPath, JSON.stringify(newConfig, null, 2), "utf-8");
       return true;
     } catch (e) {
@@ -345,7 +351,7 @@ app.whenReady().then(async () => {
         const out = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-out.log"), "w");
         const err = fs.openSync(path.join(path.dirname(config.JAR_PATH), "backend-err.log"), "w");
 
-        console.log("Uruchamianie backendu z argumentami:", args);
+        // console.log("Uruchamianie backendu z argumentami:", args);
 
         backendProcess = spawn("java", args, {
           cwd: path.dirname(config.JAR_PATH),
