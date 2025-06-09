@@ -94,7 +94,10 @@ const ReservationsTable = () => {
                   className="form-control form-control-sm"
                   value={resultsPerPage}
                   min={1}
-                  onChange={(e) => setResultsPerPage(Number(e.target.value))}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setResultsPerPage(value === "" ? 1 : Number(value));
+                  }}
                   aria-label="Invoices count"
                 />
               </div>
