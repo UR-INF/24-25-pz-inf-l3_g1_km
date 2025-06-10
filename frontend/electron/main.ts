@@ -3,7 +3,8 @@ import { app, shell, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
-import { spawn } from "node:child_process";
+// import { tasklist } from "tasklist";
+import { spawn, execSync } from "node:child_process";
 import net from "node:net";
 import fetch from "node-fetch";
 import { dialog } from "electron";
@@ -177,7 +178,7 @@ app.on("activate", () => {
 
 let statusWindow: BrowserWindow | null = null;
 
-export function showStatusWindow(message: string) {
+export function showStatusWindow(message: string, spinner?: boolean) {
   if (statusWindow && !statusWindow.isDestroyed()) {
     closeStatusWindow();
   }
@@ -193,7 +194,7 @@ export function showStatusWindow(message: string) {
   statusWindow = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, "hotel.ico"),
     width: 500,
-    height: 400,
+    height: 450,
     frame: false,
     resizable: false,
     alwaysOnTop: true,
@@ -224,6 +225,7 @@ export function showStatusWindow(message: string) {
       </div>
       <div class="card-body text-center">
         <p class="text-secondary">${message.replace(/\n/g, "<br>")}</p>
+        ${spinner === true ? '<div class="spinner-border text-primary"></div>' : ""}
       </div>
       <div class="card-footer border-top d-flex justify-content-center">
         <button class="btn btn-primary" onclick="window.close()">Zamknij</button>
@@ -331,10 +333,12 @@ app.whenReady().then(async () => {
   const apiHost = config.API_HOST || "http://localhost";
 
   if (config.JAR_PATH && config.JAR_PATH.trim() !== "") {
+    // await killOrphanedBackend(config.JAR_PATH);
+
     const inUse = await isPortInUse(port);
     if (!inUse) {
       try {
-        showStatusWindow("Rozpoczynam uruchamianie backendu...");
+        // showStatusWindow("Rozpoczynam uruchamianie backendu...");
 
         const dbPassDecrypted = Buffer.from(config.DB_PASS, "base64").toString("utf-8");
         const args = [
@@ -362,7 +366,7 @@ app.whenReady().then(async () => {
         backendProcess.unref();
         console.log("Backend uruchomiony z:", config.JAR_PATH);
 
-        showStatusWindow(`Backend został uruchomiony z: ${config.JAR_PATH}`);
+        // showStatusWindow(`Backend został uruchomiony z: ${config.JAR_PATH}`);
 
         if (config.SEED_DB) {
           config.SEED_DB = false;
@@ -389,11 +393,15 @@ app.whenReady().then(async () => {
   }
 
   showStatusWindow(
-    "Oczekiwanie na backend. Aplikacja spróbuje nawiązać połączenie przez maksymalnie 20 sekund.",
+    backendProcess
+      ? `Uruchamianie lokalnego backendu z: ${config.JAR_PATH}\n\n` +
+          "Aplikacja spróbuje nawiązać połączenie przez maksymalnie 30 sekund."
+      : "Oczekiwanie na zdalny backend. Aplikacja spróbuje nawiązać połączenie przez maksymalnie 30 sekund.",
+    true,
   );
 
   const fullBackendUrl = `${apiHost}:${port}`;
-  const backendReady = await waitForBackend(fullBackendUrl, 20000); // 20s timeout
+  const backendReady = await waitForBackend(fullBackendUrl, 30000); 
   if (backendReady) {
     console.log("Backend gotowy - uruchamiam UI");
     closeStatusWindow();
@@ -401,8 +409,8 @@ app.whenReady().then(async () => {
     console.warn("Backend nie odpowiedzial - UI moze nie dzialac!");
 
     let errorMessage =
-      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 20 sekund.\n\n" +
-      "Aplikacja może nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem.";
+      "Brak odpowiedzi od backendu - nie odpowiedział w ciągu 30 sekund.\n\n" +
+      "Aplikacja MOŻE nie działać poprawnie. Spróbuj uruchomić ją ponownie lub sprawdź połączenie z backendem.";
 
     if (config.JAR_PATH && config.JAR_PATH.trim() !== "") {
       errorMessage +=
@@ -418,13 +426,61 @@ app.whenReady().then(async () => {
   createWindow();
 });
 
-app.on("before-quit", () => {
-  if (backendProcess && !backendProcess.killed) {
+// export async function killOrphanedBackend(jarPath: string) {
+//   try {
+//     // Pobierz listę wszystkich procesów java.exe
+//     const processes = await tasklist({ filter: ["imageName eq java.exe"] });
+//     for (const proc of processes) {
+//       const pid = proc.pid;
+//       // tasklist nie daje commandline, więc pobierz z WMIC (dla każdego PID)
+//       try {
+//         const cmd = execSync(`wmic process where processid=${pid} get CommandLine`, {
+//           encoding: "utf-8",
+//         });
+//         if (cmd.includes(jarPath)) {
+//           console.log(`Znaleziono sierotę backendu: PID ${pid}\n${cmd}`);
+//           execSync(`taskkill /PID ${pid} /T /F`);
+//           console.log("Zabito sierotę backendu!");
+//         }
+//       } catch (e) {
+//         // ignoruj błędy pojedynczych procesów
+//       }
+//     }
+//   } catch (err) {
+//     console.error("Nie udało się sprawdzić procesów java:", err);
+//   }
+// }
+
+function killBackendProcess() {
+  if (backendProcess && backendProcess.pid) {
     try {
-      process.kill(backendProcess.pid);
-      console.log("Zamknieto backend.");
+      execSync(`taskkill /PID ${backendProcess.pid} /T /F`);
+      console.log("Proces backendu zostal zakonczony.");
+
+      backendProcess = null;
     } catch (e) {
-      console.error("Nie udalo sie zamknac backendu:", e);
+      console.error("Wystapil blad podczas konczenia procesu backendu:", e);
     }
   }
+}
+
+// Obsługa sygnałów SIGTERM i SIGINT (np. Ctrl+C w terminalu)
+process.on("SIGTERM", () => {
+  killBackendProcess();
+  app.quit();
+});
+
+process.on("SIGINT", () => {
+  killBackendProcess();
+  app.quit();
+});
+
+// Obsługa wyjścia aplikacji (np. przez app.quit())
+app.on("before-quit", () => {
+  killBackendProcess();
+});
+
+// Dla pewności, także na event 'quit' (czasem nie wywołuje before-quit)
+app.on("quit", () => {
+  killBackendProcess();
 });
