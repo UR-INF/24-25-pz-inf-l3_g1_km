@@ -194,6 +194,26 @@ Podczas startu aplikacji seeder automatycznie wypełni bazę przykładowymi dany
 app.db.seed=false
 ```
 
+###### Zseedowane domyślne konta pracowników
+
+Poniżej znajduje się lista domyślnych kont pracowników. Każde konto posiada standardowe hasło: `admin123`.
+
+1. Menedżer
+- **Imię i nazwisko:** Krzysztof Motas  
+  **E-mail:** motas.krzysztof@gmail.com  
+
+2. Recepcjonista
+- **Imię i nazwisko:** Dawid Wójcik  
+  **E-mail:** dawid@hotel.pl  
+
+3. Pokojówka
+- **Imię i nazwisko:** Anna Zielińska  
+  **E-mail:** anna@hotel.pl  
+
+4. Konserwator
+- **Imię i nazwisko:** Robert Kowalski  
+  **E-mail:** robert@hotel.pl
+
 ## Wykorzystane technologie
 - **Java 22** – główny język backendu
 - **Spring Boot** – framework do tworzenia REST API
