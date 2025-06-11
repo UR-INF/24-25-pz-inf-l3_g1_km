@@ -13,6 +13,8 @@ Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 ## Cel projektu 
 Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelu. System umożliwia delegowanie zadań, śledzenie ich postępu. Dzięki intuicyjnemu interfejsowi, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co poprawia organizację pracy w hotelu.
 
+![Główny panel aplikacji](app.png)
+
 ## Zakres projektu
 
 ## Wymagania stawiane aplikacji
