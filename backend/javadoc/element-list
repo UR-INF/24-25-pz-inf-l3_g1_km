@@ -1,0 +1,10 @@
+com.hoteltaskmanager
+com.hoteltaskmanager.config
+com.hoteltaskmanager.controller
+com.hoteltaskmanager.dto
+com.hoteltaskmanager.model
+com.hoteltaskmanager.repository
+com.hoteltaskmanager.security
+com.hoteltaskmanager.seed
+com.hoteltaskmanager.service
+com.hoteltaskmanager.util
