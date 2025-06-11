@@ -91,8 +91,8 @@ public class PasswordResetController {
         }
 
         String newPassword = request.get("newPassword");
-        if (newPassword == null || newPassword.length() < 8) {
-            return ResponseEntity.badRequest().body("Hasło musi mieć minimum 8 znaków.");
+        if (newPassword == null || newPassword.length() < 6) {
+            return ResponseEntity.badRequest().body("Hasło musi mieć minimum 6 znaków.");
         }
 
         employee.setPassword(passwordHasher.hashPassword(newPassword));

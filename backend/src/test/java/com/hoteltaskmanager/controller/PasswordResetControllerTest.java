@@ -186,6 +186,6 @@ class PasswordResetControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(payload))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Hasło musi mieć minimum 8 znaków."));
+                .andExpect(content().string("Hasło musi mieć minimum 6 znaków."));
     }
 }
