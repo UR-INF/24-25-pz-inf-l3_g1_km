@@ -1,6 +1,6 @@
 Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 
-# Dokumentacja projetu: **System do zarządzania zadaniami w hotelu**
+# Dokumentacja projektu: **System do zarządzania zadaniami w hotelu**
 
 ## Zespoł projetowy:
 - Krzysztof Motas (Lider)
@@ -14,6 +14,25 @@ Programowanie zespołowe laboratorium _**3**_ grupa _**1**_
 Aplikacja Hotel Task Manager to narzędzie do zarządzania zadaniami w hotelu. System umożliwia delegowanie zadań, śledzenie ich postępu. Dzięki intuicyjnemu interfejsowi, pracownicy mogą na bieżąco otrzymywać i aktualizować informacje o swoich obowiązkach, co poprawia organizację pracy w hotelu.
 
 ![Główny panel aplikacji](app.png)
+
+## Struktura projektu
+
+Poniżej przedstawiono główne foldery i pliki repozytorium:
+
+```
+.
+├── .vscode/               # Konfiguracja edytora – formatowanie, ustawienia środowiska
+├── backend/               # Kod backendu aplikacji (Spring Boot)
+├── frontend/              # Kod frontendowy aplikacji desktopowej (Electron+Vite, React)
+├── installer-images/      # Zrzuty ekranu prezentujące instalator
+├── installer/             # Skrypty i pliki źródłowe instalatora (Rust)
+├── schema/                # Pliki związane ze strukturą bazy danych
+├── tabler/preview/dist/   # Komponenty Tabler
+├── uml/                   # Diagramy UML – diagramy klas, przypadków użycia itp.
+├── .gitignore             # Plik ignorujący zbędne pliki/foldery w repozytorium
+├── README.md              # Dokumentacja projektu
+└── app.png                # Grafika prezentująca aplikację
+```
 
 ## Zakres projektu
 
