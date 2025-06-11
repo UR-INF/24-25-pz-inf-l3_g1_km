@@ -224,7 +224,7 @@ const ModifyRepairRequest = () => {
               type="date"
               className="form-control"
               name="completionDate"
-              value={formData.completionDate}
+              value={formData.completionDate || ""}
               onChange={handleChange}
               disabled={!isEditable}
               min={formData.requestDate}

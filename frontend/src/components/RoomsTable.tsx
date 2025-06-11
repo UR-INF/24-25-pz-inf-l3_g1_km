@@ -97,8 +97,8 @@ const RoomsTable = () => {
                   className="form-control form-control-sm"
                   value={resultsPerPage}
                   onChange={(e) => {
-                    const value = e.target.value;
-                    setResultsPerPage(value === "" ? 1 : Number(value));
+                    const value = Number(e.target.value);
+                    setResultsPerPage(!value || value < 1 ? 1 : value);
                   }}
                   min={1}
                   aria-label="Liczba pokoi na stronie"

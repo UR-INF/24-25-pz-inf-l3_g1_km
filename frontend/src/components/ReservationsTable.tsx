@@ -95,10 +95,10 @@ const ReservationsTable = () => {
                   value={resultsPerPage}
                   min={1}
                   onChange={(e) => {
-                    const value = e.target.value;
-                    setResultsPerPage(value === "" ? 1 : Number(value));
+                    const value = Number(e.target.value);
+                    setResultsPerPage(!value || value < 1 ? 1 : value);
                   }}
-                  aria-label="Invoices count"
+                  aria-label="Liczba rezerwacji na stronie"
                 />
               </div>
               wyników
