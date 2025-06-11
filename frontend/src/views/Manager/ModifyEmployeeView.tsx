@@ -5,11 +5,13 @@ import { useNotification } from "../../contexts/notification";
 import { validateEmailFormat, validatePhoneNumber } from "../../utils/regexUtils";
 import { getRoleNameInPolish } from "../../utils/roleUtils";
 import { RoleName } from "../../contexts/user";
+import { useUser } from "../../contexts/user";
 
 const ModifyEmployeeView = () => {
   const { id } = useParams<{ id: string }>();
   const { showNotification } = useNotification();
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -200,6 +202,7 @@ const ModifyEmployeeView = () => {
                   className="form-select"
                   value={role}
                   onChange={(e) => setRole(e.target.value as RoleName)}
+                  disabled={id === String(user?.id)}
                 >
                   {Object.values(RoleName).map((roleKey) => (
                     <option key={roleKey} value={roleKey}>
