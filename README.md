@@ -23,6 +23,7 @@ Poniżej przedstawiono główne foldery i pliki repozytorium:
 .
 ├── .vscode/               # Konfiguracja edytora – formatowanie, ustawienia środowiska
 ├── backend/               # Kod backendu aplikacji (Spring Boot)
+│   └── javadoc/           # Wygenerowana dokumentacja JavaDoc dla backendu
 ├── frontend/              # Kod frontendowy aplikacji desktopowej (Electron+Vite, React)
 ├── installer-images/      # Zrzuty ekranu prezentujące instalator
 ├── installer/             # Skrypty i pliki źródłowe instalatora (Rust)
